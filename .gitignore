@@ -1,0 +1,123 @@
+
+# ===========================
+# .NET / C# Build Artifacts
+# ===========================
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.suo
+*.cache
+*.pidb
+*.svd
+*.userprefs
+*.ncrunchproject
+*.dottrace
+*.snk
+*.suo
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# .NET Publish output
+[Pp]ublish/
+publish/
+
+# .NET Core / ASP.NET
+appsettings.Development.json
+*.pfx
+*.cer
+
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+*.nuspec
+project.assets.json
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj.filters
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+# ===========================
+# Node.js / Tests
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Puppeteer browser cache (very large — 300MB+)
+Tests/.cache/
+.cache/
+**/chrome-win64/
+**/chrome-linux/
+**/chrome-mac/
+
+# ===========================
+# Test Reports (optional — keep PDFs in repo)
+# Keep: Test Reports/*.pdf
+# ===========================
+# Uncomment below to also exclude PDFs:
+# Test Reports/
+
+# ===========================
+# Environment & Secrets
+# ===========================
+.env
+.env.*
+*.env
+secrets.json
+appsettings.Local.json
+
+# ===========================
+# OS & Editor
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+
+# ===========================
+# Temporary / Misc
+# ===========================
+*.tmp
+*.temp
+_temp/
+scratch/
