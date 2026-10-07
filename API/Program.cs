@@ -166,6 +166,20 @@ builder.Services.AddScoped<IBackupService,    BackupService>();
 builder.Services.AddScoped<ILookupService,    LookupService>();
 builder.Services.AddScoped<IAdminService,     AdminService>();
 
+// ─── Device Integration Layer ──────────────────────────────────────────────────
+// Provides a hardware-agnostic abstraction over all physical billing devices.
+// Each service decouples the billing modules from specific device implementations,
+// allowing the same software to work for any shop type.
+builder.Services.AddScoped<IDeviceConfigurationService, DeviceConfigurationService>();
+builder.Services.AddScoped<IDeviceSettingsService,      DeviceSettingsService>();
+builder.Services.AddScoped<IBarcodeScannerService,      BarcodeScannerService>();
+builder.Services.AddScoped<IQRScannerService,           QRScannerService>();
+builder.Services.AddScoped<IWeighingScaleService,       WeighingScaleService>();
+builder.Services.AddScoped<IOcrScannerService,          OcrScannerService>();
+builder.Services.AddScoped<ICardPaymentService,         CardPaymentService>();
+builder.Services.AddScoped<ICashDrawerService,          CashDrawerService>();
+
+
 // ─── Swagger / OpenAPI ────────────────────────────────────────────────────────
 builder.Services.AddSwaggerGen(options =>
 {

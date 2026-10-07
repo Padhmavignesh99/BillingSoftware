@@ -145,6 +145,28 @@ namespace BillingSoftware.API.Data
         // Theme Settings (per-user)
         public DbSet<UserThemeSettings> UserThemeSettings { get; set; }
 
+        // ── Device Integration Layer ──────────────────────────────────────────────
+        /// <summary>Registry of physical devices registered to a billing terminal (scanners, scales, etc.).</summary>
+        public DbSet<DeviceConfiguration> DeviceConfigurations { get; set; }
+
+        /// <summary>Per-tenant feature flags that enable/disable each device type.</summary>
+        public DbSet<DeviceSettings> DeviceSettings { get; set; }
+
+        /// <summary>Audit log of every barcode scan event across all modules.</summary>
+        public DbSet<ScanEventLog> ScanEventLogs { get; set; }
+
+        /// <summary>Log of weight readings captured from connected weighing scales.</summary>
+        public DbSet<WeightCaptureLog> WeightCaptureLogs { get; set; }
+
+        /// <summary>Results of supplier invoice / document OCR scans.</summary>
+        public DbSet<OcrScanResult> OcrScanResults { get; set; }
+
+        /// <summary>Card/POS terminal payment transactions.</summary>
+        public DbSet<CardPaymentTransaction> CardPaymentTransactions { get; set; }
+
+        /// <summary>QR code scan events across all modules.</summary>
+        public DbSet<QRScanEvent> QRScanEvents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -254,6 +276,20 @@ namespace BillingSoftware.API.Data
             modelBuilder.Entity<PurchaseOrder>().HasQueryFilter(p => _tenantId == null || p.TenantId == _tenantId);
             modelBuilder.Entity<PrintSettings>().HasQueryFilter(ps => _tenantId == null || ps.TenantId == _tenantId);
             modelBuilder.Entity<UserThemeSettings>().HasQueryFilter(t => _tenantId == null || t.TenantId == _tenantId);
+
+            // ── Device Integration Layer — tenant-scoped filters ───────────────────
+            modelBuilder.Entity<DeviceConfiguration>().HasQueryFilter(d => _tenantId == null || d.TenantId == _tenantId);
+            modelBuilder.Entity<DeviceSettings>().HasQueryFilter(d => _tenantId == null || d.TenantId == _tenantId);
+            modelBuilder.Entity<ScanEventLog>().HasQueryFilter(s => _tenantId == null || s.TenantId == _tenantId);
+            modelBuilder.Entity<WeightCaptureLog>().HasQueryFilter(w => _tenantId == null || w.TenantId == _tenantId);
+            modelBuilder.Entity<OcrScanResult>().HasQueryFilter(o => _tenantId == null || o.TenantId == _tenantId);
+            modelBuilder.Entity<CardPaymentTransaction>().HasQueryFilter(c => _tenantId == null || c.TenantId == _tenantId);
+            modelBuilder.Entity<QRScanEvent>().HasQueryFilter(q => _tenantId == null || q.TenantId == _tenantId);
+
+            // DeviceSettings — unique constraint: one settings record per tenant
+            modelBuilder.Entity<DeviceSettings>()
+                .HasIndex(d => d.TenantId)
+                .IsUnique();
 
             // UserThemeSettings — unique constraint: one row per user per tenant
             modelBuilder.Entity<UserThemeSettings>()
