@@ -329,7 +329,10 @@ namespace BillingSoftware.API.DTOs.Responses
         public bool HasWhatsAppIntegration { get; set; }
         public bool HasEmailIntegration { get; set; }
         public bool HasReports { get; set; }
+        public bool HasMultiCurrency { get; set; }
+        public bool HasInventoryManagement { get; set; }
         public bool IsPopular { get; set; }
+        public int TrialDays { get; set; } = 30;
         public List<string> Features { get; set; } = new();
     }
 
@@ -484,24 +487,43 @@ namespace BillingSoftware.API.DTOs.Responses
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? OwnerName { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Country { get; set; }
+        public string? GSTNumber { get; set; }
+        public string? LogoUrl { get; set; }
         public string Status { get; set; } = string.Empty;
-        public string? PlanName { get; set; }
+        public int TotalUsers { get; set; }
+        public int TotalBranches { get; set; }
+        public string SubscriptionStatus { get; set; } = string.Empty;
+        public string? CurrentPlanName { get; set; }
+        public DateTime? TrialStartDate { get; set; }
+        public DateTime? TrialEndDate { get; set; }
+        public DateTime? SubscriptionStartDate { get; set; }
+        public DateTime? SubscriptionEndDate { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int UserCount { get; set; }
-        public int ProductCount { get; set; }
-        public int InvoiceCount { get; set; }
     }
 
     public class RevenueReportResponse
     {
         public decimal TotalRevenue { get; set; }
+        public decimal MonthlyRevenue { get; set; }
+        public decimal YearlyRevenue { get; set; }
         public int TotalShops { get; set; }
         public int ActiveSubscriptions { get; set; }
         public decimal MonthlyRecurringRevenue { get; set; }
+        public List<RevenueByPlan> SubscriptionBreakdown { get; set; } = new();
         public List<ChartDataPoint> RevenueChart { get; set; } = new();
+    }
+
+    public class RevenueByPlan
+    {
+        public string PlanName { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public decimal Revenue { get; set; }
     }
 
     // ==================== TENANT (SUPERADMIN) ====================
@@ -894,4 +916,178 @@ namespace BillingSoftware.API.DTOs.Responses
         public string ExpiryStatus { get; set; } = string.Empty; // Expired, ExpiringSoon, Valid
         public int DaysToExpiry { get; set; } // Negative = already expired
     }
+
+    // ==================== ADMIN — DASHBOARD ====================
+    public class AdminDashboardResponse
+    {
+        public int TotalShops { get; set; }
+        public int ActiveShops { get; set; }
+        public int SuspendedShops { get; set; }
+        public int TotalUsers { get; set; }
+        public int ActiveTrials { get; set; }
+        public int ExpiredTrials { get; set; }
+        public int ActiveSubscriptions { get; set; }
+        public int ExpiredSubscriptions { get; set; }
+        public decimal TotalRevenueThisMonth { get; set; }
+        public decimal TotalRevenueAllTime { get; set; }
+        public int TotalSubscriptionPlans { get; set; }
+        public List<AdminPlanStats> PlanStats { get; set; } = new();
+        public List<AdminMonthlyRevenue> MonthlyRevenue { get; set; } = new();
+    }
+
+    public class AdminPlanStats
+    {
+        public int PlanId { get; set; }
+        public string PlanName { get; set; } = string.Empty;
+        public int ActiveSubscribers { get; set; }
+        public decimal MonthlyRevenue { get; set; }
+    }
+
+    public class AdminMonthlyRevenue
+    {
+        public string Month { get; set; } = string.Empty;
+        public decimal Revenue { get; set; }
+        public int NewSubscriptions { get; set; }
+    }
+
+
+    public class AdminUserResponse
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public int? TenantId { get; set; }
+        public string? BusinessName { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? LastLoginAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    // ==================== ADMIN — PLAN ====================
+    public class AdminPlanResponse
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public decimal MonthlyPrice { get; set; }
+        public decimal? YearlyPrice { get; set; }
+        public int MaxProducts { get; set; }
+        public int MaxUsers { get; set; }
+        public int MaxBranches { get; set; }
+        public int MaxInvoicesPerMonth { get; set; }
+        public bool HasWhatsAppIntegration { get; set; }
+        public bool HasEmailIntegration { get; set; }
+        public bool HasReports { get; set; }
+        public bool HasMultiCurrency { get; set; }
+        public bool HasInventoryManagement { get; set; }
+        public bool HasDeviceIntegration { get; set; }
+        public bool HasApiAccess { get; set; }
+        public int TrialDays { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsPopular { get; set; }
+        public int SortOrder { get; set; }
+        public int ActiveSubscribers { get; set; }
+        public List<AdminPlanFeatureResponse> Features { get; set; } = new();
+        public DateTime CreatedAt { get; set; }
+    }
+
+    // ==================== ADMIN — PLAN FEATURE ====================
+    public class AdminPlanFeatureResponse
+    {
+        public int Id { get; set; }
+        public int PlanId { get; set; }
+        public string FeatureName { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public bool IsEnabled { get; set; }
+        public string? FeatureValue { get; set; }
+    }
+
+    // ==================== ADMIN — SUBSCRIPTION ====================
+    public class AdminSubscriptionResponse
+    {
+        public int Id { get; set; }
+        public int BusinessId { get; set; }
+        public string BusinessName { get; set; } = string.Empty;
+        public string? BusinessEmail { get; set; }
+        public int PlanId { get; set; }
+        public string PlanName { get; set; } = string.Empty;
+        public decimal PlanMonthlyPrice { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string BillingCycle { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int DaysRemaining { get; set; }
+        public decimal AmountPaid { get; set; }
+        public bool AutoRenew { get; set; }
+        public DateTime? CancelledAt { get; set; }
+        public string? CancellationReason { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    // ==================== ADMIN — TRIAL ====================
+    public class AdminTrialResponse
+    {
+        public int Id { get; set; }
+        public int BusinessId { get; set; }
+        public string BusinessName { get; set; } = string.Empty;
+        public string? BusinessEmail { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int DaysRemaining { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsExpired { get; set; }
+        public bool IsConverted { get; set; }
+        public string? ConvertedPlanName { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    // ==================== ADMIN — SUBSCRIPTION PAYMENT ====================
+    public class AdminSubscriptionPaymentResponse
+    {
+        public int Id { get; set; }
+        public int SubscriptionId { get; set; }
+        public int BusinessId { get; set; }
+        public string BusinessName { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string? Currency { get; set; }
+        public string? PaymentGateway { get; set; }
+        public string? TransactionId { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public DateTime PaymentDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    // ==================== ADMIN — AUDIT LOG ====================
+    public class AdminAuditLogResponse
+    {
+        public int Id { get; set; }
+        public int? TenantId { get; set; }
+        public string? BusinessName { get; set; }
+        public int? UserId { get; set; }
+        public string? UserName { get; set; }
+        public string Action { get; set; } = string.Empty;
+        public string EntityType { get; set; } = string.Empty;
+        public int? EntityId { get; set; }
+        public string? OldValues { get; set; }
+        public string? NewValues { get; set; }
+        public string? IpAddress { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+
+    // ==================== SUBSCRIPTION STATUS (for login check) ====================
+    public class SubscriptionStatusResponse
+    {
+        public bool IsAllowed { get; set; }
+        public string Status { get; set; } = string.Empty; // Trial | Active | Expired | NoSubscription
+        public string Message { get; set; } = string.Empty;
+        public DateTime? ExpiryDate { get; set; }
+        public int? DaysRemaining { get; set; }
+        public bool IsTrial { get; set; }
+        public bool IsExpired { get; set; }
+        public string? CurrentPlanName { get; set; }
+        public List<SubscriptionPlanResponse>? AvailablePlans { get; set; }
+    }
 }
+

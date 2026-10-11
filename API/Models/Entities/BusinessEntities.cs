@@ -22,6 +22,8 @@ namespace BillingSoftware.API.Models.Entities
         public string? CurrencyCode { get; set; } = "INR";
         public string? CurrencySymbol { get; set; } = "₹";
         public BusinessStatus Status { get; set; } = BusinessStatus.Active;
+        public string? SuspendedReason { get; set; }
+        public DateTime? SuspendedAt { get; set; }
         public ICollection<Branch> Branches { get; set; } = new List<Branch>();
         public BusinessSettings? Settings { get; set; }
         public InvoiceSettings? InvoiceSettings { get; set; }

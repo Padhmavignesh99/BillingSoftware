@@ -126,7 +126,8 @@ namespace BillingSoftware.API.Services.Implementations
 
     public class LookupService : ILookupService { private readonly ApplicationDbContext _c; public LookupService(ApplicationDbContext c) { _c = c; } public async Task<List<Lookup>> GetLookupsByCategoryAsync(string cat) => await _c.Lookups.Where(l => l.Category == cat && l.IsActive).OrderBy(l => l.SortOrder).ToListAsync(); public async Task<Lookup> CreateLookupAsync(string cat, string key, string val, string? desc) { var l = new Lookup { Category = cat, Key = key, Value = val, Description = desc }; _c.Lookups.Add(l); await _c.SaveChangesAsync(); return l; } }
 
-    public class AdminService : IAdminService { private readonly ApplicationDbContext _c; public AdminService(ApplicationDbContext c) { _c = c; } public async Task<List<AdminShopResponse>> GetAllShopsAsync() => await _c.Businesses.Select(b => new AdminShopResponse { Id = b.Id, Name = b.Name, Email = b.Email, Phone = b.Phone, Status = b.Status.ToString(), CreatedAt = b.CreatedAt }).ToListAsync(); public async Task<bool> SuspendShopAsync(int id, string? reason) { var b = await _c.Businesses.FindAsync(id) ?? throw new KeyNotFoundException(); b.Status = BusinessStatus.Suspended; await _c.SaveChangesAsync(); return true; } public async Task<bool> ActivateShopAsync(int id) { var b = await _c.Businesses.FindAsync(id) ?? throw new KeyNotFoundException(); b.Status = BusinessStatus.Active; await _c.SaveChangesAsync(); return true; } public async Task<RevenueReportResponse> GetRevenueReportAsync() => new RevenueReportResponse { TotalRevenue = await _c.SubscriptionPayments.SumAsync(p => p.Amount), TotalShops = await _c.Businesses.CountAsync(), ActiveSubscriptions = await _c.Subscriptions.CountAsync(s => s.Status == SubscriptionStatus.Active) }; }
+
+
 
     // ==================== PRINT SETTINGS SERVICE ====================
     public class PrintSettingsService : IPrintSettingsService

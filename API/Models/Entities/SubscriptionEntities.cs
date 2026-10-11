@@ -17,6 +17,10 @@ namespace BillingSoftware.API.Models.Entities
         public bool HasReports { get; set; } = true;
         public bool HasMultiCurrency { get; set; } = false;
         public bool HasInventoryManagement { get; set; } = true;
+        public bool HasDeviceIntegration { get; set; } = false;
+        public bool HasApiAccess { get; set; } = false;
+        public int TrialDays { get; set; } = 30;
+        public new bool IsActive { get; set; } = true;
         public int SortOrder { get; set; } = 0;
         public bool IsPopular { get; set; } = false;
         public ICollection<PlanFeature> Features { get; set; } = new List<PlanFeature>();

@@ -152,10 +152,60 @@ namespace BillingSoftware.API.Services.Interfaces
     // ==================== ADMIN ====================
     public interface IAdminService
     {
+        // ── Dashboard ────────────────────────────────────────────────────────────
+        Task<AdminDashboardResponse> GetDashboardAsync();
+        Task<RevenueReportResponse> GetRevenueReportAsync();
+
+        // ── Shops / Tenants ──────────────────────────────────────────────────────
         Task<List<AdminShopResponse>> GetAllShopsAsync();
+        Task<AdminShopResponse?> GetShopByIdAsync(int shopId);
         Task<bool> SuspendShopAsync(int shopId, string? reason);
         Task<bool> ActivateShopAsync(int shopId);
-        Task<RevenueReportResponse> GetRevenueReportAsync();
+        Task<bool> DeleteShopAsync(int shopId);
+        Task<bool> UpdateShopAsync(int shopId, AdminUpdateShopRequest request);
+
+        // ── Users ────────────────────────────────────────────────────────────────
+        Task<List<AdminUserResponse>> GetAllUsersAsync();
+        Task<AdminUserResponse?> GetUserByIdAsync(int userId);
+        Task<bool> ActivateUserAsync(int userId);
+        Task<bool> DeactivateUserAsync(int userId);
+        Task<bool> ResetUserPasswordAsync(int userId, string newPassword);
+        Task<bool> DeleteUserAsync(int userId);
+
+        // ── Subscription Plans (Admin CRUD) ──────────────────────────────────────
+        Task<List<AdminPlanResponse>> GetAllPlansAsync();
+        Task<AdminPlanResponse?> GetPlanByIdAsync(int planId);
+        Task<AdminPlanResponse> CreatePlanAsync(AdminCreatePlanRequest request);
+        Task<AdminPlanResponse> UpdatePlanAsync(int planId, AdminCreatePlanRequest request);
+        Task<bool> DeletePlanAsync(int planId);
+
+        // ── Plan Features ────────────────────────────────────────────────────────
+        Task<List<AdminPlanFeatureResponse>> GetPlanFeaturesAsync(int planId);
+        Task<AdminPlanFeatureResponse> AddPlanFeatureAsync(int planId, AdminPlanFeatureRequest request);
+        Task<AdminPlanFeatureResponse> UpdatePlanFeatureAsync(int featureId, AdminPlanFeatureRequest request);
+        Task<bool> DeletePlanFeatureAsync(int featureId);
+
+        // ── Subscriptions ────────────────────────────────────────────────────────
+        Task<List<AdminSubscriptionResponse>> GetAllSubscriptionsAsync();
+        Task<AdminSubscriptionResponse?> GetSubscriptionByIdAsync(int id);
+        Task<AdminSubscriptionResponse> AssignSubscriptionAsync(AdminAssignSubscriptionRequest request);
+        Task<bool> CancelSubscriptionAsync(int subscriptionId, string? reason);
+        Task<bool> ExtendSubscriptionAsync(int subscriptionId, int days);
+        Task<bool> UpdateSubscriptionStatusAsync(int subscriptionId, string status);
+
+        // ── Trials ──────────────────────────────────────────────────────────────
+        Task<List<AdminTrialResponse>> GetAllTrialsAsync();
+        Task<AdminTrialResponse?> GetTrialByShopAsync(int shopId);
+        Task<AdminTrialResponse> StartTrialForShopAsync(int shopId, int trialDays);
+        Task<bool> EndTrialAsync(int shopId);
+        Task<bool> ExtendTrialAsync(int shopId, int days);
+
+        // ── Subscription Payments ────────────────────────────────────────────────
+        Task<List<AdminSubscriptionPaymentResponse>> GetAllSubscriptionPaymentsAsync();
+        Task<AdminSubscriptionPaymentResponse> RecordSubscriptionPaymentAsync(AdminRecordPaymentRequest request);
+
+        // ── Audit Logs ───────────────────────────────────────────────────────────
+        Task<List<AdminAuditLogResponse>> GetAuditLogsAsync(int page, int pageSize, int? tenantId);
     }
 
     // ==================== PRINT SETTINGS ====================

@@ -362,6 +362,94 @@ namespace BillingSoftware.API.Data
                 new Lookup { Id = 4, Category = "Country", Key = "IN", Value = "India", Description = "India" },
                 new Lookup { Id = 5, Category = "Country", Key = "US", Value = "United States", Description = "United States" }
             );
+
+            // ─── Seed Admin user ──────────────────────────────────────────────────────
+            // Admin credentials: admin@billingsoftware.com / Admin@123
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id             = 2,
+                FullName       = "Admin",
+                Email          = "admin@billingsoftware.com",
+                PasswordHash   = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                Role           = UserRole.SuperAdmin,
+                TenantId       = null,
+                IsActive       = true,
+                IsDeleted      = false,
+                CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
+            // ─── Seed Subscription Plans ──────────────────────────────────────────────
+            // Plan 1: Starter (Free Trial)
+            // Plan 2: Basic
+            // Plan 3: Professional (Popular)
+            // Plan 4: Enterprise
+            modelBuilder.Entity<SubscriptionPlan>().HasData(
+                new SubscriptionPlan
+                {
+                    Id = 1, Name = "Starter", Description = "Perfect for small shops getting started. Includes a 30-day free trial.",
+                    MonthlyPrice = 0, YearlyPrice = 0,
+                    MaxProducts = 50, MaxUsers = 2, MaxBranches = 1, MaxInvoicesPerMonth = 100,
+                    HasWhatsAppIntegration = false, HasEmailIntegration = true, HasReports = false,
+                    HasMultiCurrency = false, HasInventoryManagement = true, HasDeviceIntegration = false, HasApiAccess = false,
+                    TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 1,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new SubscriptionPlan
+                {
+                    Id = 2, Name = "Basic", Description = "Ideal for growing businesses with essential billing features.",
+                    MonthlyPrice = 499, YearlyPrice = 4999,
+                    MaxProducts = 500, MaxUsers = 5, MaxBranches = 1, MaxInvoicesPerMonth = 1000,
+                    HasWhatsAppIntegration = false, HasEmailIntegration = true, HasReports = true,
+                    HasMultiCurrency = false, HasInventoryManagement = true, HasDeviceIntegration = false, HasApiAccess = false,
+                    TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 2,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new SubscriptionPlan
+                {
+                    Id = 3, Name = "Professional", Description = "For established businesses needing advanced features and integrations.",
+                    MonthlyPrice = 999, YearlyPrice = 9999,
+                    MaxProducts = 5000, MaxUsers = 15, MaxBranches = 3, MaxInvoicesPerMonth = 10000,
+                    HasWhatsAppIntegration = true, HasEmailIntegration = true, HasReports = true,
+                    HasMultiCurrency = true, HasInventoryManagement = true, HasDeviceIntegration = true, HasApiAccess = false,
+                    TrialDays = 30, IsActive = true, IsPopular = true, SortOrder = 3,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new SubscriptionPlan
+                {
+                    Id = 4, Name = "Enterprise", Description = "Unlimited features for large enterprises with API access and dedicated support.",
+                    MonthlyPrice = 2499, YearlyPrice = 24999,
+                    MaxProducts = int.MaxValue, MaxUsers = int.MaxValue, MaxBranches = int.MaxValue, MaxInvoicesPerMonth = int.MaxValue,
+                    HasWhatsAppIntegration = true, HasEmailIntegration = true, HasReports = true,
+                    HasMultiCurrency = true, HasInventoryManagement = true, HasDeviceIntegration = true, HasApiAccess = true,
+                    TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 4,
+                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // ─── Seed Plan Features ───────────────────────────────────────────────────
+            modelBuilder.Entity<PlanFeature>().HasData(
+                // Starter features
+                new PlanFeature { Id = 1,  PlanId = 1, FeatureName = "Sales Invoice",        IsEnabled = true,  Description = "Create and manage sales invoices", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 2,  PlanId = 1, FeatureName = "Basic Inventory",       IsEnabled = true,  Description = "Track stock for up to 50 products", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 3,  PlanId = 1, FeatureName = "Customer Management",   IsEnabled = true,  Description = "Manage customer records", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                // Basic features
+                new PlanFeature { Id = 4,  PlanId = 2, FeatureName = "Sales & Purchase",      IsEnabled = true,  Description = "Full sales and purchase management", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 5,  PlanId = 2, FeatureName = "Reports",               IsEnabled = true,  Description = "Sales, purchase, and stock reports", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 6,  PlanId = 2, FeatureName = "GST Reports",           IsEnabled = true,  Description = "GSTR-1, GSTR-3B summary reports", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 7,  PlanId = 2, FeatureName = "Email Integration",     IsEnabled = true,  Description = "Send invoices via email", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                // Professional features
+                new PlanFeature { Id = 8,  PlanId = 3, FeatureName = "WhatsApp Integration",  IsEnabled = true,  Description = "Send invoices & reminders via WhatsApp", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 9,  PlanId = 3, FeatureName = "Multi-Branch",          IsEnabled = true,  Description = "Manage up to 3 branches", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 10, PlanId = 3, FeatureName = "Device Integration",    IsEnabled = true,  Description = "Barcode scanners, weighing scales, card terminals", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 11, PlanId = 3, FeatureName = "Multi-Currency",        IsEnabled = true,  Description = "Accept payments in multiple currencies", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 12, PlanId = 3, FeatureName = "Advanced Reports",      IsEnabled = true,  Description = "Profit & loss, customer analytics, trend reports", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                // Enterprise features
+                new PlanFeature { Id = 13, PlanId = 4, FeatureName = "Unlimited Everything",  IsEnabled = true,  Description = "No limits on products, users, or branches", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 14, PlanId = 4, FeatureName = "API Access",            IsEnabled = true,  Description = "REST API access for custom integrations", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 15, PlanId = 4, FeatureName = "Dedicated Support",     IsEnabled = true,  Description = "Priority support with dedicated account manager", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
+                new PlanFeature { Id = 16, PlanId = 4, FeatureName = "Custom Integrations",   IsEnabled = true,  Description = "Custom ERP/CRM integrations on request", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) }
+            );
+
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

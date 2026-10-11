@@ -53,6 +53,25 @@ namespace BillingSoftware.API.Services.Implementations
                 TenantId = business.Id
             };
             _context.Users.Add(user);
+
+            // ── Auto-start 30-day free trial ──────────────────────────────────────────
+            // Every new registration gets a free trial automatically.
+            // Trial duration is driven by the first active SubscriptionPlan's TrialDays,
+            // falling back to 30 if no plan is seeded yet.
+            int trialDays = 30;
+            var trialPlan = await _context.SubscriptionPlans
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.SortOrder)
+                .FirstOrDefaultAsync();
+            if (trialPlan != null) trialDays = trialPlan.TrialDays;
+
+            _context.Trials.Add(new Trial
+            {
+                BusinessId = business.Id,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(trialDays)
+            });
+
             await _context.SaveChangesAsync();
 
             return GenerateAuthResponse(user);
