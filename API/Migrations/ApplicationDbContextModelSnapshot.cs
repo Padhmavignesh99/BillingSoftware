@@ -22,6 +22,155 @@ namespace BillingSoftware.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.AIForecast", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ActualQty")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("ConfidenceHigh")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ConfidenceLow")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ForecastDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("ForecastedQty")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Granularity")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MetricsJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ModelVersion")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("AIForecasts");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.AIInsight", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("ConfidenceScore")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DataJson")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("GeneratedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("InsightType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActedOn")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RecommendationJson")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RelatedEntityType")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GeneratedByUserId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("AIInsights");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.AuditLog", b =>
                 {
                     b.Property<int>("Id")
@@ -318,6 +467,12 @@ namespace BillingSoftware.API.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("SuspendedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SuspendedReason")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -452,7 +607,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6789),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1614),
                             Description = "General retail shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -461,7 +616,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6799),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1617),
                             Description = "Wholesale business",
                             IsActive = true,
                             IsDeleted = false,
@@ -470,7 +625,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6800),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1618),
                             Description = "Food & beverage",
                             IsActive = true,
                             IsDeleted = false,
@@ -479,7 +634,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6801),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1619),
                             Description = "Medical store",
                             IsActive = true,
                             IsDeleted = false,
@@ -488,7 +643,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6802),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1620),
                             Description = "Electronics shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -497,7 +652,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6803),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1621),
                             Description = "Fashion & apparel",
                             IsActive = true,
                             IsDeleted = false,
@@ -506,7 +661,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6804),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1622),
                             Description = "Grocery & supermarket",
                             IsActive = true,
                             IsDeleted = false,
@@ -515,7 +670,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6805),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1623),
                             Description = "Service-based business",
                             IsActive = true,
                             IsDeleted = false,
@@ -524,7 +679,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6806),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1623),
                             Description = "Manufacturing unit",
                             IsActive = true,
                             IsDeleted = false,
@@ -533,7 +688,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 704, DateTimeKind.Utc).AddTicks(6807),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1624),
                             Description = "Other business type",
                             IsActive = true,
                             IsDeleted = false,
@@ -706,6 +861,77 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("CashRegisters");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.Counter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssignedUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedUserId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Counters");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Customer", b =>
@@ -1531,6 +1757,55 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("EmailMessages");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.EmployeeRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSystemRole")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("EmployeeRoles");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Expense", b =>
                 {
                     b.Property<int>("Id")
@@ -2283,7 +2558,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 1,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 885, DateTimeKind.Utc).AddTicks(7044),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(255),
                             Description = "Indian Rupee",
                             IsActive = true,
                             IsDeleted = false,
@@ -2295,7 +2570,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 2,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 885, DateTimeKind.Utc).AddTicks(7049),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(259),
                             Description = "US Dollar",
                             IsActive = true,
                             IsDeleted = false,
@@ -2307,7 +2582,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 3,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 885, DateTimeKind.Utc).AddTicks(7050),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(261),
                             Description = "Euro",
                             IsActive = true,
                             IsDeleted = false,
@@ -2319,7 +2594,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 4,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 885, DateTimeKind.Utc).AddTicks(7051),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(262),
                             Description = "India",
                             IsActive = true,
                             IsDeleted = false,
@@ -2331,7 +2606,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 5,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 7, 16, 48, 19, 885, DateTimeKind.Utc).AddTicks(7052),
+                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(263),
                             Description = "United States",
                             IsActive = true,
                             IsDeleted = false,
@@ -2680,6 +2955,9 @@ namespace BillingSoftware.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Action")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -2694,6 +2972,10 @@ namespace BillingSoftware.API.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Module")
                         .HasColumnType("text");
@@ -2760,6 +3042,277 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("PlanId");
 
                     b.ToTable("PlanFeatures");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create and manage sales invoices",
+                            FeatureName = "Sales Invoice",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Track stock for up to 50 products",
+                            FeatureName = "Basic Inventory",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage customer records",
+                            FeatureName = "Customer Management",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Full sales and purchase management",
+                            FeatureName = "Sales & Purchase",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Sales, purchase, and stock reports",
+                            FeatureName = "Reports",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "GSTR-1, GSTR-3B summary reports",
+                            FeatureName = "GST Reports",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Send invoices via email",
+                            FeatureName = "Email Integration",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Send invoices & reminders via WhatsApp",
+                            FeatureName = "WhatsApp Integration",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage up to 3 branches",
+                            FeatureName = "Multi-Branch",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Barcode scanners, weighing scales, card terminals",
+                            FeatureName = "Device Integration",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Accept payments in multiple currencies",
+                            FeatureName = "Multi-Currency",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Profit & loss, customer analytics, trend reports",
+                            FeatureName = "Advanced Reports",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 3
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "No limits on products, users, or branches",
+                            FeatureName = "Unlimited Everything",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 4
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "REST API access for custom integrations",
+                            FeatureName = "API Access",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 4
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Priority support with dedicated account manager",
+                            FeatureName = "Dedicated Support",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 4
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Custom ERP/CRM integrations on request",
+                            FeatureName = "Custom Integrations",
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsEnabled = true,
+                            PlanId = 4
+                        });
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.PrintJob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Copies")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CounterId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("DocumentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DocumentReference")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("InitiatedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsReprint")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxRetries")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("OriginalPrintJobId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PaperSize")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("PrintedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PrinterTarget")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RetryAfter")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InitiatedByUserId");
+
+                    b.HasIndex("TenantId", "Status");
+
+                    b.HasIndex("TenantId", "DocumentType", "DocumentId");
+
+                    b.ToTable("PrintJobs");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.PrintSettings", b =>
@@ -2772,6 +3325,12 @@ namespace BillingSoftware.API.Migrations
 
                     b.Property<string>("BankDetails")
                         .HasColumnType("text");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CounterId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2803,6 +3362,9 @@ namespace BillingSoftware.API.Migrations
 
                     b.Property<decimal>("FooterFontSizePt")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FooterText")
+                        .HasColumnType("text");
 
                     b.Property<decimal>("HeaderFontSizePt")
                         .HasColumnType("decimal(18,2)");
@@ -2859,6 +3421,9 @@ namespace BillingSoftware.API.Migrations
                     b.Property<decimal>("MarginTopMm")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("OpenCashDrawer")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Orientation")
                         .IsRequired()
                         .HasColumnType("text");
@@ -2872,6 +3437,16 @@ namespace BillingSoftware.API.Migrations
 
                     b.Property<string>("PrintPrimaryColor")
                         .HasColumnType("text");
+
+                    b.Property<string>("PrinterConnection")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrinterIpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PrinterPort")
+                        .HasColumnType("integer");
 
                     b.Property<int>("PurchaseCopies")
                         .HasColumnType("integer");
@@ -2987,7 +3562,10 @@ namespace BillingSoftware.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TenantId", "BranchId", "CounterId")
+                        .IsUnique();
 
                     b.ToTable("PrintSettings");
                 });
@@ -3056,6 +3634,9 @@ namespace BillingSoftware.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ReorderLevel")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("SKU")
@@ -3998,10 +4579,16 @@ namespace BillingSoftware.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsGranted")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("PermissionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RoleId1")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4009,6 +4596,8 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("PermissionId");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("RoleId1");
 
                     b.ToTable("RolePermissions");
                 });
@@ -4338,6 +4927,79 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ScanEventLogs");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ShopInvite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("AcceptedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("InvitedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcceptedByUserId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("InvitedByUserId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ShopInvites");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.SmsMessage", b =>
@@ -4834,6 +5496,12 @@ namespace BillingSoftware.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("HasApiAccess")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasDeviceIntegration")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("HasEmailIntegration")
                         .HasColumnType("boolean");
 
@@ -4880,6 +5548,9 @@ namespace BillingSoftware.API.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TrialDays")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -4892,6 +5563,176 @@ namespace BillingSoftware.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubscriptionPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Perfect for small shops getting started. Includes a 30-day free trial.",
+                            HasApiAccess = false,
+                            HasDeviceIntegration = false,
+                            HasEmailIntegration = true,
+                            HasInventoryManagement = true,
+                            HasMultiCurrency = false,
+                            HasReports = false,
+                            HasWhatsAppIntegration = false,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsPopular = false,
+                            MaxBranches = 1,
+                            MaxInvoicesPerMonth = 100,
+                            MaxProducts = 50,
+                            MaxUsers = 2,
+                            MonthlyPrice = 0m,
+                            Name = "Starter",
+                            SortOrder = 1,
+                            TrialDays = 30,
+                            YearlyPrice = 0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Ideal for growing businesses with essential billing features.",
+                            HasApiAccess = false,
+                            HasDeviceIntegration = false,
+                            HasEmailIntegration = true,
+                            HasInventoryManagement = true,
+                            HasMultiCurrency = false,
+                            HasReports = true,
+                            HasWhatsAppIntegration = false,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsPopular = false,
+                            MaxBranches = 1,
+                            MaxInvoicesPerMonth = 1000,
+                            MaxProducts = 500,
+                            MaxUsers = 5,
+                            MonthlyPrice = 499m,
+                            Name = "Basic",
+                            SortOrder = 2,
+                            TrialDays = 30,
+                            YearlyPrice = 4999m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "For established businesses needing advanced features and integrations.",
+                            HasApiAccess = false,
+                            HasDeviceIntegration = true,
+                            HasEmailIntegration = true,
+                            HasInventoryManagement = true,
+                            HasMultiCurrency = true,
+                            HasReports = true,
+                            HasWhatsAppIntegration = true,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsPopular = true,
+                            MaxBranches = 3,
+                            MaxInvoicesPerMonth = 10000,
+                            MaxProducts = 5000,
+                            MaxUsers = 15,
+                            MonthlyPrice = 999m,
+                            Name = "Professional",
+                            SortOrder = 3,
+                            TrialDays = 30,
+                            YearlyPrice = 9999m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Unlimited features for large enterprises with API access and dedicated support.",
+                            HasApiAccess = true,
+                            HasDeviceIntegration = true,
+                            HasEmailIntegration = true,
+                            HasInventoryManagement = true,
+                            HasMultiCurrency = true,
+                            HasReports = true,
+                            HasWhatsAppIntegration = true,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsPopular = false,
+                            MaxBranches = 2147483647,
+                            MaxInvoicesPerMonth = 2147483647,
+                            MaxProducts = 2147483647,
+                            MaxUsers = 2147483647,
+                            MonthlyPrice = 2499m,
+                            Name = "Enterprise",
+                            SortOrder = 4,
+                            TrialDays = 30,
+                            YearlyPrice = 24999m
+                        });
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.SubscriptionUsage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApiCallsCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BranchesCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("InvoicesCreated")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductsCount")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("StorageUsedBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SubscriptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UsersCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("SubscriptionUsages");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Supplier", b =>
@@ -5284,6 +6125,68 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("TaxRates");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.TenantUserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CounterId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("CounterId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Trial", b =>
                 {
                     b.Property<int>("Id")
@@ -5381,6 +6284,64 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("Units");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.UsageAlert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AcknowledgedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("AcknowledgedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AlertType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("CurrentValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsAcknowledged")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("LimitValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ThresholdPct")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("UsageAlerts");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -5470,7 +6431,18 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$dyXPvvhVB7c2pJ76h5Omvumu5pJrmlbik.uvTB/un76U3r.n/eClW",
+                            PasswordHash = "$2a$11$m3iP7tjxbKn1Wq4DmuJZgOr3rVzT5A4TQ.GEpNhjqVtbFl22l1cPy",
+                            Role = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@billingsoftware.com",
+                            FullName = "Admin",
+                            IsActive = true,
+                            IsDeleted = false,
+                            PasswordHash = "$2a$11$ZrETxNTsxeD9pZKiBIX/Uu9wQLv5YMFmvmznGE3uPm4Mva5GxKiU6",
                             Role = 1
                         });
                 });
@@ -5609,10 +6581,19 @@ namespace BillingSoftware.API.Migrations
                     b.Property<int?>("BranchId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CapacityUnit")
+                        .HasColumnType("text");
+
                     b.Property<string>("City")
                         .HasColumnType("text");
 
                     b.Property<string>("Code")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactPhone")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -5621,7 +6602,13 @@ namespace BillingSoftware.API.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
@@ -5639,6 +6626,9 @@ namespace BillingSoftware.API.Migrations
 
                     b.Property<string>("State")
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("StorageCapacity")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("integer");
@@ -5802,6 +6792,43 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("WhatsAppMessages");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.AIForecast", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.AIInsight", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "GeneratedByUser")
+                        .WithMany()
+                        .HasForeignKey("GeneratedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GeneratedByUser");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.AuditLog", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.User", "User")
@@ -5904,6 +6931,32 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("ClosedByUser");
 
                     b.Navigation("OpenedByUser");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.Counter", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "AssignedUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignedUser");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Tenant");
                 });
@@ -6069,6 +7122,17 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Invoice");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.EmployeeRole", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tenant");
                 });
@@ -6415,13 +7479,38 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("BillingSoftware.API.Models.Entities.PrintSettings", b =>
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.PrintJob", b =>
                 {
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "InitiatedByUser")
+                        .WithMany()
+                        .HasForeignKey("InitiatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("InitiatedByUser");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.PrintSettings", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Tenant");
                 });
@@ -6797,9 +7886,15 @@ namespace BillingSoftware.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BillingSoftware.API.Models.Entities.EmployeeRole", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BillingSoftware.API.Models.Entities.Role", "Role")
                         .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("RoleId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -6939,6 +8034,44 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ShopInvite", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "AcceptedByUser")
+                        .WithMany()
+                        .HasForeignKey("AcceptedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "InvitedByUser")
+                        .WithMany()
+                        .HasForeignKey("InvitedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.EmployeeRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AcceptedByUser");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("InvitedByUser");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.SmsMessage", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
@@ -7053,7 +8186,8 @@ namespace BillingSoftware.API.Migrations
 
                     b.HasOne("BillingSoftware.API.Models.Entities.Warehouse", "FromWarehouse")
                         .WithMany()
-                        .HasForeignKey("FromWarehouseId");
+                        .HasForeignKey("FromWarehouseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
                         .WithMany()
@@ -7075,7 +8209,8 @@ namespace BillingSoftware.API.Migrations
 
                     b.HasOne("BillingSoftware.API.Models.Entities.Warehouse", "ToWarehouse")
                         .WithMany()
-                        .HasForeignKey("ToWarehouseId");
+                        .HasForeignKey("ToWarehouseId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("FromBranch");
 
@@ -7126,6 +8261,25 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Business");
 
                     b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.SubscriptionUsage", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Supplier", b =>
@@ -7236,6 +8390,47 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.TenantUserRole", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Counter", "Counter")
+                        .WithMany()
+                        .HasForeignKey("CounterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.EmployeeRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Counter");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Trial", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Business", "Business")
@@ -7254,6 +8449,17 @@ namespace BillingSoftware.API.Migrations
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Unit", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.UsageAlert", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
                         .WithMany()
@@ -7372,6 +8578,13 @@ namespace BillingSoftware.API.Migrations
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerGroup", b =>
                 {
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.EmployeeRole", b =>
+                {
+                    b.Navigation("Permissions");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Expense", b =>

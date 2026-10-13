@@ -34,10 +34,14 @@ namespace BillingSoftware.API.DTOs.Responses
 
     public class PermissionResponse
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Module { get; set; }
+        public int     Id          { get; set; }
+        public string  Name        { get; set; } = string.Empty;
+        public string? Module      { get; set; }
         public string? Description { get; set; }
+        // Extended for role-based permission system
+        public string? Action      { get; set; }
+        public string  Key         { get; set; } = string.Empty;
+        public bool    IsGranted   { get; set; } = true;
     }
 
     public class StaffResponse
@@ -663,6 +667,20 @@ namespace BillingSoftware.API.DTOs.Responses
         public string? DefaultThermalPrinter { get; set; }
         public string? DefaultLabelPrinter   { get; set; }
 
+        // Network / Direct Printer Configuration
+        public string? PrinterIpAddress    { get; set; }
+        public int?    PrinterPort         { get; set; }
+        public string  PrinterConnection   { get; set; } = "USB";
+        public bool    OpenCashDrawer      { get; set; }
+        public string? FooterText          { get; set; }
+
+        // Branch / Counter scope
+        /// <summary>null = tenant-level settings</summary>
+        public int?    BranchId           { get; set; }
+        public int?    CounterId          { get; set; }
+        /// <summary>Human-readable scope description</summary>
+        public string  ScopeLabel         { get; set; } = "Tenant Default";
+
         public DateTime? UpdatedAt { get; set; }
     }
 
@@ -1089,5 +1107,171 @@ namespace BillingSoftware.API.DTOs.Responses
         public string? CurrentPlanName { get; set; }
         public List<SubscriptionPlanResponse>? AvailablePlans { get; set; }
     }
+
+    // ==================== PRINT SETTINGS — LOOKUP DATA ====================
+
+    /// <summary>Describes a supported paper size with its physical dimensions.</summary>
+    public class PaperSizeInfo
+    {
+        public string Value       { get; set; } = string.Empty;  // e.g. "A4"
+        public string Label       { get; set; } = string.Empty;  // e.g. "A4 (210 × 297 mm)"
+        public decimal? WidthMm  { get; set; }
+        public decimal? HeightMm { get; set; }
+        public bool     IsCustom { get; set; } = false;
+        public bool     IsThermal{ get; set; } = false;
+        /// <summary>Approximate characters per line (useful for thermal receipts)</summary>
+        public int?     CharsPerLine { get; set; }
+    }
+
+    /// <summary>Describes a supported printer type.</summary>
+    public class PrinterTypeInfo
+    {
+        public string Value       { get; set; } = string.Empty;  // e.g. "Thermal"
+        public string Label       { get; set; } = string.Empty;  // e.g. "Thermal receipt printer"
+        public string Description { get; set; } = string.Empty;
+        public bool   SupportsColor  { get; set; }
+        public bool   SupportsCut    { get; set; }
+        public bool   SupportsCashDrawer { get; set; }
+    }
+
+    // ==================== PRINTER TEST ====================
+
+    /// <summary>Response from the printer connectivity test endpoint.</summary>
+    public class PrinterTestResult
+    {
+        public bool    Success       { get; set; }
+        public string  Message       { get; set; } = string.Empty;
+        public string? PrinterTarget { get; set; }
+        public string? ConnectionType{ get; set; }
+        /// <summary>Round-trip latency in milliseconds (for network printers)</summary>
+        public long?   LatencyMs     { get; set; }
+        public DateTime TestedAt     { get; set; } = DateTime.UtcNow;
+    }
+
+    // ==================== INVOICE PRINT DATA ====================
+
+    /// <summary>
+    /// Full invoice data plus active print settings, returned to the Angular client
+    /// so it can render the invoice with the correct paper size, font, and display options.
+    /// </summary>
+    public class InvoicePrintDataResponse
+    {
+        // Invoice metadata
+        public int     InvoiceId      { get; set; }
+        public string  InvoiceNumber  { get; set; } = string.Empty;
+        public DateTime InvoiceDate   { get; set; }
+        public DateTime? DueDate      { get; set; }
+
+        // Customer
+        public string? CustomerName   { get; set; }
+        public string? CustomerPhone  { get; set; }
+        public string? CustomerEmail  { get; set; }
+        public string? CustomerAddress{ get; set; }
+        public string? CustomerGSTIN  { get; set; }
+
+        // Business
+        public string  BusinessName   { get; set; } = string.Empty;
+        public string? BusinessAddress{ get; set; }
+        public string? BusinessPhone  { get; set; }
+        public string? BusinessEmail  { get; set; }
+        public string? BusinessGSTIN  { get; set; }
+        public string? LogoUrl        { get; set; }
+
+        // Line items
+        public List<InvoicePrintItemRow> Items { get; set; } = new();
+
+        // Totals
+        public decimal SubTotal       { get; set; }
+        public decimal TaxAmount      { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal RoundOff       { get; set; }
+        public decimal TotalAmount    { get; set; }
+        public decimal PaidAmount     { get; set; }
+        public decimal DueAmount      { get; set; }
+        public string? AmountInWords  { get; set; }
+
+        // Payment
+        public string? PaymentMethod  { get; set; }
+        public string? Notes          { get; set; }
+        public string? TermsAndConditions { get; set; }
+
+        // Active print settings (applied to this invoice)
+        public PrintSettingsResponse PrintSettings { get; set; } = new();
+
+        // Print job control
+        public int?    PrintJobId     { get; set; }
+        public bool    IsReprint      { get; set; } = false;
+    }
+
+    public class InvoicePrintItemRow
+    {
+        public int     SrNo          { get; set; }
+        public string  ProductName   { get; set; } = string.Empty;
+        public string? HSNCode       { get; set; }
+        public decimal Quantity      { get; set; }
+        public decimal UnitPrice     { get; set; }
+        public decimal DiscountAmount{ get; set; }
+        public decimal TaxAmount     { get; set; }
+        public decimal? CGSTAmount   { get; set; }
+        public decimal? SGSTAmount   { get; set; }
+        public decimal? TaxPercentage{ get; set; }
+        public decimal TotalPrice    { get; set; }
+    }
+
+    // ==================== PRINT JOB ====================
+
+    /// <summary>Print job response — returned for all print job management endpoints.</summary>
+    public class PrintJobResponse
+    {
+        public int     Id                  { get; set; }
+        public int     TenantId            { get; set; }
+        public string  DocumentType        { get; set; } = string.Empty;
+        public int?    DocumentId          { get; set; }
+        public string? DocumentReference   { get; set; }
+        public string  Status              { get; set; } = "Queued";
+        public string? PrinterTarget       { get; set; }
+        public string? PaperSize           { get; set; }
+        public int     Copies              { get; set; }
+        public int     RetryCount          { get; set; }
+        public int     MaxRetries          { get; set; }
+        public string? ErrorMessage        { get; set; }
+        public DateTime? PrintedAt         { get; set; }
+        public DateTime? RetryAfter        { get; set; }
+        public bool    IsReprint           { get; set; }
+        public int?    OriginalPrintJobId  { get; set; }
+        public int?    InitiatedByUserId   { get; set; }
+        public string? InitiatedByUserName { get; set; }
+        public int?    BranchId            { get; set; }
+        public int?    CounterId           { get; set; }
+        public DateTime CreatedAt          { get; set; }
+        public DateTime? UpdatedAt         { get; set; }
+    }
+
+    // ==================== EXTENDED PRINT SETTINGS RESPONSE ====================
+    // (Patch PrintSettingsResponse to include new multi-tenant scope fields)
+    // NOTE: The PrintSettingsResponse class already exists above at line 577.
+    //       Scope fields are added here as an extension class consumed by the scoped-settings API.
+
+    /// <summary>
+    /// Wraps a PrintSettingsResponse with its configuration scope (tenant / branch / counter).
+    /// Used by the GET /api/print-settings/all-scopes endpoint.
+    /// </summary>
+    public class ScopedPrintSettingsResponse
+    {
+        /// <summary>null = tenant-level</summary>
+        public int?  BranchId   { get; set; }
+        public string? BranchName { get; set; }
+
+        /// <summary>null = branch or tenant level</summary>
+        public int?  CounterId  { get; set; }
+
+        /// <summary>Scope label e.g. "Tenant Default", "Branch: Main Store", "Counter 2 – Main Store"</summary>
+        public string ScopeLabel { get; set; } = string.Empty;
+
+        public PrintSettingsResponse Settings { get; set; } = new();
+    }
 }
+
+
+
 

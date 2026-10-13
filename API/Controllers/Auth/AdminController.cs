@@ -49,7 +49,7 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<AdminShopResponse>>> GetShop(int id)
         {
             var shop = await _admin.GetShopByIdAsync(id);
-            if (shop == null) return NotFound(ApiResponse<object>.ErrorResponse("Shop not found"));
+            if (shop == null) return NotFound(ApiResponse<object>.FailResponse("Shop not found"));
             return Ok(ApiResponse<AdminShopResponse>.SuccessResponse(shop));
         }
 
@@ -85,7 +85,7 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<AdminUserResponse>>> GetUser(int id)
         {
             var user = await _admin.GetUserByIdAsync(id);
-            if (user == null) return NotFound(ApiResponse<object>.ErrorResponse("User not found"));
+            if (user == null) return NotFound(ApiResponse<object>.FailResponse("User not found"));
             return Ok(ApiResponse<AdminUserResponse>.SuccessResponse(user));
         }
 
@@ -121,7 +121,7 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<AdminPlanResponse>>> GetPlan(int id)
         {
             var plan = await _admin.GetPlanByIdAsync(id);
-            if (plan == null) return NotFound(ApiResponse<object>.ErrorResponse("Plan not found"));
+            if (plan == null) return NotFound(ApiResponse<object>.FailResponse("Plan not found"));
             return Ok(ApiResponse<AdminPlanResponse>.SuccessResponse(plan));
         }
 
@@ -174,7 +174,7 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<AdminSubscriptionResponse>>> GetSubscription(int id)
         {
             var sub = await _admin.GetSubscriptionByIdAsync(id);
-            if (sub == null) return NotFound(ApiResponse<object>.ErrorResponse("Subscription not found"));
+            if (sub == null) return NotFound(ApiResponse<object>.FailResponse("Subscription not found"));
             return Ok(ApiResponse<AdminSubscriptionResponse>.SuccessResponse(sub));
         }
 
@@ -210,7 +210,7 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<AdminTrialResponse>>> GetTrialForShop(int shopId)
         {
             var trial = await _admin.GetTrialByShopAsync(shopId);
-            if (trial == null) return NotFound(ApiResponse<object>.ErrorResponse("No trial found for this shop"));
+            if (trial == null) return NotFound(ApiResponse<object>.FailResponse("No trial found for this shop"));
             return Ok(ApiResponse<AdminTrialResponse>.SuccessResponse(trial));
         }
 

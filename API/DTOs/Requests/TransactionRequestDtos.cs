@@ -32,26 +32,24 @@ namespace BillingSoftware.API.DTOs.Requests
 
     public class CreateWarehouseRequest
     {
-        public string Name { get; set; } = string.Empty;
-        public string? Code { get; set; }
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? State { get; set; }
-        public string? Phone { get; set; }
-        public string? ManagerName { get; set; }
-        public int? BranchId { get; set; }
+        public string  Name            { get; set; } = string.Empty;
+        public string? Code            { get; set; }
+        public string? Description     { get; set; }
+        public string? Address         { get; set; }
+        public string? City            { get; set; }
+        public string? State           { get; set; }
+        public string? Phone           { get; set; }
+        public string? ManagerName     { get; set; }
+        public int?    BranchId        { get; set; }
+        // Extended fields
+        public bool    IsDefault       { get; set; } = false;
+        public decimal? StorageCapacity { get; set; }
+        public string?  CapacityUnit   { get; set; }
+        public string?  ContactPerson  { get; set; }
+        public string?  ContactPhone   { get; set; }
     }
 
-    public class UpdateWarehouseRequest
-    {
-        public string? Name { get; set; }
-        public string? Code { get; set; }
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? State { get; set; }
-        public string? Phone { get; set; }
-        public string? ManagerName { get; set; }
-    }
+    public class UpdateWarehouseRequest : CreateWarehouseRequest { }
 
     // ==================== PURCHASE ====================
     public class CreatePurchaseRequest

@@ -25,15 +25,7 @@ namespace BillingSoftware.API.Services.Interfaces
         Task<StockTransfer> UpdateTransferStatusAsync(int id, string status);
     }
 
-    // ==================== WAREHOUSE ====================
-    public interface IWarehouseService
-    {
-        Task<List<Warehouse>> GetAllWarehousesAsync(int tenantId);
-        Task<Warehouse?> GetWarehouseByIdAsync(int id);
-        Task<Warehouse> CreateWarehouseAsync(CreateWarehouseRequest request, int tenantId);
-        Task<Warehouse> UpdateWarehouseAsync(int id, UpdateWarehouseRequest request);
-        Task<bool> DeleteWarehouseAsync(int id);
-    }
+    // IWarehouseService moved to ITenantManagementServices.cs (fully upgraded)
 
     // ==================== PURCHASE ====================
     public interface IPurchaseService

@@ -137,9 +137,11 @@ namespace BillingSoftware.API.Services.Implementations
 
         // ── Helpers ──────────────────────────────────────────────────────────────
 
-        private static PrintSettings BuildDefaults(int tenantId) => new()
+        private static PrintSettings BuildDefaults(int tenantId, int? branchId = null, int? counterId = null) => new()
         {
             TenantId             = tenantId,
+            BranchId             = branchId,
+            CounterId            = counterId,
             PaperSize            = "A4",
             Orientation          = "Portrait",
             MarginTopMm          = 10, MarginBottomMm = 10,
@@ -188,76 +190,94 @@ namespace BillingSoftware.API.Services.Implementations
             ShowPrintDateTime    = true,
             ShowReportLogo       = true,
             PrintPrimaryColor    = "#1a73e8",
-            PrintInColor         = true
+            PrintInColor         = true,
+            PrinterConnection    = "USB",
+            OpenCashDrawer       = false,
+            FooterText           = "Thank you! Visit again"
         };
+
+        private static string BuildScopeLabel(PrintSettings s)
+        {
+            if (s.BranchId == null)  return "Tenant Default";
+            if (s.CounterId == null) return $"Branch #{s.BranchId}";
+            return $"Counter {s.CounterId} — Branch #{s.BranchId}";
+        }
 
         private static PrintSettingsResponse MapToResponse(PrintSettings s) => new()
         {
-            Id                   = s.Id,
-            PaperSize            = s.PaperSize,
-            CustomPaperWidthMm   = s.CustomPaperWidthMm,
-            CustomPaperHeightMm  = s.CustomPaperHeightMm,
-            Orientation          = s.Orientation,
-            MarginTopMm          = s.MarginTopMm,
-            MarginBottomMm       = s.MarginBottomMm,
-            MarginLeftMm         = s.MarginLeftMm,
-            MarginRightMm        = s.MarginRightMm,
-            FontFamily           = s.FontFamily,
-            FontSizePt           = s.FontSizePt,
-            HeaderFontSizePt     = s.HeaderFontSizePt,
-            FooterFontSizePt     = s.FooterFontSizePt,
-            ShowBusinessLogo     = s.ShowBusinessLogo,
-            ShowBusinessAddress  = s.ShowBusinessAddress,
-            ShowGSTDetails       = s.ShowGSTDetails,
-            ShowCustomerAddress  = s.ShowCustomerAddress,
-            ShowItemHSNCode      = s.ShowItemHSNCode,
-            ShowItemDiscount     = s.ShowItemDiscount,
-            ShowTaxBreakdown     = s.ShowTaxBreakdown,
-            ShowRoundOff         = s.ShowRoundOff,
-            ShowAmountInWords    = s.ShowAmountInWords,
-            ShowTermsAndConditions = s.ShowTermsAndConditions,
-            ShowFooterNote       = s.ShowFooterNote,
-            ShowSignatureLine    = s.ShowSignatureLine,
-            ShowQRCode           = s.ShowQRCode,
-            ShowBarcode          = s.ShowBarcode,
-            ShowPaymentDetails   = s.ShowPaymentDetails,
-            ShowDueAmount        = s.ShowDueAmount,
-            ShowBankDetails      = s.ShowBankDetails,
-            BankDetails          = s.BankDetails,
-            UpiId                = s.UpiId,
-            InvoiceCopies        = s.InvoiceCopies,
-            QuotationCopies      = s.QuotationCopies,
-            PurchaseCopies       = s.PurchaseCopies,
-            ReceiptCopies        = s.ReceiptCopies,
-            InvoiceCopyLabel1    = s.InvoiceCopyLabel1,
-            InvoiceCopyLabel2    = s.InvoiceCopyLabel2,
-            InvoiceCopyLabel3    = s.InvoiceCopyLabel3,
-            ThermalPrintEnabled  = s.ThermalPrintEnabled,
-            ThermalPaperWidth    = s.ThermalPaperWidth,
-            ThermalShowLogo      = s.ThermalShowLogo,
-            ThermalShowQRCode    = s.ThermalShowQRCode,
-            ThermalShowItemCode  = s.ThermalShowItemCode,
+            Id                    = s.Id,
+            PaperSize             = s.PaperSize,
+            CustomPaperWidthMm    = s.CustomPaperWidthMm,
+            CustomPaperHeightMm   = s.CustomPaperHeightMm,
+            Orientation           = s.Orientation,
+            MarginTopMm           = s.MarginTopMm,
+            MarginBottomMm        = s.MarginBottomMm,
+            MarginLeftMm          = s.MarginLeftMm,
+            MarginRightMm         = s.MarginRightMm,
+            FontFamily            = s.FontFamily,
+            FontSizePt            = s.FontSizePt,
+            HeaderFontSizePt      = s.HeaderFontSizePt,
+            FooterFontSizePt      = s.FooterFontSizePt,
+            ShowBusinessLogo      = s.ShowBusinessLogo,
+            ShowBusinessAddress   = s.ShowBusinessAddress,
+            ShowGSTDetails        = s.ShowGSTDetails,
+            ShowCustomerAddress   = s.ShowCustomerAddress,
+            ShowItemHSNCode       = s.ShowItemHSNCode,
+            ShowItemDiscount      = s.ShowItemDiscount,
+            ShowTaxBreakdown      = s.ShowTaxBreakdown,
+            ShowRoundOff          = s.ShowRoundOff,
+            ShowAmountInWords     = s.ShowAmountInWords,
+            ShowTermsAndConditions= s.ShowTermsAndConditions,
+            ShowFooterNote        = s.ShowFooterNote,
+            ShowSignatureLine     = s.ShowSignatureLine,
+            ShowQRCode            = s.ShowQRCode,
+            ShowBarcode           = s.ShowBarcode,
+            ShowPaymentDetails    = s.ShowPaymentDetails,
+            ShowDueAmount         = s.ShowDueAmount,
+            ShowBankDetails       = s.ShowBankDetails,
+            BankDetails           = s.BankDetails,
+            UpiId                 = s.UpiId,
+            InvoiceCopies         = s.InvoiceCopies,
+            QuotationCopies       = s.QuotationCopies,
+            PurchaseCopies        = s.PurchaseCopies,
+            ReceiptCopies         = s.ReceiptCopies,
+            InvoiceCopyLabel1     = s.InvoiceCopyLabel1,
+            InvoiceCopyLabel2     = s.InvoiceCopyLabel2,
+            InvoiceCopyLabel3     = s.InvoiceCopyLabel3,
+            ThermalPrintEnabled   = s.ThermalPrintEnabled,
+            ThermalPaperWidth     = s.ThermalPaperWidth,
+            ThermalShowLogo       = s.ThermalShowLogo,
+            ThermalShowQRCode     = s.ThermalShowQRCode,
+            ThermalShowItemCode   = s.ThermalShowItemCode,
             ThermalShowCustomerName = s.ThermalShowCustomerName,
-            ThermalAutocut       = s.ThermalAutocut,
-            ThermalLineFeedCount = s.ThermalLineFeedCount,
-            LabelPrintEnabled    = s.LabelPrintEnabled,
-            LabelPaperSize       = s.LabelPaperSize,
-            LabelShowBarcode     = s.LabelShowBarcode,
-            LabelShowMRP         = s.LabelShowMRP,
-            LabelShowProductName = s.LabelShowProductName,
-            LabelShowBusiness    = s.LabelShowBusiness,
-            LabelsPerRow         = s.LabelsPerRow,
-            ShowReportHeader     = s.ShowReportHeader,
-            ShowReportFooter     = s.ShowReportFooter,
-            ShowPageNumbers      = s.ShowPageNumbers,
-            ShowPrintDateTime    = s.ShowPrintDateTime,
-            ShowReportLogo       = s.ShowReportLogo,
-            PrintPrimaryColor    = s.PrintPrimaryColor,
-            PrintInColor         = s.PrintInColor,
-            DefaultPrinterName   = s.DefaultPrinterName,
-            DefaultThermalPrinter= s.DefaultThermalPrinter,
-            DefaultLabelPrinter  = s.DefaultLabelPrinter,
-            UpdatedAt            = s.UpdatedAt
+            ThermalAutocut        = s.ThermalAutocut,
+            ThermalLineFeedCount  = s.ThermalLineFeedCount,
+            LabelPrintEnabled     = s.LabelPrintEnabled,
+            LabelPaperSize        = s.LabelPaperSize,
+            LabelShowBarcode      = s.LabelShowBarcode,
+            LabelShowMRP          = s.LabelShowMRP,
+            LabelShowProductName  = s.LabelShowProductName,
+            LabelShowBusiness     = s.LabelShowBusiness,
+            LabelsPerRow          = s.LabelsPerRow,
+            ShowReportHeader      = s.ShowReportHeader,
+            ShowReportFooter      = s.ShowReportFooter,
+            ShowPageNumbers       = s.ShowPageNumbers,
+            ShowPrintDateTime     = s.ShowPrintDateTime,
+            ShowReportLogo        = s.ShowReportLogo,
+            PrintPrimaryColor     = s.PrintPrimaryColor,
+            PrintInColor          = s.PrintInColor,
+            DefaultPrinterName    = s.DefaultPrinterName,
+            DefaultThermalPrinter = s.DefaultThermalPrinter,
+            DefaultLabelPrinter   = s.DefaultLabelPrinter,
+            PrinterIpAddress      = s.PrinterIpAddress,
+            PrinterPort           = s.PrinterPort,
+            PrinterConnection     = s.PrinterConnection,
+            OpenCashDrawer        = s.OpenCashDrawer,
+            FooterText            = s.FooterText,
+            BranchId              = s.BranchId,
+            CounterId             = s.CounterId,
+            ScopeLabel            = BuildScopeLabel(s),
+            UpdatedAt             = s.UpdatedAt
         };
 
         /// <summary>Applies non-null fields from the request onto the entity (shared by Update and Patch).</summary>
@@ -326,42 +346,112 @@ namespace BillingSoftware.API.Services.Implementations
             if (r.DefaultPrinterName    != null) s.DefaultPrinterName    = r.DefaultPrinterName;
             if (r.DefaultThermalPrinter != null) s.DefaultThermalPrinter = r.DefaultThermalPrinter;
             if (r.DefaultLabelPrinter   != null) s.DefaultLabelPrinter   = r.DefaultLabelPrinter;
+            // Network / connection fields
+            if (r.PrinterIpAddress      != null) s.PrinterIpAddress      = r.PrinterIpAddress;
+            if (r.PrinterPort.HasValue)           s.PrinterPort           = r.PrinterPort;
+            if (r.PrinterConnection     != null) s.PrinterConnection     = r.PrinterConnection;
+            if (r.OpenCashDrawer.HasValue)        s.OpenCashDrawer        = r.OpenCashDrawer.Value;
+            if (r.FooterText            != null) s.FooterText            = r.FooterText;
         }
 
-        // ── Public API ────────────────────────────────────────────────────────────
 
-        public async Task<PrintSettingsResponse> GetPrintSettingsAsync(int tenantId)
+        // ── Settings Hierarchy Resolution ─────────────────────────────────────────
+
+        /// <summary>
+        /// Resolves settings using the three-level hierarchy:
+        /// counter-level → branch-level → tenant-level.
+        /// Returns in-memory defaults if nothing is stored yet.
+        /// </summary>
+        private async Task<PrintSettings> ResolveSettingsAsync(int tenantId, int? branchId, int? counterId)
         {
-            var s = await _c.PrintSettings.FirstOrDefaultAsync(x => x.TenantId == tenantId);
-            return MapToResponse(s ?? BuildDefaults(tenantId));
+            // 1. Counter-level (most specific)
+            if (branchId.HasValue && counterId.HasValue)
+            {
+                var counter = await _c.PrintSettings
+                    .FirstOrDefaultAsync(x => x.TenantId == tenantId
+                                           && x.BranchId == branchId
+                                           && x.CounterId == counterId);
+                if (counter != null) return counter;
+            }
+
+            // 2. Branch-level
+            if (branchId.HasValue)
+            {
+                var branch = await _c.PrintSettings
+                    .FirstOrDefaultAsync(x => x.TenantId == tenantId
+                                           && x.BranchId == branchId
+                                           && x.CounterId == null);
+                if (branch != null) return branch;
+            }
+
+            // 3. Tenant-level (fallback)
+            var tenant = await _c.PrintSettings
+                .FirstOrDefaultAsync(x => x.TenantId == tenantId
+                                       && x.BranchId == null
+                                       && x.CounterId == null);
+            return tenant ?? BuildDefaults(tenantId);
         }
 
-        public async Task<PrintSettingsResponse> UpdatePrintSettingsAsync(int tenantId, UpdatePrintSettingsRequest request)
+        // ── Core CRUD ─────────────────────────────────────────────────────────────
+
+        public async Task<PrintSettingsResponse> GetPrintSettingsAsync(int tenantId, int? branchId = null, int? counterId = null)
+            => MapToResponse(await ResolveSettingsAsync(tenantId, branchId, counterId));
+
+        public async Task<PrintSettingsResponse> UpdatePrintSettingsAsync(int tenantId, UpdatePrintSettingsRequest request, int? branchId = null, int? counterId = null)
         {
-            var s = await _c.PrintSettings.FirstOrDefaultAsync(x => x.TenantId == tenantId);
-            if (s == null) { s = BuildDefaults(tenantId); _c.PrintSettings.Add(s); }
+            var effectiveBranchId  = branchId  ?? request.BranchId;
+            var effectiveCounterId = counterId ?? request.CounterId;
+
+            var s = await _c.PrintSettings.FirstOrDefaultAsync(x =>
+                x.TenantId  == tenantId &&
+                x.BranchId  == effectiveBranchId &&
+                x.CounterId == effectiveCounterId);
+
+            if (s == null)
+            {
+                s = BuildDefaults(tenantId, effectiveBranchId, effectiveCounterId);
+                _c.PrintSettings.Add(s);
+            }
+
             ApplyRequest(s, request);
+            s.UpdatedAt = DateTime.UtcNow;
             await _c.SaveChangesAsync();
             return MapToResponse(s);
         }
 
-        public async Task<PrintSettingsResponse> PatchPrintSettingsAsync(int tenantId, PatchPrintSettingsRequest request)
-            => await UpdatePrintSettingsAsync(tenantId, request); // same logic — ApplyRequest only sets non-null fields
+        public async Task<PrintSettingsResponse> PatchPrintSettingsAsync(int tenantId, PatchPrintSettingsRequest request, int? branchId = null, int? counterId = null)
+            => await UpdatePrintSettingsAsync(tenantId, request, branchId, counterId);
 
-        public async Task<PrintSettingsResponse> ResetToDefaultsAsync(int tenantId)
+        public async Task<PrintSettingsResponse> ResetToDefaultsAsync(int tenantId, int? branchId = null, int? counterId = null)
         {
-            var existing = await _c.PrintSettings.FirstOrDefaultAsync(x => x.TenantId == tenantId);
+            var existing = await _c.PrintSettings.FirstOrDefaultAsync(x =>
+                x.TenantId  == tenantId &&
+                x.BranchId  == branchId &&
+                x.CounterId == counterId);
+
             if (existing != null) _c.PrintSettings.Remove(existing);
-            var defaults = BuildDefaults(tenantId);
+            var defaults = BuildDefaults(tenantId, branchId, counterId);
             _c.PrintSettings.Add(defaults);
             await _c.SaveChangesAsync();
             return MapToResponse(defaults);
         }
 
-        public async Task<string> GetPrintPreviewHtmlAsync(int tenantId, string documentType)
+        public async Task<List<PrintSettingsResponse>> GetAllScopedSettingsAsync(int tenantId)
         {
-            var s = await _c.PrintSettings.FirstOrDefaultAsync(x => x.TenantId == tenantId) ?? BuildDefaults(tenantId);
-            var biz = await _c.Businesses.FirstOrDefaultAsync(b => b.Id == tenantId);
+            var all = await _c.PrintSettings
+                .Where(x => x.TenantId == tenantId)
+                .OrderBy(x => x.BranchId)
+                .ThenBy(x => x.CounterId)
+                .ToListAsync();
+            return all.Select(MapToResponse).ToList();
+        }
+
+        // ── Preview ───────────────────────────────────────────────────────────────
+
+        public async Task<string> GetPrintPreviewHtmlAsync(int tenantId, string documentType, int? branchId = null, int? counterId = null)
+        {
+            var s       = await ResolveSettingsAsync(tenantId, branchId, counterId);
+            var biz     = await _c.Businesses.FirstOrDefaultAsync(b => b.Id == tenantId);
             var bizName = biz?.Name ?? "Your Business Name";
             var gst     = biz?.GSTNumber ?? "GST1234567890";
             var color   = s.PrintPrimaryColor ?? "#1a73e8";
@@ -378,6 +468,15 @@ namespace BillingSoftware.API.Services.Implementations
                 "REPORT"    => "Report",
                 _           => "Invoice"
             };
+            var pageWidth = s.PaperSize switch
+            {
+                "A5"          => "148mm",
+                "Thermal80mm" => "80mm",
+                "Thermal58mm" => "58mm",
+                "Letter"      => "216mm",
+                "Legal"       => "216mm",
+                _             => "210mm"
+            };
 
             return $@"<!DOCTYPE html>
 <html lang=""en"">
@@ -388,7 +487,7 @@ namespace BillingSoftware.API.Services.Implementations
   <style>
     *{{ box-sizing:border-box; margin:0; padding:0; }}
     body{{ font-family:'{font}',Arial,sans-serif; font-size:{bodyPx}px; color:#333; background:#f0f2f5; }}
-    .page{{ background:#fff; width:{(s.PaperSize == "A5" ? "148mm" : "210mm")}; margin:20px auto;
+    .page{{ background:#fff; width:{pageWidth}; margin:20px auto;
             padding:{mt}mm {mr}mm {mb}mm {ml}mm; box-shadow:0 4px 24px rgba(0,0,0,.12); position:relative; }}
     .header{{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid {color}; padding-bottom:12px; margin-bottom:16px; }}
     .biz-name{{ font-size:{hdrPx}px; font-weight:700; color:{color}; }}
@@ -406,9 +505,11 @@ namespace BillingSoftware.API.Services.Implementations
     .footer-note{{ margin-top:18px; font-size:{ftrPx}px; color:#777; border-top:1px dashed #ddd; padding-top:10px; }}
     .watermark{{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-30deg);
                  font-size:72px; color:rgba(0,0,0,.04); font-weight:900; pointer-events:none; white-space:nowrap; }}
+    .scope-badge{{ font-size:10px; background:#f3f4f6; border:1px solid #e5e7eb; color:#6b7280; padding:2px 8px; border-radius:9999px; display:inline-block; margin-bottom:8px; }}
   </style>
 </head>
 <body>
+<div style=""text-align:center;margin-bottom:4px""><span class=""scope-badge"">Preview — {BuildScopeLabel(s)}</span></div>
 <div class=""page"">
   <div class=""watermark"">PREVIEW</div>
   <div class=""header"">
@@ -429,7 +530,7 @@ namespace BillingSoftware.API.Services.Implementations
     <div><strong>Bill To:</strong><br>Sample Customer<br>456 Customer Lane, Mumbai – 400001<br>Ph: +91 90000 12345</div>
     <div style='text-align:right;font-size:{ftrPx + 1}px;color:#555'>
       Due Date: {DateTime.Now.AddDays(30):dd-MMM-yyyy}<br>
-      {(s.ShowDueAmount ? "Balance Due: <strong>₹ 1,180.00</strong>" : "")}
+      {(s.ShowDueAmount ? "Balance Due: <strong>&#8377; 1,180.00</strong>" : "")}
     </div>
   </div>" : "")}
 
@@ -448,30 +549,30 @@ namespace BillingSoftware.API.Services.Implementations
       <tr>
         <td>1</td><td>Sample Product A</td>
         {(s.ShowItemHSNCode ? "<td>8471</td>" : "")}
-        <td>2</td><td>₹500.00</td>
-        {(s.ShowItemDiscount ? "<td>₹0.00</td>" : "")}
-        {(s.ShowTaxBreakdown ? "<td>₹45.00</td><td>₹45.00</td>" : "<td>₹90.00</td>")}
-        <td>₹1,090.00</td>
+        <td>2</td><td>&#8377;500.00</td>
+        {(s.ShowItemDiscount ? "<td>&#8377;0.00</td>" : "")}
+        {(s.ShowTaxBreakdown ? "<td>&#8377;45.00</td><td>&#8377;45.00</td>" : "<td>&#8377;90.00</td>")}
+        <td>&#8377;1,090.00</td>
       </tr>
       <tr>
         <td>2</td><td>Sample Service B</td>
         {(s.ShowItemHSNCode ? "<td>9983</td>" : "")}
-        <td>1</td><td>₹90.00</td>
-        {(s.ShowItemDiscount ? "<td>₹0.00</td>" : "")}
-        {(s.ShowTaxBreakdown ? "<td>₹8.10</td><td>₹8.10</td>" : "<td>₹16.20</td>")}
-        <td>₹106.20</td>
+        <td>1</td><td>&#8377;90.00</td>
+        {(s.ShowItemDiscount ? "<td>&#8377;0.00</td>" : "")}
+        {(s.ShowTaxBreakdown ? "<td>&#8377;8.10</td><td>&#8377;8.10</td>" : "<td>&#8377;16.20</td>")}
+        <td>&#8377;106.20</td>
       </tr>
     </tbody>
   </table>
 
   <div class=""totals"">
     <div class=""totals-box"">
-      <div class=""totals-row""><span>Sub Total</span><span>₹1,090.00</span></div>
-      {(s.ShowTaxBreakdown ? "<div class=\"totals-row\"><span>CGST</span><span>₹53.10</span></div><div class=\"totals-row\"><span>SGST</span><span>₹53.10</span></div>" : "<div class=\"totals-row\"><span>Tax</span><span>₹106.20</span></div>")}
-      {(s.ShowItemDiscount ? "<div class=\"totals-row\"><span>Discount</span><span>- ₹0.00</span></div>" : "")}
-      {(s.ShowRoundOff ? "<div class=\"totals-row\"><span>Round Off</span><span>+ ₹0.70</span></div>" : "")}
-      <div class=""totals-row grand""><span>Grand Total</span><span>₹1,197.00</span></div>
-      {(s.ShowDueAmount ? "<div class=\"totals-row\" style='color:#e53e3e'><span>Balance Due</span><span>₹1,197.00</span></div>" : "")}
+      <div class=""totals-row""><span>Sub Total</span><span>&#8377;1,090.00</span></div>
+      {(s.ShowTaxBreakdown ? "<div class=\"totals-row\"><span>CGST</span><span>&#8377;53.10</span></div><div class=\"totals-row\"><span>SGST</span><span>&#8377;53.10</span></div>" : "<div class=\"totals-row\"><span>Tax</span><span>&#8377;106.20</span></div>")}
+      {(s.ShowItemDiscount ? "<div class=\"totals-row\"><span>Discount</span><span>- &#8377;0.00</span></div>" : "")}
+      {(s.ShowRoundOff ? "<div class=\"totals-row\"><span>Round Off</span><span>+ &#8377;0.70</span></div>" : "")}
+      <div class=""totals-row grand""><span>Grand Total</span><span>&#8377;1,197.00</span></div>
+      {(s.ShowDueAmount ? "<div class=\"totals-row\" style='color:#e53e3e'><span>Balance Due</span><span>&#8377;1,197.00</span></div>" : "")}
     </div>
   </div>
 
@@ -479,14 +580,312 @@ namespace BillingSoftware.API.Services.Implementations
   {(s.ShowBankDetails && s.BankDetails != null ? $"<div style='margin-top:10px;font-size:{ftrPx + 1}px;padding:8px;background:#f9fafb;border-radius:4px'><strong>Bank Details:</strong> {s.BankDetails}</div>" : "")}
   {(s.ShowPaymentDetails ? $"<div style='margin-top:8px;font-size:{ftrPx + 1}px;color:#555'>Payment: Cash</div>" : "")}
 
-  {(s.ShowTermsAndConditions ? $"<div class=\"footer-note\"><strong>Terms & Conditions:</strong> Goods once sold are not returnable. Payment due within 30 days.</div>" : "")}
-  {(s.ShowFooterNote ? $"<div class=\"footer-note\" style='margin-top:6px'>Thank you for your business! For queries contact us at info@yourbiz.com</div>" : "")}
+  {(s.ShowTermsAndConditions ? "<div class=\"footer-note\"><strong>Terms &amp; Conditions:</strong> Goods once sold are not returnable. Payment due within 30 days.</div>" : "")}
+  {(s.ShowFooterNote ? $"<div class=\"footer-note\" style='margin-top:6px'>{(s.FooterText ?? "Thank you for your business!")}</div>" : "")}
   {(s.ShowSignatureLine ? $"<div style='margin-top:32px;text-align:right;font-size:{ftrPx + 1}px;color:#555'>Authorised Signature<br><div style='width:160px;border-top:1px solid #999;margin-top:30px;margin-left:auto'></div></div>" : "")}
-  {(s.ShowPageNumbers ? $"<div class=\"footer-note\" style='text-align:right;margin-top:8px'>Page 1 of 1</div>" : "")}
+  {(s.ShowPageNumbers ? "<div class=\"footer-note\" style='text-align:right;margin-top:8px'>Page 1 of 1</div>" : "")}
   {(s.ShowPrintDateTime ? $"<div style='font-size:{ftrPx}px;color:#aaa;text-align:right'>Printed on {DateTime.Now:dd-MMM-yyyy HH:mm}</div>" : "")}
 </div>
 </body>
 </html>";
+        }
+
+        // ── Lookup Data ───────────────────────────────────────────────────────────
+
+        public List<PaperSizeInfo> GetPaperSizes() => new()
+        {
+            new() { Value = "A4",          Label = "A4 (210 × 297 mm)",          WidthMm = 210, HeightMm = 297,  IsThermal = false },
+            new() { Value = "A5",          Label = "A5 (148 × 210 mm)",          WidthMm = 148, HeightMm = 210,  IsThermal = false },
+            new() { Value = "Letter",      Label = "Letter (216 × 279 mm)",       WidthMm = 216, HeightMm = 279,  IsThermal = false },
+            new() { Value = "Legal",       Label = "Legal (216 × 356 mm)",        WidthMm = 216, HeightMm = 356,  IsThermal = false },
+            new() { Value = "Thermal80mm", Label = "Thermal 80 mm Receipt",       WidthMm = 80,  HeightMm = null, IsThermal = true, CharsPerLine = 48 },
+            new() { Value = "Thermal58mm", Label = "Thermal 58 mm Receipt",       WidthMm = 58,  HeightMm = null, IsThermal = true, CharsPerLine = 32 },
+            new() { Value = "Custom",      Label = "Custom (specify dimensions)", WidthMm = null,HeightMm = null, IsCustom  = true }
+        };
+
+        public List<PrinterTypeInfo> GetPrinterTypes() => new()
+        {
+            new() { Value = "Thermal",   Label = "Thermal Receipt Printer", Description = "POS thermal printers (ESC/POS). Fast receipts, auto-cut, cash drawer support.",  SupportsColor = false, SupportsCut = true,  SupportsCashDrawer = true  },
+            new() { Value = "Laser",     Label = "Laser Printer",           Description = "High-quality A4/A5 invoices and reports. Best for office environments.",         SupportsColor = true,  SupportsCut = false, SupportsCashDrawer = false },
+            new() { Value = "Inkjet",    Label = "Inkjet Printer",          Description = "Standard colour inkjet for invoices, quotations and labels.",                    SupportsColor = true,  SupportsCut = false, SupportsCashDrawer = false },
+            new() { Value = "DotMatrix", Label = "Dot Matrix Printer",      Description = "Impact printers for multi-part carbon-copy forms.",                              SupportsColor = false, SupportsCut = false, SupportsCashDrawer = false },
+            new() { Value = "PDF",       Label = "Save as PDF",             Description = "Renders to a downloadable PDF file. No physical printer required.",              SupportsColor = true,  SupportsCut = false, SupportsCashDrawer = false },
+            new() { Value = "Browser",   Label = "Browser Print",           Description = "Opens the browser print dialog, works with any installed printer.",              SupportsColor = true,  SupportsCut = false, SupportsCashDrawer = false }
+        };
+
+        public List<string> GetConnectionTypes() => new() { "USB", "Network", "Bluetooth", "Cloud" };
+
+        // ── Printer Test ──────────────────────────────────────────────────────────
+
+        public async Task<PrinterTestResult> TestPrinterAsync(int tenantId, PrinterTestRequest request)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                if (request.ConnectionType.Equals("Network", StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrWhiteSpace(request.IpAddress))
+                {
+                    using var tcp = new System.Net.Sockets.TcpClient();
+                    var cts       = new System.Threading.CancellationTokenSource(request.TimeoutMs);
+                    await tcp.ConnectAsync(request.IpAddress, request.Port, cts.Token);
+                    sw.Stop();
+                    return new PrinterTestResult
+                    {
+                        Success        = true,
+                        Message        = $"Connected to {request.IpAddress}:{request.Port} in {sw.ElapsedMilliseconds} ms.",
+                        PrinterTarget  = request.PrinterTarget,
+                        ConnectionType = request.ConnectionType,
+                        LatencyMs      = sw.ElapsedMilliseconds
+                    };
+                }
+
+                sw.Stop();
+                return new PrinterTestResult
+                {
+                    Success        = true,
+                    Message        = $"Printer '{request.PrinterTarget}' configuration is valid ({request.ConnectionType}). Physical connectivity test is only supported for Network printers.",
+                    PrinterTarget  = request.PrinterTarget,
+                    ConnectionType = request.ConnectionType,
+                    LatencyMs      = null
+                };
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+                return new PrinterTestResult
+                {
+                    Success        = false,
+                    Message        = $"Connection failed: {ex.Message}",
+                    PrinterTarget  = request.PrinterTarget,
+                    ConnectionType = request.ConnectionType,
+                    LatencyMs      = sw.ElapsedMilliseconds
+                };
+            }
+        }
+
+        // ── Invoice Print Data ────────────────────────────────────────────────────
+
+        public async Task<InvoicePrintDataResponse> GetInvoicePrintDataAsync(int invoiceId, int tenantId)
+        {
+            var invoice = await _c.Invoices
+                .Include(i => i.Items).ThenInclude(i => i.Product)
+                .Include(i => i.Customer)
+                .Include(i => i.Branch)
+                .FirstOrDefaultAsync(i => i.Id == invoiceId && i.TenantId == tenantId)
+                ?? throw new KeyNotFoundException($"Invoice {invoiceId} not found.");
+
+            var biz      = await _c.Businesses.FirstOrDefaultAsync(b => b.Id == tenantId);
+            var settings = await ResolveSettingsAsync(tenantId, invoice.BranchId, null);
+
+            var lastJob  = await _c.PrintJobs
+                .Where(j => j.TenantId == tenantId
+                         && j.DocumentId == invoiceId
+                         && j.DocumentType == "Invoice"
+                         && j.Status == "Printed")
+                .OrderByDescending(j => j.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            return new InvoicePrintDataResponse
+            {
+                InvoiceId          = invoice.Id,
+                InvoiceNumber      = invoice.InvoiceNumber,
+                InvoiceDate        = invoice.InvoiceDate,
+                DueDate            = invoice.DueDate,
+                CustomerName       = invoice.Customer?.Name,
+                CustomerPhone      = invoice.Customer?.Phone,
+                CustomerEmail      = invoice.Customer?.Email,
+                CustomerAddress    = invoice.Customer?.Address,
+                CustomerGSTIN      = invoice.Customer?.GSTNumber,
+                BusinessName       = biz?.Name ?? "Business",
+                BusinessAddress    = biz?.Address,
+                BusinessPhone      = biz?.Phone,
+                BusinessEmail      = biz?.Email,
+                BusinessGSTIN      = biz?.GSTNumber,
+                LogoUrl            = biz?.LogoUrl,
+                SubTotal           = invoice.SubTotal,
+                TaxAmount          = invoice.TaxAmount,
+                DiscountAmount     = invoice.DiscountAmount,
+                RoundOff           = invoice.RoundOff,
+                TotalAmount        = invoice.TotalAmount,
+                PaidAmount         = invoice.PaidAmount,
+                DueAmount          = invoice.DueAmount,
+                PaymentMethod      = invoice.PaymentMethod?.ToString(),
+                Notes              = invoice.Notes,
+                TermsAndConditions = invoice.TermsAndConditions,
+                PrintSettings      = MapToResponse(settings),
+                PrintJobId         = lastJob?.Id,
+                IsReprint          = lastJob != null,
+                Items              = invoice.Items.Select((item, idx) => new InvoicePrintItemRow
+                {
+                    SrNo           = idx + 1,
+                    ProductName    = item.ProductName,
+                    HSNCode        = item.HSNCode,
+                    Quantity       = item.Quantity,
+                    UnitPrice      = item.UnitPrice,
+                    DiscountAmount = item.DiscountAmount,
+                    TaxAmount      = item.TaxAmount,
+                    CGSTAmount     = item.CGSTAmount,
+                    SGSTAmount     = item.SGSTAmount,
+                    TaxPercentage  = item.TaxPercentage,
+                    TotalPrice     = item.TotalPrice
+                }).ToList()
+            };
+        }
+
+        // ── Print Job Management ──────────────────────────────────────────────────
+
+        private static PrintJobResponse MapJobToResponse(PrintJob j) => new()
+        {
+            Id                  = j.Id,
+            TenantId            = j.TenantId,
+            DocumentType        = j.DocumentType,
+            DocumentId          = j.DocumentId,
+            DocumentReference   = j.DocumentReference,
+            Status              = j.Status,
+            PrinterTarget       = j.PrinterTarget,
+            PaperSize           = j.PaperSize,
+            Copies              = j.Copies,
+            RetryCount          = j.RetryCount,
+            MaxRetries          = j.MaxRetries,
+            ErrorMessage        = j.ErrorMessage,
+            PrintedAt           = j.PrintedAt,
+            RetryAfter          = j.RetryAfter,
+            IsReprint           = j.IsReprint,
+            OriginalPrintJobId  = j.OriginalPrintJobId,
+            InitiatedByUserId   = j.InitiatedByUserId,
+            InitiatedByUserName = j.InitiatedByUser?.FullName,
+            BranchId            = j.BranchId,
+            CounterId           = j.CounterId,
+            CreatedAt           = j.CreatedAt,
+            UpdatedAt           = j.UpdatedAt
+        };
+
+        public async Task<PrintJobResponse> QueuePrintJobAsync(int tenantId, QueuePrintJobRequest request)
+        {
+            var settings = await ResolveSettingsAsync(tenantId, request.BranchId, request.CounterId);
+
+            var job = new PrintJob
+            {
+                TenantId          = tenantId,
+                DocumentType      = request.DocumentType,
+                DocumentId        = request.DocumentId,
+                DocumentReference = request.DocumentReference,
+                Status            = "Queued",
+                PrinterTarget     = request.PrinterTarget ?? settings.DefaultPrinterName,
+                PaperSize         = request.PaperSize    ?? settings.PaperSize,
+                Copies            = request.Copies,
+                MaxRetries        = request.MaxRetries,
+                BranchId          = request.BranchId,
+                CounterId         = request.CounterId,
+                IsReprint         = false
+            };
+
+            _c.PrintJobs.Add(job);
+            await _c.SaveChangesAsync();
+            return MapJobToResponse(job);
+        }
+
+        public async Task<PrintJobResponse> UpdatePrintJobStatusAsync(int jobId, int tenantId, string status, string? errorMessage = null)
+        {
+            var job = await _c.PrintJobs.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == tenantId)
+                ?? throw new KeyNotFoundException($"PrintJob {jobId} not found.");
+
+            job.Status    = status;
+            job.UpdatedAt = DateTime.UtcNow;
+
+            if (status == "Printed") job.PrintedAt    = DateTime.UtcNow;
+            if (status == "Failed")  job.ErrorMessage = errorMessage;
+
+            await _c.SaveChangesAsync();
+            return MapJobToResponse(job);
+        }
+
+        public async Task<PrintJobResponse> RetryPrintJobAsync(int jobId, int tenantId)
+        {
+            var job = await _c.PrintJobs.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == tenantId)
+                ?? throw new KeyNotFoundException($"PrintJob {jobId} not found.");
+
+            if (job.RetryCount >= job.MaxRetries)
+                throw new InvalidOperationException($"Job {jobId} has reached its retry limit ({job.MaxRetries}).");
+
+            if (job.Status != "Failed" && job.Status != "Cancelled")
+                throw new InvalidOperationException($"Only Failed or Cancelled jobs can be retried. Status: {job.Status}");
+
+            job.RetryCount++;
+            job.Status       = "Queued";
+            job.ErrorMessage = null;
+            job.RetryAfter   = null;
+            job.UpdatedAt    = DateTime.UtcNow;
+            await _c.SaveChangesAsync();
+            return MapJobToResponse(job);
+        }
+
+        public async Task<PrintJobResponse> ReprintAsync(int originalJobId, int tenantId, int? userId)
+        {
+            var original = await _c.PrintJobs.FirstOrDefaultAsync(j => j.Id == originalJobId && j.TenantId == tenantId)
+                ?? throw new KeyNotFoundException($"Original PrintJob {originalJobId} not found.");
+
+            var reprint = new PrintJob
+            {
+                TenantId           = tenantId,
+                DocumentType       = original.DocumentType,
+                DocumentId         = original.DocumentId,
+                DocumentReference  = original.DocumentReference,
+                Status             = "Queued",
+                PrinterTarget      = original.PrinterTarget,
+                PaperSize          = original.PaperSize,
+                Copies             = original.Copies,
+                MaxRetries         = original.MaxRetries,
+                IsReprint          = true,
+                OriginalPrintJobId = originalJobId,
+                InitiatedByUserId  = userId,
+                BranchId           = original.BranchId,
+                CounterId          = original.CounterId
+            };
+
+            _c.PrintJobs.Add(reprint);
+            await _c.SaveChangesAsync();
+            return MapJobToResponse(reprint);
+        }
+
+        public async Task<List<PrintJobResponse>> GetPrintJobsAsync(int tenantId, string? status = null, string? documentType = null, int page = 1, int pageSize = 20)
+        {
+            var query = _c.PrintJobs
+                .Include(j => j.InitiatedByUser)
+                .Where(j => j.TenantId == tenantId);
+
+            if (!string.IsNullOrWhiteSpace(status))       query = query.Where(j => j.Status == status);
+            if (!string.IsNullOrWhiteSpace(documentType)) query = query.Where(j => j.DocumentType == documentType);
+
+            var jobs = await query
+                .OrderByDescending(j => j.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return jobs.Select(MapJobToResponse).ToList();
+        }
+
+        public async Task<PrintJobResponse?> GetPrintJobByIdAsync(int jobId, int tenantId)
+        {
+            var job = await _c.PrintJobs
+                .Include(j => j.InitiatedByUser)
+                .FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == tenantId);
+            return job == null ? null : MapJobToResponse(job);
+        }
+
+        public async Task<bool> CancelPrintJobAsync(int jobId, int tenantId)
+        {
+            var job = await _c.PrintJobs.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == tenantId)
+                ?? throw new KeyNotFoundException($"PrintJob {jobId} not found.");
+
+            if (job.Status == "Printed")
+                throw new InvalidOperationException("Cannot cancel a Printed job. Use Reprint instead.");
+
+            job.Status    = "Cancelled";
+            job.UpdatedAt = DateTime.UtcNow;
+            await _c.SaveChangesAsync();
+            return true;
         }
     }
 }

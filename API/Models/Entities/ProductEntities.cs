@@ -25,12 +25,14 @@ namespace BillingSoftware.API.Models.Entities
         public decimal CurrentStock { get; set; } = 0;
         public decimal? MinStockLevel { get; set; }
         public decimal? MaxStockLevel { get; set; }
-        public string? ImageUrl { get; set; }
-        public decimal? Weight { get; set; }
-        public string? WeightUnit { get; set; }
-        public bool IsService { get; set; } = false;
+        /// <summary>Reorder point — when stock falls at or below this, a repurchase is triggered. Alias of MinStockLevel for AI service compatibility.</summary>
+        public decimal ReorderLevel   { get; set; } = 0;
+        public string? ImageUrl       { get; set; }
+        public decimal? Weight        { get; set; }
+        public string?  WeightUnit    { get; set; }
+        public bool IsService         { get; set; } = false;
         /// <summary>Optional product expiry date. Used for FMCG, pharmacy, grocery etc.</summary>
-        public DateTime? ExpiryDate { get; set; }
+        public DateTime? ExpiryDate   { get; set; }
         public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
     }
 

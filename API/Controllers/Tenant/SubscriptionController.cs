@@ -128,7 +128,7 @@ namespace BillingSoftware.API.Controllers.Tenant
             var businessId = CurrentBusinessId;
             var existing = await _db.Trials.FirstOrDefaultAsync(t => t.BusinessId == businessId);
             if (existing != null)
-                return BadRequest(ApiResponse<object>.ErrorResponse("A trial has already been used for this business."));
+                return BadRequest(ApiResponse<object>.FailResponse("A trial has already been used for this business."));
 
             // Get the default trial plan (Starter) or the first active plan
             var trialPlan = await _db.SubscriptionPlans.Where(p => p.IsActive).OrderBy(p => p.SortOrder).FirstOrDefaultAsync();
@@ -187,11 +187,11 @@ namespace BillingSoftware.API.Controllers.Tenant
 
             var plan = await _db.SubscriptionPlans.FindAsync(request.PlanId);
             if (plan == null || !plan.IsActive)
-                return BadRequest(ApiResponse<object>.ErrorResponse("Invalid or inactive plan."));
+                return BadRequest(ApiResponse<object>.FailResponse("Invalid or inactive plan."));
 
             // Validate payment (in real scenario, verify with payment gateway)
             if (request.AmountPaid <= 0)
-                return BadRequest(ApiResponse<object>.ErrorResponse("Invalid payment amount."));
+                return BadRequest(ApiResponse<object>.FailResponse("Invalid payment amount."));
 
             // Cancel existing active/suspended subscription
             var existing = await _db.Subscriptions.FirstOrDefaultAsync(s =>

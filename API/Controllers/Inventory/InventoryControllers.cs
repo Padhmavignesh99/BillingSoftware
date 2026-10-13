@@ -59,18 +59,8 @@ namespace BillingSoftware.API.Controllers.Inventory
         [HttpPut("{id}/status")] public async Task<ActionResult<ApiResponse<StockTransfer>>> UpdateStatus(int id, [FromBody] string status) => Ok(ApiResponse<StockTransfer>.SuccessResponse(await _service.UpdateTransferStatusAsync(id, status), "Updated"));
     }
 
-    [ApiController] [Route("api/warehouses")] [Authorize]
-    public class WarehouseController : ControllerBase
-    {
-        private readonly IWarehouseService _service;
-        public WarehouseController(IWarehouseService service) { _service = service; }
-        private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
-        [HttpGet] public async Task<ActionResult<ApiResponse<List<Warehouse>>>> GetAll() => Ok(ApiResponse<List<Warehouse>>.SuccessResponse(await _service.GetAllWarehousesAsync(TenantId)));
-        [HttpGet("{id}")] public async Task<ActionResult<ApiResponse<Warehouse>>> GetById(int id) { var r = await _service.GetWarehouseByIdAsync(id); return r == null ? NotFound(ApiResponse<Warehouse>.FailResponse("Not found")) : Ok(ApiResponse<Warehouse>.SuccessResponse(r)); }
-        [HttpPost] public async Task<ActionResult<ApiResponse<Warehouse>>> Create([FromBody] CreateWarehouseRequest r) => Ok(ApiResponse<Warehouse>.SuccessResponse(await _service.CreateWarehouseAsync(r, TenantId), "Created"));
-        [HttpPut("{id}")] public async Task<ActionResult<ApiResponse<Warehouse>>> Update(int id, [FromBody] UpdateWarehouseRequest r) => Ok(ApiResponse<Warehouse>.SuccessResponse(await _service.UpdateWarehouseAsync(id, r), "Updated"));
-        [HttpDelete("{id}")] public async Task<ActionResult<ApiResponse<bool>>> Delete(int id) => Ok(ApiResponse<bool>.SuccessResponse(await _service.DeleteWarehouseAsync(id), "Deleted"));
-    }
+    // WarehouseController moved to Controllers/Tenant/TenantManagementControllers.cs
+    // Route: api/warehouses — all CRUD + set-default + branchId filter
 
     [ApiController] [Route("api/low-stock")] [Authorize]
     public class LowStockController : ControllerBase

@@ -211,21 +211,83 @@ namespace BillingSoftware.API.Services.Interfaces
     // ==================== PRINT SETTINGS ====================
     public interface IPrintSettingsService
     {
-        /// <summary>Returns the current print settings for the tenant, or system defaults if not yet configured.</summary>
-        Task<PrintSettingsResponse> GetPrintSettingsAsync(int tenantId);
+        // ── Core Settings CRUD ────────────────────────────────────────────────────
+        /// <summary>
+        /// Returns the most specific print settings for the authenticated tenant,
+        /// using the three-level hierarchy: counter → branch → tenant.
+        /// If no settings exist yet, system defaults are returned (not persisted).
+        /// </summary>
+        Task<PrintSettingsResponse> GetPrintSettingsAsync(int tenantId, int? branchId = null, int? counterId = null);
 
-        /// <summary>Creates or fully replaces the print settings for the tenant.</summary>
-        Task<PrintSettingsResponse> UpdatePrintSettingsAsync(int tenantId, UpdatePrintSettingsRequest request);
+        /// <summary>Creates or fully replaces the print settings for the given scope.</summary>
+        Task<PrintSettingsResponse> UpdatePrintSettingsAsync(int tenantId, UpdatePrintSettingsRequest request, int? branchId = null, int? counterId = null);
 
-        /// <summary>Partially updates only the supplied fields (PATCH semantics).</summary>
-        Task<PrintSettingsResponse> PatchPrintSettingsAsync(int tenantId, PatchPrintSettingsRequest request);
+        /// <summary>Partially updates only the supplied non-null fields (PATCH semantics).</summary>
+        Task<PrintSettingsResponse> PatchPrintSettingsAsync(int tenantId, PatchPrintSettingsRequest request, int? branchId = null, int? counterId = null);
 
-        /// <summary>Resets all print settings back to system defaults for the tenant.</summary>
-        Task<PrintSettingsResponse> ResetToDefaultsAsync(int tenantId);
+        /// <summary>Resets the settings for the given scope back to system defaults.</summary>
+        Task<PrintSettingsResponse> ResetToDefaultsAsync(int tenantId, int? branchId = null, int? counterId = null);
 
-        /// <summary>Returns a preview-ready HTML snippet rendered with the current print settings applied to a sample invoice.</summary>
-        Task<string> GetPrintPreviewHtmlAsync(int tenantId, string documentType);
+        /// <summary>
+        /// Returns all settings configured for the tenant (tenant-level + all branch + all counter overrides).
+        /// Useful for the admin settings page showing the full hierarchy.
+        /// </summary>
+        Task<List<PrintSettingsResponse>> GetAllScopedSettingsAsync(int tenantId);
+
+        // ── Preview ───────────────────────────────────────────────────────────────
+        /// <summary>Returns a preview-ready HTML page rendered with the current print settings.</summary>
+        Task<string> GetPrintPreviewHtmlAsync(int tenantId, string documentType, int? branchId = null, int? counterId = null);
+
+        // ── Lookup Data ───────────────────────────────────────────────────────────
+        /// <summary>Returns the supported paper sizes with their dimensions.</summary>
+        List<PaperSizeInfo> GetPaperSizes();
+
+        /// <summary>Returns the supported printer types with descriptions.</summary>
+        List<PrinterTypeInfo> GetPrinterTypes();
+
+        /// <summary>Returns the supported printer connection types.</summary>
+        List<string> GetConnectionTypes();
+
+        // ── Printer Test ──────────────────────────────────────────────────────────
+        /// <summary>
+        /// Validates the printer configuration and returns a connectivity status.
+        /// For network printers it attempts a TCP socket check; for others it confirms configuration only.
+        /// </summary>
+        Task<PrinterTestResult> TestPrinterAsync(int tenantId, PrinterTestRequest request);
+
+        // ── Invoice Print Data ────────────────────────────────────────────────────
+        /// <summary>
+        /// Returns the invoice data formatted for printing, including the tenant's active print settings.
+        /// The Angular/browser layer uses this to render the invoice and call window.print().
+        /// </summary>
+        Task<InvoicePrintDataResponse> GetInvoicePrintDataAsync(int invoiceId, int tenantId);
+
+        // ── Print Job Management ──────────────────────────────────────────────────
+        /// <summary>Queues a new print job and returns the job record.</summary>
+        Task<PrintJobResponse> QueuePrintJobAsync(int tenantId, QueuePrintJobRequest request);
+
+        /// <summary>Updates the status of an existing print job (e.g. Printing → Printed | Failed).</summary>
+        Task<PrintJobResponse> UpdatePrintJobStatusAsync(int jobId, int tenantId, string status, string? errorMessage = null);
+
+        /// <summary>Retries a failed print job if it has not exceeded MaxRetries.</summary>
+        Task<PrintJobResponse> RetryPrintJobAsync(int jobId, int tenantId);
+
+        /// <summary>
+        /// Creates a reprint job for an already-printed document.
+        /// Marks the new job with IsReprint = true and links it to the original job.
+        /// </summary>
+        Task<PrintJobResponse> ReprintAsync(int originalJobId, int tenantId, int? userId);
+
+        /// <summary>Returns print job history for the tenant with optional filters.</summary>
+        Task<List<PrintJobResponse>> GetPrintJobsAsync(int tenantId, string? status = null, string? documentType = null, int page = 1, int pageSize = 20);
+
+        /// <summary>Gets a single print job by ID.</summary>
+        Task<PrintJobResponse?> GetPrintJobByIdAsync(int jobId, int tenantId);
+
+        /// <summary>Cancels a queued print job.</summary>
+        Task<bool> CancelPrintJobAsync(int jobId, int tenantId);
     }
+
 
     // ==================== THEME SETTINGS ====================
     public interface IThemeSettingsService

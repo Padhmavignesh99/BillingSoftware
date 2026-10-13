@@ -101,6 +101,12 @@ builder.Services.AddScoped<IBarcodeService,   BarcodeService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IStockService,     StockService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+builder.Services.AddScoped<ICounterService,           CounterService>();
+builder.Services.AddScoped<IEmployeeRoleService,      EmployeeRoleService>();
+builder.Services.AddScoped<IUserRoleService,          UserRoleService>();
+builder.Services.AddScoped<IShopInviteService,        ShopInviteService>();
+builder.Services.AddScoped<ISubscriptionUsageService, SubscriptionUsageService>();
+builder.Services.AddScoped<IAIInsightService,         AIInsightService>();
 
 // ─── Sales Services ───────────────────────────────────────────────────────────
 builder.Services.AddScoped<IInvoiceService,     InvoiceService>();

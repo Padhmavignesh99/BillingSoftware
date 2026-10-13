@@ -115,9 +115,14 @@ namespace BillingSoftware.API.Models.Entities
 
     public class Permission : BaseEntity
     {
-        public string Name { get; set; } = string.Empty;
-        public string? Module { get; set; }
+        public string  Name        { get; set; } = string.Empty;
+        public string? Module      { get; set; }
         public string? Description { get; set; }
+        // ── Extended for role-permission system ─────────────────────────────
+        /// <summary>Action part of the key (e.g. "View" | "Create" | "Edit" | "Delete")</summary>
+        public string? Action      { get; set; }
+        /// <summary>Full dot-notation key: Module.Action (e.g. "Invoices.Create")</summary>
+        public string  Key         { get; set; } = string.Empty;
         public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 
@@ -128,6 +133,9 @@ namespace BillingSoftware.API.Models.Entities
         public Role? Role { get; set; }
         public int PermissionId { get; set; }
         public Permission? Permission { get; set; }
+        // ── Extended for EmployeeRole permission system ──────────────────────
+        public Permission? PermissionDef { get; set; }  // alias nav for service compatibility
+        public bool IsGranted { get; set; } = true;
     }
 
     public class Staff : TenantEntity

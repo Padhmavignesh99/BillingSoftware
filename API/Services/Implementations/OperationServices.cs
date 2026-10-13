@@ -73,17 +73,7 @@ namespace BillingSoftware.API.Services.Implementations
         { var t = await _context.StockTransfers.FindAsync(id) ?? throw new KeyNotFoundException("Transfer not found"); t.Status = status; await _context.SaveChangesAsync(); return t; }
     }
 
-    // ==================== WAREHOUSE SERVICE ====================
-    public class WarehouseService : IWarehouseService
-    {
-        private readonly ApplicationDbContext _context;
-        public WarehouseService(ApplicationDbContext context) { _context = context; }
-        public async Task<List<Warehouse>> GetAllWarehousesAsync(int tenantId) => await _context.Warehouses.Where(w => w.TenantId == tenantId && !w.IsDeleted).ToListAsync();
-        public async Task<Warehouse?> GetWarehouseByIdAsync(int id) => await _context.Warehouses.FindAsync(id);
-        public async Task<Warehouse> CreateWarehouseAsync(CreateWarehouseRequest request, int tenantId) { var w = new Warehouse { Name = request.Name, Code = request.Code, Address = request.Address, City = request.City, State = request.State, Phone = request.Phone, ManagerName = request.ManagerName, BranchId = request.BranchId, TenantId = tenantId }; _context.Warehouses.Add(w); await _context.SaveChangesAsync(); return w; }
-        public async Task<Warehouse> UpdateWarehouseAsync(int id, UpdateWarehouseRequest request) { var w = await _context.Warehouses.FindAsync(id) ?? throw new KeyNotFoundException("Warehouse not found"); if (request.Name != null) w.Name = request.Name; if (request.Code != null) w.Code = request.Code; if (request.Address != null) w.Address = request.Address; if (request.City != null) w.City = request.City; if (request.Phone != null) w.Phone = request.Phone; if (request.ManagerName != null) w.ManagerName = request.ManagerName; await _context.SaveChangesAsync(); return w; }
-        public async Task<bool> DeleteWarehouseAsync(int id) { var w = await _context.Warehouses.FindAsync(id) ?? throw new KeyNotFoundException("Warehouse not found"); w.IsDeleted = true; await _context.SaveChangesAsync(); return true; }
-    }
+    // WarehouseService moved to TenantManagementServices.cs (fully upgraded)
 
     // ==================== CUSTOMER SERVICE ====================
     public class CustomerService : ICustomerService

@@ -142,8 +142,21 @@ namespace BillingSoftware.API.Data
         public DbSet<BackupRecord> BackupRecords { get; set; }
         public DbSet<PrintSettings> PrintSettings { get; set; }
 
+        // Print Jobs — tracks every print dispatch with status, retry, and reprint support
+        public DbSet<PrintJob> PrintJobs { get; set; }
+
         // Theme Settings (per-user)
         public DbSet<UserThemeSettings> UserThemeSettings { get; set; }
+
+        // ── Multi-tenant Shop Management ──────────────────────────────────────────
+        public DbSet<Counter>         Counters           { get; set; }
+        public DbSet<EmployeeRole>    EmployeeRoles      { get; set; }
+        public DbSet<TenantUserRole>  UserRoles          { get; set; }
+        public DbSet<SubscriptionUsage> SubscriptionUsages { get; set; }
+        public DbSet<AIInsight>       AIInsights         { get; set; }
+        public DbSet<AIForecast>      AIForecasts        { get; set; }
+        public DbSet<ShopInvite>      ShopInvites        { get; set; }
+        public DbSet<UsageAlert>      UsageAlerts        { get; set; }
 
         // ── Device Integration Layer ──────────────────────────────────────────────
         /// <summary>Registry of physical devices registered to a billing terminal (scanners, scales, etc.).</summary>
@@ -275,6 +288,7 @@ namespace BillingSoftware.API.Data
             modelBuilder.Entity<SalesOrder>().HasQueryFilter(s => _tenantId == null || s.TenantId == _tenantId);
             modelBuilder.Entity<PurchaseOrder>().HasQueryFilter(p => _tenantId == null || p.TenantId == _tenantId);
             modelBuilder.Entity<PrintSettings>().HasQueryFilter(ps => _tenantId == null || ps.TenantId == _tenantId);
+            modelBuilder.Entity<PrintJob>().HasQueryFilter(pj => _tenantId == null || pj.TenantId == _tenantId);
             modelBuilder.Entity<UserThemeSettings>().HasQueryFilter(t => _tenantId == null || t.TenantId == _tenantId);
 
             // ── Device Integration Layer — tenant-scoped filters ───────────────────
@@ -295,6 +309,35 @@ namespace BillingSoftware.API.Data
             modelBuilder.Entity<UserThemeSettings>()
                 .HasIndex(t => new { t.UserId, t.TenantId })
                 .IsUnique();
+
+            // PrintSettings — unique constraint per (TenantId, BranchId, CounterId).
+            // This supports the three-level configuration hierarchy:
+            //   • TenantId only         → tenant-level default
+            //   • TenantId + BranchId   → branch-level override
+            //   • TenantId + BranchId + CounterId → counter-level override
+            modelBuilder.Entity<PrintSettings>()
+                .HasIndex(ps => new { ps.TenantId, ps.BranchId, ps.CounterId })
+                .IsUnique();
+
+            // PrintJob — index for efficient per-tenant status queries and reprint lookups
+            modelBuilder.Entity<PrintJob>()
+                .HasIndex(pj => new { pj.TenantId, pj.Status });
+
+            modelBuilder.Entity<PrintJob>()
+                .HasIndex(pj => new { pj.TenantId, pj.DocumentType, pj.DocumentId });
+
+            modelBuilder.Entity<PrintJob>()
+                .HasOne(pj => pj.InitiatedByUser)
+                .WithMany()
+                .HasForeignKey(pj => pj.InitiatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // PrintSettings branch FK (optional)
+            modelBuilder.Entity<PrintSettings>()
+                .HasOne(ps => ps.Branch)
+                .WithMany()
+                .HasForeignKey(ps => ps.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Category self-referencing relationship
             modelBuilder.Entity<ProductCategory>()
@@ -449,6 +492,114 @@ namespace BillingSoftware.API.Data
                 new PlanFeature { Id = 15, PlanId = 4, FeatureName = "Dedicated Support",     IsEnabled = true,  Description = "Priority support with dedicated account manager", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) },
                 new PlanFeature { Id = 16, PlanId = 4, FeatureName = "Custom Integrations",   IsEnabled = true,  Description = "Custom ERP/CRM integrations on request", CreatedAt = new DateTime(2024,1,1,0,0,0,DateTimeKind.Utc) }
             );
+
+            // ─── Multi-Tenant Management Relationships ────────────────────────────────
+
+            // EmployeeRole → RolePermission (separate from system Role→RolePermission)
+            modelBuilder.Entity<EmployeeRole>()
+                .HasMany(er => er.Permissions)
+                .WithOne()
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ignore the PermissionDef alias navigation (same FK as Permission)
+            modelBuilder.Entity<RolePermission>()
+                .Ignore(rp => rp.PermissionDef);
+
+            // TenantUserRole — multiple User FKs
+            modelBuilder.Entity<TenantUserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany()
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TenantUserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(er => er.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TenantUserRole>()
+                .HasOne(ur => ur.Branch)
+                .WithMany()
+                .HasForeignKey(ur => ur.BranchId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<TenantUserRole>()
+                .HasOne(ur => ur.Counter)
+                .WithMany()
+                .HasForeignKey(ur => ur.CounterId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // ShopInvite — three User FKs
+            modelBuilder.Entity<ShopInvite>()
+                .HasOne(i => i.InvitedByUser)
+                .WithMany()
+                .HasForeignKey(i => i.InvitedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ShopInvite>()
+                .HasOne(i => i.AcceptedByUser)
+                .WithMany()
+                .HasForeignKey(i => i.AcceptedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Counter — AssignedUser FK
+            modelBuilder.Entity<Counter>()
+                .HasOne(c => c.AssignedUser)
+                .WithMany()
+                .HasForeignKey(c => c.AssignedUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Warehouse — ignore ambiguous collection navs, configure via StockTransfer side
+            modelBuilder.Entity<Warehouse>()
+                .Ignore(w => w.InboundTransfers)
+                .Ignore(w => w.OutboundTransfers);
+
+            // StockTransfer — explicit warehouse FKs
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(s => s.FromWarehouse)
+                .WithMany()
+                .HasForeignKey(s => s.FromWarehouseId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<StockTransfer>()
+                .HasOne(s => s.ToWarehouse)
+                .WithMany()
+                .HasForeignKey(s => s.ToWarehouseId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // AIForecast product FK
+            modelBuilder.Entity<AIForecast>()
+                .HasOne(f => f.Product)
+                .WithMany()
+                .HasForeignKey(f => f.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // AIInsight generated-by user FK
+            modelBuilder.Entity<AIInsight>()
+                .HasOne(i => i.GeneratedByUser)
+                .WithMany()
+                .HasForeignKey(i => i.GeneratedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // SubscriptionUsage FK
+            modelBuilder.Entity<SubscriptionUsage>()
+                .HasOne(u => u.Subscription)
+                .WithMany()
+                .HasForeignKey(u => u.SubscriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Tenant-scoped query filters for new entities
+            modelBuilder.Entity<Counter>()         .HasQueryFilter(c => !c.IsDeleted && (_tenantId == null || c.TenantId == _tenantId));
+            modelBuilder.Entity<EmployeeRole>()    .HasQueryFilter(r => !r.IsDeleted && (_tenantId == null || r.TenantId == _tenantId));
+            modelBuilder.Entity<TenantUserRole>()  .HasQueryFilter(r => !r.IsDeleted && (_tenantId == null || r.TenantId == _tenantId));
+            modelBuilder.Entity<SubscriptionUsage>().HasQueryFilter(u => !u.IsDeleted && (_tenantId == null || u.TenantId == _tenantId));
+            modelBuilder.Entity<AIInsight>()       .HasQueryFilter(i => !i.IsDeleted && (_tenantId == null || i.TenantId == _tenantId));
+            modelBuilder.Entity<AIForecast>()      .HasQueryFilter(f => !f.IsDeleted && (_tenantId == null || f.TenantId == _tenantId));
+            modelBuilder.Entity<ShopInvite>()      .HasQueryFilter(i => !i.IsDeleted && (_tenantId == null || i.TenantId == _tenantId));
+            modelBuilder.Entity<UsageAlert>()      .HasQueryFilter(a => !a.IsDeleted && (_tenantId == null || a.TenantId == _tenantId));
+            modelBuilder.Entity<Warehouse>()       .HasQueryFilter(w => !w.IsDeleted && (_tenantId == null || w.TenantId == _tenantId));
 
         }
 

@@ -1,4 +1,5 @@
 using BillingSoftware.API.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace BillingSoftware.API.DTOs.Requests
 {
@@ -438,6 +439,24 @@ namespace BillingSoftware.API.DTOs.Requests
         public string? DefaultPrinterName    { get; set; }
         public string? DefaultThermalPrinter { get; set; }
         public string? DefaultLabelPrinter   { get; set; }
+
+        // ── Network / Direct Printer Configuration ──────────────────────────────
+        /// <summary>Network printer IP address (e.g. "192.168.1.50")</summary>
+        public string? PrinterIpAddress    { get; set; }
+        /// <summary>Network printer port (default 9100 for ESC/POS raw printing)</summary>
+        public int?    PrinterPort         { get; set; }
+        /// <summary>USB | Network | Bluetooth | Cloud</summary>
+        public string? PrinterConnection   { get; set; }
+        /// <summary>Open cash drawer after printing</summary>
+        public bool?   OpenCashDrawer      { get; set; }
+        /// <summary>Footer text shown at the bottom of every thermal receipt</summary>
+        public string? FooterText          { get; set; }
+
+        // ── Branch / Counter Scope ───────────────────────────────────────────────
+        /// <summary>null = save as tenant-level default; set to target a specific branch</summary>
+        public int?    BranchId            { get; set; }
+        /// <summary>null = branch or tenant level; set to target a specific billing counter</summary>
+        public int?    CounterId           { get; set; }
     }
 
     /// <summary>
@@ -446,6 +465,59 @@ namespace BillingSoftware.API.DTOs.Requests
     /// </summary>
     public class PatchPrintSettingsRequest : UpdatePrintSettingsRequest { }
 
+    // ==================== PRINT JOB REQUESTS ====================
+
+    /// <summary>Queue a new print job for a document.</summary>
+    public class QueuePrintJobRequest
+    {
+        /// <summary>Invoice | Receipt | Quotation | Purchase | SalesReturn | Report | Label</summary>
+        [Required]
+        public string DocumentType       { get; set; } = "Invoice";
+
+        /// <summary>Primary key of the source document</summary>
+        public int?   DocumentId         { get; set; }
+
+        /// <summary>Human-readable document number (e.g. "INV-2024-00001")</summary>
+        public string? DocumentReference { get; set; }
+
+        /// <summary>Printer name, "IP:Port", or "Browser" / "PDF"</summary>
+        public string? PrinterTarget     { get; set; }
+
+        /// <summary>Paper size override for this job (null = use tenant default)</summary>
+        public string? PaperSize         { get; set; }
+
+        /// <summary>Number of copies (default 1)</summary>
+        [Range(1, 10)]
+        public int    Copies             { get; set; } = 1;
+
+        /// <summary>Maximum retry attempts on failure</summary>
+        [Range(0, 10)]
+        public int    MaxRetries         { get; set; } = 3;
+
+        public int?   BranchId          { get; set; }
+        public int?   CounterId         { get; set; }
+    }
+
+    /// <summary>Request body for the printer connectivity test endpoint.</summary>
+    public class PrinterTestRequest
+    {
+        /// <summary>Printer name or IP:Port to test</summary>
+        [Required]
+        public string PrinterTarget   { get; set; } = string.Empty;
+
+        /// <summary>USB | Network | Bluetooth | Cloud</summary>
+        public string ConnectionType  { get; set; } = "USB";
+
+        /// <summary>Network printer IP (required when ConnectionType = Network)</summary>
+        public string? IpAddress      { get; set; }
+
+        /// <summary>Network printer port (default 9100)</summary>
+        public int     Port           { get; set; } = 9100;
+
+        /// <summary>TCP connect timeout in milliseconds (default 3000)</summary>
+        [Range(500, 30000)]
+        public int     TimeoutMs      { get; set; } = 3000;
+    }
 
     // ==================== THEME SETTINGS ====================
 
