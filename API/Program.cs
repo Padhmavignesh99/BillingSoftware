@@ -77,6 +77,11 @@ builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<IPrintSettingsService, PrintSettingsService>();
 builder.Services.AddScoped<IThemeSettingsService, ThemeSettingsService>();
 
+// ─── Communication Configuration ─────────────────────────────────────────────
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<WhatsAppSettings>(builder.Configuration.GetSection("WhatsAppSettings"));
+builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("SmsSettings"));
+
 // ─── Auth / User Services ─────────────────────────────────────────────────────
 builder.Services.AddScoped<IAuthService,       AuthService>();
 builder.Services.AddScoped<IUserService,       UserService>();
@@ -149,10 +154,11 @@ builder.Services.AddScoped<IExpenseCategoryService, ExpenseCategoryService>();
 builder.Services.AddScoped<IExpensePaymentService,  ExpensePaymentService>();
 
 // ─── Communication Services ───────────────────────────────────────────────────
-builder.Services.AddScoped<IEmailService,        EmailService>();
-builder.Services.AddScoped<IWhatsAppService,     WhatsAppService>();
-builder.Services.AddScoped<ISmsService,          SmsService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEmailService,                    EmailService>();
+builder.Services.AddScoped<IWhatsAppService,                 WhatsAppService>();
+builder.Services.AddScoped<ISmsService,                      SmsService>();
+builder.Services.AddScoped<INotificationService,             NotificationService>();
+builder.Services.AddScoped<IPostBillingNotificationService,  PostBillingNotificationService>();
 
 // ─── Report & Dashboard ───────────────────────────────────────────────────────
 builder.Services.AddScoped<IDashboardService, DashboardService>();

@@ -33,7 +33,19 @@ namespace BillingSoftware.API.Controllers.Sales
         private readonly IInvoiceService _s;
         private readonly IEmailService _email;
         private readonly IWhatsAppService _whatsapp;
-        public InvoiceController(IInvoiceService s, IEmailService email, IWhatsAppService whatsapp) { _s = s; _email = email; _whatsapp = whatsapp; }
+        private readonly ISmsService _sms;
+        private readonly IPostBillingNotificationService _postBilling;
+
+        public InvoiceController(
+            IInvoiceService s,
+            IEmailService email,
+            IWhatsAppService whatsapp,
+            ISmsService sms,
+            IPostBillingNotificationService postBilling)
+        {
+            _s = s; _email = email; _whatsapp = whatsapp;
+            _sms = sms; _postBilling = postBilling;
+        }
         private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
 
         [HttpGet] public async Task<ActionResult<ApiResponse<List<InvoiceResponse>>>> GetAll([FromQuery] PaginationRequest p) { var (items, total) = await _s.GetAllInvoicesAsync(TenantId, p); return Ok(ApiResponse<List<InvoiceResponse>>.SuccessResponse(items, "Success", total, p.Page, p.PageSize)); }
@@ -44,9 +56,42 @@ namespace BillingSoftware.API.Controllers.Sales
         [HttpGet("{id}/pdf")] public async Task<IActionResult> GetPdf(int id) { var pdf = await _s.GenerateInvoicePdfAsync(id, TenantId); return File(pdf, "application/pdf", $"Invoice-{id}.pdf"); }
         [HttpGet("next-number")] public async Task<ActionResult<ApiResponse<string>>> GetNextNumber() => Ok(ApiResponse<string>.SuccessResponse(await _s.GetNextInvoiceNumberAsync(TenantId)));
 
-        // Invoice Email & WhatsApp sending
-        [HttpPost("{id}/send-email")] public async Task<ActionResult<ApiResponse<MessageSendResponse>>> SendEmail(int id, [FromBody] SendInvoiceEmailRequest r) { r.InvoiceId = id; return Ok(ApiResponse<MessageSendResponse>.SuccessResponse(await _email.SendInvoiceEmailAsync(id, r.EmailAddress, r.Subject, r.Message, TenantId), "Email sent")); }
-        [HttpPost("{id}/send-whatsapp")] public async Task<ActionResult<ApiResponse<MessageSendResponse>>> SendWhatsApp(int id, [FromBody] SendInvoiceWhatsAppRequest r) { r.InvoiceId = id; return Ok(ApiResponse<MessageSendResponse>.SuccessResponse(await _whatsapp.SendInvoiceWhatsAppAsync(id, r.MobileNumber, r.Message, TenantId), "WhatsApp sent")); }
+        // ── Per-channel invoice sending ────────────────────────────────────────────
+        [HttpPost("{id}/send-email")]
+        public async Task<ActionResult<ApiResponse<MessageSendResponse>>> SendEmail(int id, [FromBody] SendInvoiceEmailRequest r)
+        { r.InvoiceId = id; return Ok(ApiResponse<MessageSendResponse>.SuccessResponse(await _email.SendInvoiceEmailAsync(id, r.EmailAddress, r.Subject, r.Message, TenantId), "Email sent")); }
+
+        [HttpPost("{id}/send-whatsapp")]
+        public async Task<ActionResult<ApiResponse<MessageSendResponse>>> SendWhatsApp(int id, [FromBody] SendInvoiceWhatsAppRequest r)
+        {
+            var allowed = await _postBilling.IsWhatsAppEnabledAsync(TenantId);
+            if (!allowed) return BadRequest(ApiResponse<MessageSendResponse>.FailResponse("WhatsApp not included in your plan. Please upgrade."));
+            r.InvoiceId = id;
+            return Ok(ApiResponse<MessageSendResponse>.SuccessResponse(await _whatsapp.SendInvoiceWhatsAppAsync(id, r.MobileNumber, r.Message, TenantId), "WhatsApp sent"));
+        }
+
+        [HttpPost("{id}/send-sms")]
+        public async Task<ActionResult<ApiResponse<MessageSendResponse>>> SendSms(int id, [FromBody] SendInvoiceSmsRequest r)
+        {
+            var allowed = await _postBilling.IsSmsEnabledAsync(TenantId);
+            if (!allowed) return BadRequest(ApiResponse<MessageSendResponse>.FailResponse("SMS not included in your plan. Please upgrade."));
+            r.InvoiceId = id;
+            return Ok(ApiResponse<MessageSendResponse>.SuccessResponse(await _sms.SendInvoiceSmsAsync(id, r.MobileNumber, r.Message, TenantId), "SMS sent"));
+        }
+
+        /// <summary>
+        /// Post-billing multi-channel dispatch. Called by the UI after generating a bill;
+        /// the user selects which channels to use via checkboxes (Email / WhatsApp / SMS).
+        /// Returns a per-channel result; channels blocked by the plan return Status="NotAllowed".
+        /// </summary>
+        [HttpPost("{id}/send-all")]
+        public async Task<ActionResult<ApiResponse<PostBillingNotificationResult>>> SendAll(int id, [FromBody] PostBillingSendRequest r)
+        {
+            r.InvoiceId = id;
+            return Ok(ApiResponse<PostBillingNotificationResult>.SuccessResponse(
+                await _postBilling.SendAsync(r, TenantId), "Notification dispatch complete"));
+        }
+
         [HttpGet("{id}/delivery-status")] public async Task<ActionResult<ApiResponse<object>>> GetDeliveryStatus(int id) => Ok(ApiResponse<object>.SuccessResponse(new { InvoiceId = id, Status = "Delivered" }));
     }
 

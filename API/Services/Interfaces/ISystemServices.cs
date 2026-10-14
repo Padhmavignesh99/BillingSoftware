@@ -62,6 +62,7 @@ namespace BillingSoftware.API.Services.Interfaces
     public interface ISmsService
     {
         Task<MessageSendResponse> SendSmsAsync(SendSmsRequest request, int tenantId);
+        Task<MessageSendResponse> SendInvoiceSmsAsync(int invoiceId, string mobileNumber, string? message, int tenantId);
         Task<List<CommunicationLogResponse>> GetSmsHistoryAsync(int tenantId);
     }
 
@@ -72,6 +73,30 @@ namespace BillingSoftware.API.Services.Interfaces
         Task<bool> MarkAsReadAsync(int id);
         Task<bool> UpdateSettingsAsync(int tenantId, UpdateNotificationSettingsRequest request);
         Task<Notification> CreateNotificationAsync(int tenantId, int userId, string title, string message, string type);
+    }
+
+    // ==================== POST-BILLING NOTIFICATION ====================
+    /// <summary>
+    /// Orchestrates sending Email / WhatsApp / SMS after a billing event.
+    /// Enforces subscription plan feature gates before dispatching.
+    /// </summary>
+    public interface IPostBillingNotificationService
+    {
+        /// <summary>
+        /// Sends to whichever channels are ticked in <paramref name="request"/> and
+        /// allowed by the tenant's active subscription plan.
+        /// Returns a per-channel result summary.
+        /// </summary>
+        Task<PostBillingNotificationResult> SendAsync(PostBillingSendRequest request, int tenantId);
+
+        /// <summary>Check whether the tenant plan allows WhatsApp messaging.</summary>
+        Task<bool> IsWhatsAppEnabledAsync(int tenantId);
+
+        /// <summary>Check whether the tenant plan allows SMS messaging.</summary>
+        Task<bool> IsSmsEnabledAsync(int tenantId);
+
+        /// <summary>Email is enabled on all plans; always returns true.</summary>
+        Task<bool> IsEmailEnabledAsync(int tenantId);
     }
 
     // ==================== INVOICE DOCUMENT ====================

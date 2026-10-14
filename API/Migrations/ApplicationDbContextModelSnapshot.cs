@@ -17,7 +17,7 @@ namespace BillingSoftware.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.31")
+                .HasAnnotation("ProductVersion", "8.0.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -607,7 +607,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1614),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2165),
                             Description = "General retail shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -616,7 +616,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1617),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2175),
                             Description = "Wholesale business",
                             IsActive = true,
                             IsDeleted = false,
@@ -625,7 +625,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1618),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2180),
                             Description = "Food & beverage",
                             IsActive = true,
                             IsDeleted = false,
@@ -634,7 +634,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1619),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2184),
                             Description = "Medical store",
                             IsActive = true,
                             IsDeleted = false,
@@ -643,7 +643,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1620),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2188),
                             Description = "Electronics shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -652,7 +652,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1621),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2191),
                             Description = "Fashion & apparel",
                             IsActive = true,
                             IsDeleted = false,
@@ -661,7 +661,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1622),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2195),
                             Description = "Grocery & supermarket",
                             IsActive = true,
                             IsDeleted = false,
@@ -670,7 +670,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1623),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2198),
                             Description = "Service-based business",
                             IsActive = true,
                             IsDeleted = false,
@@ -679,7 +679,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1623),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2202),
                             Description = "Manufacturing unit",
                             IsActive = true,
                             IsDeleted = false,
@@ -688,7 +688,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 644, DateTimeKind.Utc).AddTicks(1624),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2206),
                             Description = "Other business type",
                             IsActive = true,
                             IsDeleted = false,
@@ -2558,7 +2558,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 1,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(255),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6889),
                             Description = "Indian Rupee",
                             IsActive = true,
                             IsDeleted = false,
@@ -2570,7 +2570,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 2,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(259),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6899),
                             Description = "US Dollar",
                             IsActive = true,
                             IsDeleted = false,
@@ -2582,7 +2582,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 3,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(261),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6907),
                             Description = "Euro",
                             IsActive = true,
                             IsDeleted = false,
@@ -2594,7 +2594,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 4,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(262),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6912),
                             Description = "India",
                             IsActive = true,
                             IsDeleted = false,
@@ -2606,7 +2606,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 5,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 13, 16, 58, 35, 775, DateTimeKind.Utc).AddTicks(263),
+                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6916),
                             Description = "United States",
                             IsActive = true,
                             IsDeleted = false,
@@ -5514,6 +5514,9 @@ namespace BillingSoftware.API.Migrations
                     b.Property<bool>("HasReports")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("HasSmsIntegration")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("HasWhatsAppIntegration")
                         .HasColumnType("boolean");
 
@@ -5576,6 +5579,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = false,
                             HasReports = false,
+                            HasSmsIntegration = false,
                             HasWhatsAppIntegration = false,
                             IsActive = true,
                             IsDeleted = false,
@@ -5601,6 +5605,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = false,
                             HasReports = true,
+                            HasSmsIntegration = false,
                             HasWhatsAppIntegration = false,
                             IsActive = true,
                             IsDeleted = false,
@@ -5626,6 +5631,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = true,
                             HasReports = true,
+                            HasSmsIntegration = false,
                             HasWhatsAppIntegration = true,
                             IsActive = true,
                             IsDeleted = false,
@@ -5651,6 +5657,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = true,
                             HasReports = true,
+                            HasSmsIntegration = false,
                             HasWhatsAppIntegration = true,
                             IsActive = true,
                             IsDeleted = false,
@@ -6431,7 +6438,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$m3iP7tjxbKn1Wq4DmuJZgOr3rVzT5A4TQ.GEpNhjqVtbFl22l1cPy",
+                            PasswordHash = "$2a$11$XohkG/B.5Q//ss2Dn3EzOuh61XLJqwrQdNQjQdBxFzyFVxAwLGcdq",
                             Role = 1
                         },
                         new
@@ -6442,7 +6449,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$ZrETxNTsxeD9pZKiBIX/Uu9wQLv5YMFmvmznGE3uPm4Mva5GxKiU6",
+                            PasswordHash = "$2a$11$qtq8oS0rN6kHzUU1gGB6mObHJBaxSFhYVyWwtBYkrXqhDC7wOwcjC",
                             Role = 1
                         });
                 });

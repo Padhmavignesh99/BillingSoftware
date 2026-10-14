@@ -13,6 +13,7 @@ namespace BillingSoftware.API.Models.Entities
         public int MaxBranches { get; set; } = 1;
         public int MaxInvoicesPerMonth { get; set; } = 500;
         public bool HasWhatsAppIntegration { get; set; } = false;
+        public bool HasSmsIntegration { get; set; } = false;
         public bool HasEmailIntegration { get; set; } = true;
         public bool HasReports { get; set; } = true;
         public bool HasMultiCurrency { get; set; } = false;

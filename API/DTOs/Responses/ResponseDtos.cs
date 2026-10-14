@@ -318,6 +318,24 @@ namespace BillingSoftware.API.DTOs.Responses
         public string? CustomerName { get; set; }
     }
 
+    /// <summary>Returned by POST /api/invoices/{id}/send-all – one entry per enabled channel.</summary>
+    public class PostBillingNotificationResult
+    {
+        public ChannelSendResult? Email { get; set; }
+        public ChannelSendResult? WhatsApp { get; set; }
+        public ChannelSendResult? Sms { get; set; }
+    }
+
+    public class ChannelSendResult
+    {
+        public bool Attempted { get; set; }
+        /// <summary>false = feature not enabled on the subscription plan.</summary>
+        public bool PlanAllowed { get; set; }
+        public string Status { get; set; } = string.Empty;  // "Sent" | "Failed" | "Skipped" | "NotAllowed"
+        public string? Message { get; set; }
+        public int? MessageId { get; set; }
+    }
+
     // ==================== SUBSCRIPTION ====================
     public class SubscriptionPlanResponse
     {
@@ -331,6 +349,7 @@ namespace BillingSoftware.API.DTOs.Responses
         public int MaxBranches { get; set; }
         public int MaxInvoicesPerMonth { get; set; }
         public bool HasWhatsAppIntegration { get; set; }
+        public bool HasSmsIntegration { get; set; }
         public bool HasEmailIntegration { get; set; }
         public bool HasReports { get; set; }
         public bool HasMultiCurrency { get; set; }

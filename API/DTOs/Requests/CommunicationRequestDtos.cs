@@ -41,6 +41,37 @@ namespace BillingSoftware.API.DTOs.Requests
         public string Message { get; set; } = string.Empty;
     }
 
+    public class SendInvoiceSmsRequest
+    {
+        public int InvoiceId { get; set; }
+        public string MobileNumber { get; set; } = string.Empty;
+        public string? Message { get; set; }
+    }
+
+    /// <summary>
+    /// Used by the post-billing dialog – the user ticks which channels to send on.
+    /// </summary>
+    public class PostBillingSendRequest
+    {
+        public int InvoiceId { get; set; }
+
+        // ── Email ──────────────────────────────────────────────────────────────
+        public bool SendEmail { get; set; } = false;
+        public string? EmailAddress { get; set; }
+        public string? EmailSubject { get; set; }
+        public string? EmailMessage { get; set; }
+
+        // ── WhatsApp ───────────────────────────────────────────────────────────
+        public bool SendWhatsApp { get; set; } = false;
+        public string? WhatsAppNumber { get; set; }
+        public string? WhatsAppMessage { get; set; }
+
+        // ── SMS ────────────────────────────────────────────────────────────────
+        public bool SendSms { get; set; } = false;
+        public string? SmsNumber { get; set; }
+        public string? SmsMessage { get; set; }
+    }
+
     public class UpdateNotificationSettingsRequest
     {
         public bool? EmailEnabled { get; set; }
@@ -76,6 +107,7 @@ namespace BillingSoftware.API.DTOs.Requests
         public int MaxBranches { get; set; } = 1;
         public int MaxInvoicesPerMonth { get; set; } = 500;
         public bool HasWhatsAppIntegration { get; set; }
+        public bool HasSmsIntegration { get; set; }
         public bool HasEmailIntegration { get; set; }
         public bool HasReports { get; set; }
         public bool HasMultiCurrency { get; set; }
