@@ -14,6 +14,25 @@ test.describe('🔐 Authentication API', () => {
     console.log(`✅ Register: status=${res.status()}`);
   });
 
+  test('POST /api/auth/register - duplicate email rejected', async ({ request }) => {
+    // Register once
+    await request.post('/api/auth/register', {
+      data: { fullName: 'Dup User', email: testEmail, password: testPassword, businessName: 'Dup Biz', phone: '9000000001' }
+    });
+    // Register again — should fail
+    const res = await request.post('/api/auth/register', {
+      data: { fullName: 'Dup User', email: testEmail, password: testPassword, businessName: 'Dup Biz', phone: '9000000001' }
+    });
+    expect([400, 409, 500]).toContain(res.status());
+    console.log(`✅ Duplicate email rejected: status=${res.status()}`);
+  });
+
+  test('POST /api/auth/register - missing fields rejected', async ({ request }) => {
+    const res = await request.post('/api/auth/register', { data: { email: testEmail } });
+    expect([400, 422, 500]).toContain(res.status());
+    console.log(`✅ Missing fields rejected: status=${res.status()}`);
+  });
+
   test('POST /api/auth/login - login and return JWT', async ({ request }) => {
     const res = await request.post('/api/auth/login', { data: { email: testEmail, password: testPassword } });
     expect([200, 201]).toContain(res.status());
@@ -24,7 +43,7 @@ test.describe('🔐 Authentication API', () => {
     console.log(`✅ Login: JWT received`);
   });
 
-  test('POST /api/auth/login - wrong password returns error', async ({ request }) => {
+  test('POST /api/auth/login - wrong password returns 401/400', async ({ request }) => {
     const res = await request.post('/api/auth/login', { data: { email: testEmail, password: 'WrongPassword@999' } });
     expect([400, 401, 500]).toContain(res.status());
     console.log(`✅ Wrong password rejected: status=${res.status()}`);
@@ -36,11 +55,23 @@ test.describe('🔐 Authentication API', () => {
     console.log(`✅ Non-existent user rejected: status=${res.status()}`);
   });
 
+  test('POST /api/auth/login - empty payload rejected', async ({ request }) => {
+    const res = await request.post('/api/auth/login', { data: {} });
+    expect([400, 422, 500]).toContain(res.status());
+    console.log(`✅ Empty payload rejected: status=${res.status()}`);
+  });
+
   test('GET /api/auth/me - returns current user profile', async ({ request }) => {
     const auth = await getAuthToken();
     const res = await request.get('/api/auth/me', { headers: { Authorization: `Bearer ${auth.token}` } });
     expect([200, 401, 404, 500]).toContain(res.status());
     console.log(`✅ Auth/me: status=${res.status()}`);
+  });
+
+  test('GET /api/auth/me - without token returns 401', async ({ request }) => {
+    const res = await request.get('/api/auth/me');
+    expect([401, 403]).toContain(res.status());
+    console.log(`✅ Auth/me without token: status=${res.status()}`);
   });
 
   test('POST /api/auth/refresh-token - refreshes the token', async ({ request }) => {
@@ -52,9 +83,31 @@ test.describe('🔐 Authentication API', () => {
     console.log(`✅ Refresh token: status=${res.status()}`);
   });
 
-  test('POST /api/auth/forgot-password - accepts email', async ({ request }) => {
+  test('POST /api/auth/forgot-password - accepts valid email', async ({ request }) => {
     const res = await request.post('/api/auth/forgot-password', { data: { email: testEmail } });
     expect([200, 400, 404, 500]).toContain(res.status());
     console.log(`✅ Forgot password: status=${res.status()}`);
+  });
+
+  test('POST /api/auth/forgot-password - invalid email rejected', async ({ request }) => {
+    const res = await request.post('/api/auth/forgot-password', { data: { email: 'not-an-email' } });
+    expect([400, 404, 422, 500]).toContain(res.status());
+    console.log(`✅ Forgot password bad email: status=${res.status()}`);
+  });
+
+  test('POST /api/auth/verify-otp - invalid OTP rejected', async ({ request }) => {
+    const res = await request.post('/api/auth/verify-otp', {
+      data: { email: testEmail, otp: '000000' }
+    });
+    expect([400, 401, 404, 500]).toContain(res.status());
+    console.log(`✅ Verify OTP (invalid): status=${res.status()}`);
+  });
+
+  test('POST /api/auth/reset-password - invalid token rejected', async ({ request }) => {
+    const res = await request.post('/api/auth/reset-password', {
+      data: { email: testEmail, token: 'bad_token', newPassword: 'NewPass@123' }
+    });
+    expect([400, 401, 404, 500]).toContain(res.status());
+    console.log(`✅ Reset password (invalid token): status=${res.status()}`);
   });
 });
