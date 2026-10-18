@@ -18,10 +18,10 @@ namespace BillingSoftware.API.Controllers.Business
         public BusinessController(IBusinessService service) { _service = service; }
         private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
 
-        [HttpGet("{id}")] public async Task<ActionResult<ApiResponse<BusinessResponse>>> GetById(int id) { var r = await _service.GetBusinessByIdAsync(id); return r == null ? NotFound(ApiResponse<BusinessResponse>.FailResponse("Not found")) : Ok(ApiResponse<BusinessResponse>.SuccessResponse(r)); }
+        [HttpGet("{id}")] public async Task<ActionResult<ApiResponse<BusinessResponse>>> GetById(int id) { if (id != TenantId) return Forbid(); var r = await _service.GetBusinessByIdAsync(id); return r == null ? NotFound(ApiResponse<BusinessResponse>.FailResponse("Not found")) : Ok(ApiResponse<BusinessResponse>.SuccessResponse(r)); }
         [HttpGet] public async Task<ActionResult<ApiResponse<BusinessResponse>>> GetCurrent() { var r = await _service.GetBusinessByIdAsync(TenantId); return r == null ? NotFound(ApiResponse<BusinessResponse>.FailResponse("Not found")) : Ok(ApiResponse<BusinessResponse>.SuccessResponse(r)); }
         [HttpPost] public async Task<ActionResult<ApiResponse<BusinessResponse>>> Create([FromBody] CreateBusinessRequest request) => Ok(ApiResponse<BusinessResponse>.SuccessResponse(await _service.CreateBusinessAsync(request), "Created"));
-        [HttpPut("{id}")] public async Task<ActionResult<ApiResponse<BusinessResponse>>> Update(int id, [FromBody] UpdateBusinessRequest request) => Ok(ApiResponse<BusinessResponse>.SuccessResponse(await _service.UpdateBusinessAsync(id, request), "Updated"));
+        [HttpPut("{id}")] public async Task<ActionResult<ApiResponse<BusinessResponse>>> Update(int id, [FromBody] UpdateBusinessRequest request) { if (id != TenantId) return Forbid(); return Ok(ApiResponse<BusinessResponse>.SuccessResponse(await _service.UpdateBusinessAsync(id, request), "Updated")); }
         [HttpPost("logo-upload")] [Consumes("multipart/form-data")] public async Task<ActionResult<ApiResponse<bool>>> UploadLogo([FromForm] UploadLogoRequest request) { var file = request.File; var path = Path.Combine("uploads", "logos", $"{TenantId}_{file.FileName}"); Directory.CreateDirectory(Path.GetDirectoryName(path)!); using (var stream = new FileStream(path, FileMode.Create)) await file.CopyToAsync(stream); return Ok(ApiResponse<bool>.SuccessResponse(await _service.UploadLogoAsync(TenantId, $"/uploads/logos/{TenantId}_{file.FileName}"), "Logo uploaded")); }
     }
 

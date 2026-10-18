@@ -236,9 +236,9 @@ namespace BillingSoftware.API.DTOs.Requests
     public class CreateCreditBillRequest
     {
         public int CustomerId { get; set; }
-        public int InvoiceId { get; set; }
+        public int? InvoiceId { get; set; }
         public decimal Amount { get; set; }
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         public string? Notes { get; set; }
         /// <summary>The billing user/staff ID who is creating this credit sale.</summary>
         public int? UserId { get; set; }

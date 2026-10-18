@@ -147,6 +147,7 @@ namespace BillingSoftware.API.DTOs.Responses
     public class InvoiceResponse
     {
         public int Id { get; set; }
+        public int? CustomerId { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
@@ -239,6 +240,7 @@ namespace BillingSoftware.API.DTOs.Responses
     public class PurchaseResponse
     {
         public int Id { get; set; }
+        public int SupplierId { get; set; }
         public string PurchaseNumber { get; set; } = string.Empty;
         public string? SupplierName { get; set; }
         public DateTime PurchaseDate { get; set; }
@@ -250,6 +252,70 @@ namespace BillingSoftware.API.DTOs.Responses
         public decimal PaidAmount { get; set; }
         public decimal DueAmount { get; set; }
         public string Status { get; set; } = string.Empty;
+        public List<PurchaseItemResponse> Items { get; set; } = new();
+    }
+
+    public class PurchaseItemResponse
+    {
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
+
+    public class CreditBillResponse
+    {
+        public int Id { get; set; }
+        public string CreditBillNumber { get; set; } = string.Empty;
+        public int CustomerId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public string? CustomerPhone { get; set; }
+        public int? InvoiceId { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public int? UserId { get; set; }
+        public decimal Amount { get; set; }
+        public decimal SettledAmount { get; set; }
+        public decimal BalanceAmount { get; set; }
+        public DateTime DueDate { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string? Notes { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class ReturnItemResponse
+    {
+        public int ProductId { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
+
+    public class SalesReturnResponse
+    {
+        public int Id { get; set; }
+        public string ReturnNumber { get; set; } = string.Empty;
+        public int InvoiceId { get; set; }
+        public int? CustomerId { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public DateTime ReturnDate { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public List<ReturnItemResponse> Items { get; set; } = new();
+    }
+
+    public class PurchaseReturnResponse
+    {
+        public int Id { get; set; }
+        public string ReturnNumber { get; set; } = string.Empty;
+        public int PurchaseId { get; set; }
+        public int SupplierId { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public DateTime ReturnDate { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public List<ReturnItemResponse> Items { get; set; } = new();
     }
 
     // ==================== DASHBOARD ====================

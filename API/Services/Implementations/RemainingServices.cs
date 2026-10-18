@@ -15,8 +15,43 @@ namespace BillingSoftware.API.Services.Implementations
 
     public class CustomerLedgerService : ICustomerLedgerService { private readonly ApplicationDbContext _c; public CustomerLedgerService(ApplicationDbContext c) { _c = c; } public async Task<List<CustomerLedger>> GetLedgerAsync(int cid, int t) => await _c.CustomerLedgers.Where(l => l.CustomerId == cid && l.TenantId == t).OrderByDescending(l => l.TransactionDate).ToListAsync(); public async Task<decimal> GetDueBalanceAsync(int cid, int t) { var customer = await _c.Customers.FindAsync(cid); return customer?.OutstandingBalance ?? 0; } public async Task<List<InvoiceResponse>> GetPurchaseHistoryAsync(int cid, int t) => await _c.Invoices.Where(i => i.CustomerId == cid && i.TenantId == t).OrderByDescending(i => i.InvoiceDate).Select(i => new InvoiceResponse { Id = i.Id, InvoiceNumber = i.InvoiceNumber, InvoiceDate = i.InvoiceDate, TotalAmount = i.TotalAmount, PaidAmount = i.PaidAmount, DueAmount = i.DueAmount, Status = i.Status.ToString() }).ToListAsync(); }
 
-    public class CustomerPaymentService : ICustomerPaymentService { private readonly ApplicationDbContext _c; public CustomerPaymentService(ApplicationDbContext c) { _c = c; } public async Task<List<CustomerPayment>> GetPaymentsAsync(int cid, int t) => await _c.CustomerPayments.Where(p => p.CustomerId == cid && p.TenantId == t).OrderByDescending(p => p.PaymentDate).ToListAsync(); public async Task<CustomerPayment> CreatePaymentAsync(CreateCustomerPaymentRequest r, int t) { var p = new CustomerPayment { CustomerId = r.CustomerId, InvoiceId = r.InvoiceId, Amount = r.Amount, PaymentMethod = r.PaymentMethod, ReferenceNumber = r.ReferenceNumber, Notes = r.Notes, TenantId = t }; _c.CustomerPayments.Add(p); await _c.SaveChangesAsync(); return p; } }
+    public class CustomerPaymentService : ICustomerPaymentService
+    {
+        private readonly ApplicationDbContext _c;
+        public CustomerPaymentService(ApplicationDbContext c) { _c = c; }
 
+        public async Task<List<CustomerPayment>> GetPaymentsAsync(int customerId, int tenantId) =>
+            await _c.CustomerPayments.Where(p => p.CustomerId == customerId && p.TenantId == tenantId)
+                .OrderByDescending(p => p.PaymentDate).ToListAsync();
+
+        public async Task<CustomerPayment> CreatePaymentAsync(CreateCustomerPaymentRequest request, int tenantId)
+        {
+            var customer = await _c.Customers.FirstOrDefaultAsync(c => c.Id == request.CustomerId && c.TenantId == tenantId)
+                ?? throw new KeyNotFoundException("Customer not found");
+            if (request.Amount <= 0 || request.Amount > customer.OutstandingBalance)
+                throw new ArgumentException("Payment must be positive and no more than the outstanding balance.");
+            var payment = new CustomerPayment
+            {
+                CustomerId = request.CustomerId, InvoiceId = request.InvoiceId,
+                Amount = request.Amount, PaymentMethod = request.PaymentMethod,
+                ReferenceNumber = request.ReferenceNumber, Notes = request.Notes, TenantId = tenantId
+            };
+            customer.OutstandingBalance -= request.Amount;
+            _c.CustomerPayments.Add(payment);
+            if (request.InvoiceId.HasValue)
+            {
+                var invoice = await _c.Invoices.FirstOrDefaultAsync(i =>
+                    i.Id == request.InvoiceId && i.CustomerId == request.CustomerId && i.TenantId == tenantId)
+                    ?? throw new KeyNotFoundException("Invoice not found");
+                if (request.Amount > invoice.DueAmount) throw new ArgumentException("Payment exceeds invoice due.");
+                invoice.PaidAmount += request.Amount;
+                invoice.DueAmount -= request.Amount;
+                invoice.Status = invoice.DueAmount == 0 ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+            }
+            await _c.SaveChangesAsync();
+            return payment;
+        }
+    }
     public class CustomerCreditService : ICustomerCreditService
     {
         private readonly ApplicationDbContext _c;
@@ -28,8 +63,13 @@ namespace BillingSoftware.API.Services.Implementations
                    .OrderByDescending(c => c.CreatedAt).ToListAsync();
 
         /// <summary>Create a credit bill. userId tracks which billing user created it.</summary>
-        public async Task<CustomerCredit> CreateCreditAsync(int customerId, int invoiceId, decimal amount, int tenantId, int? userId = null)
+        public async Task<CustomerCredit> CreateCreditAsync(int customerId, int? invoiceId, decimal amount, int tenantId, int? userId = null, DateTime? dueDate = null, string? notes = null)
         {
+            if (amount <= 0) throw new ArgumentException("Credit amount must be positive.");
+            var customer = await _c.Customers.FirstOrDefaultAsync(c => c.Id == customerId && c.TenantId == tenantId)
+                ?? throw new KeyNotFoundException("Customer not found");
+            if (invoiceId.HasValue && !await _c.Invoices.AnyAsync(i => i.Id == invoiceId && i.CustomerId == customerId && i.TenantId == tenantId))
+                throw new ArgumentException("Invoice does not belong to this customer.");
             var credit = new CustomerCredit
             {
                 CustomerId    = customerId,
@@ -37,12 +77,14 @@ namespace BillingSoftware.API.Services.Implementations
                 Amount        = amount,
                 BalanceAmount = amount,
                 PaidAmount    = 0,
-                DueDate       = DateTime.UtcNow.AddDays(30),
+                DueDate       = dueDate ?? DateTime.UtcNow.AddDays(30),
                 Status        = "Pending",
+                Notes         = notes,
                 TenantId      = tenantId,
                 UserId        = userId
             };
             _c.CustomerCredits.Add(credit);
+            if (!invoiceId.HasValue) customer.OutstandingBalance += amount;
             await _c.SaveChangesAsync();
             return credit;
         }
@@ -58,9 +100,23 @@ namespace BillingSoftware.API.Services.Implementations
         {
             var credit = await _c.CustomerCredits.FirstOrDefaultAsync(c => c.Id == creditId && c.TenantId == tenantId)
                 ?? throw new KeyNotFoundException($"Credit bill {creditId} not found.");
+            if (paymentAmount <= 0 || paymentAmount > credit.BalanceAmount)
+                throw new ArgumentException("Payment must be positive and no more than the outstanding balance.");
             credit.PaidAmount    += paymentAmount;
             credit.BalanceAmount  = credit.Amount - credit.PaidAmount;
             credit.Status         = credit.BalanceAmount <= 0 ? "Paid" : "PartiallyPaid";
+            var customer = await _c.Customers.FirstOrDefaultAsync(c => c.Id == credit.CustomerId && c.TenantId == tenantId);
+            if (customer != null) customer.OutstandingBalance = Math.Max(0, customer.OutstandingBalance - paymentAmount);
+            if (credit.InvoiceId.HasValue)
+            {
+                var invoice = await _c.Invoices.FirstOrDefaultAsync(i => i.Id == credit.InvoiceId && i.TenantId == tenantId);
+                if (invoice != null)
+                {
+                    invoice.PaidAmount += paymentAmount;
+                    invoice.DueAmount = Math.Max(0, invoice.TotalAmount - invoice.PaidAmount);
+                    invoice.Status = invoice.DueAmount == 0 ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+                }
+            }
             await _c.SaveChangesAsync();
             return credit;
         }
@@ -96,12 +152,178 @@ namespace BillingSoftware.API.Services.Implementations
 
     public class PurchasePaymentService : IPurchasePaymentService { private readonly ApplicationDbContext _c; public PurchasePaymentService(ApplicationDbContext c) { _c = c; } public async Task<List<PurchasePayment>> GetPaymentsByPurchaseAsync(int pid) => await _c.PurchasePayments.Where(p => p.PurchaseId == pid).ToListAsync(); public async Task<PurchasePayment> CreatePaymentAsync(CreatePurchasePaymentRequest r, int t) { var p = new PurchasePayment { PurchaseId = r.PurchaseId, Amount = r.Amount, PaymentMethod = r.PaymentMethod, ReferenceNumber = r.ReferenceNumber, Notes = r.Notes, TenantId = t }; _c.PurchasePayments.Add(p); var purchase = await _c.Purchases.FindAsync(r.PurchaseId); if (purchase != null) { purchase.PaidAmount += r.Amount; purchase.DueAmount = purchase.TotalAmount - purchase.PaidAmount; } await _c.SaveChangesAsync(); return p; } }
 
-    public class PurchaseReturnService : IPurchaseReturnService { private readonly ApplicationDbContext _c; public PurchaseReturnService(ApplicationDbContext c) { _c = c; } public async Task<List<PurchaseReturn>> GetAllAsync(int t) => await _c.PurchaseReturns.Include(r => r.Supplier).Where(r => r.TenantId == t).ToListAsync(); public async Task<PurchaseReturn?> GetByIdAsync(int id) => await _c.PurchaseReturns.Include(r => r.Items).FirstOrDefaultAsync(r => r.Id == id); public async Task<PurchaseReturn> CreateAsync(CreatePurchaseReturnRequest r, int t) { var ret = new PurchaseReturn { ReturnNumber = $"PR-{DateTime.UtcNow:yyyyMMddHHmmss}", PurchaseId = r.PurchaseId, Reason = r.Reason, Notes = r.Notes, TenantId = t }; var purchase = await _c.Purchases.FindAsync(r.PurchaseId); ret.SupplierId = purchase?.SupplierId ?? 0; foreach (var i in r.Items) { ret.Items.Add(new PurchaseReturnItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice, TotalPrice = i.Quantity * i.UnitPrice, TenantId = t }); ret.TotalAmount += i.Quantity * i.UnitPrice; } _c.PurchaseReturns.Add(ret); await _c.SaveChangesAsync(); return ret; } public async Task<bool> DeleteAsync(int id) { var r = await _c.PurchaseReturns.FindAsync(id) ?? throw new KeyNotFoundException(); _c.PurchaseReturns.Remove(r); await _c.SaveChangesAsync(); return true; } }
+    public class PurchaseReturnService : IPurchaseReturnService
+    {
+        private readonly ApplicationDbContext _c;
+        public PurchaseReturnService(ApplicationDbContext c) { _c = c; }
 
+        public async Task<List<PurchaseReturn>> GetAllAsync(int tenantId) =>
+            await _c.PurchaseReturns.Include(ret => ret.Items)
+                .Where(ret => ret.TenantId == tenantId).OrderByDescending(ret => ret.ReturnDate).ToListAsync();
+
+        public async Task<PurchaseReturn?> GetByIdAsync(int id) =>
+            await _c.PurchaseReturns.Include(ret => ret.Items).FirstOrDefaultAsync(ret => ret.Id == id);
+
+        public async Task<PurchaseReturn> CreateAsync(CreatePurchaseReturnRequest request, int tenantId)
+        {
+            var purchase = await _c.Purchases.Include(p => p.Items)
+                .FirstOrDefaultAsync(p => p.Id == request.PurchaseId && p.TenantId == tenantId)
+                ?? throw new KeyNotFoundException("Purchase not found");
+            if (request.Items.Count == 0) throw new ArgumentException("Select at least one return item.");
+
+            var ret = new PurchaseReturn
+            {
+                ReturnNumber = $"PR-{DateTime.UtcNow:yyyyMMddHHmmssfff}",
+                PurchaseId = purchase.Id,
+                SupplierId = purchase.SupplierId,
+                Reason = request.Reason,
+                Notes = request.Notes,
+                Status = "Completed",
+                TenantId = tenantId
+            };
+            foreach (var item in request.Items)
+            {
+                var purchased = purchase.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+                if (purchased == null || item.Quantity <= 0 || item.Quantity > purchased.Quantity)
+                    throw new ArgumentException("Invalid purchase return quantity.");
+                var previouslyReturned = await _c.PurchaseReturnItems
+                    .Where(i => i.PurchaseReturn != null && i.PurchaseReturn.PurchaseId == purchase.Id && i.ProductId == item.ProductId)
+                    .SumAsync(i => i.Quantity);
+                if (previouslyReturned + item.Quantity > purchased.Quantity)
+                    throw new ArgumentException("Return quantity exceeds the purchased quantity.");
+                var product = await _c.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId && p.TenantId == tenantId)
+                    ?? throw new KeyNotFoundException("Product not found");
+                if (product.CurrentStock < item.Quantity)
+                    throw new InvalidOperationException("Insufficient stock for purchase return.");
+                var previousStock = product.CurrentStock;
+                product.CurrentStock -= item.Quantity;
+                _c.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = product.Id, TransactionType = StockTransactionType.Return,
+                    Quantity = -item.Quantity, PreviousStock = previousStock, NewStock = product.CurrentStock,
+                    ReferenceNumber = ret.ReturnNumber, ReferenceType = "PurchaseReturn", TenantId = tenantId
+                });
+                ret.Items.Add(new PurchaseReturnItem
+                {
+                    ProductId = item.ProductId, Quantity = item.Quantity, UnitPrice = purchased.UnitPrice,
+                    TotalPrice = item.Quantity * purchased.UnitPrice, TenantId = tenantId
+                });
+                ret.TotalAmount += item.Quantity * purchased.UnitPrice;
+            }
+            _c.PurchaseReturns.Add(ret);
+            await _c.SaveChangesAsync();
+            return ret;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var ret = await _c.PurchaseReturns.Include(r => r.Items).FirstOrDefaultAsync(r => r.Id == id)
+                ?? throw new KeyNotFoundException("Return not found");
+            foreach (var item in ret.Items)
+            {
+                var product = await _c.Products.FindAsync(item.ProductId)
+                    ?? throw new KeyNotFoundException("Product not found");
+                var previousStock = product.CurrentStock;
+                product.CurrentStock += item.Quantity;
+                _c.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = product.Id, TransactionType = StockTransactionType.Return,
+                    Quantity = item.Quantity, PreviousStock = previousStock, NewStock = product.CurrentStock,
+                    ReferenceNumber = ret.ReturnNumber, ReferenceType = "PurchaseReturnReversal", TenantId = ret.TenantId
+                });
+            }
+            ret.IsDeleted = true;
+            await _c.SaveChangesAsync();
+            return true;
+        }
+    }
     public class GoodsReceiptService : IGoodsReceiptService { private readonly ApplicationDbContext _c; public GoodsReceiptService(ApplicationDbContext c) { _c = c; } public async Task<List<GoodsReceipt>> GetAllAsync(int t) => await _c.GoodsReceipts.Include(g => g.Supplier).Where(g => g.TenantId == t).ToListAsync(); public async Task<GoodsReceipt?> GetByIdAsync(int id) => await _c.GoodsReceipts.Include(g => g.Items).FirstOrDefaultAsync(g => g.Id == id); public async Task<GoodsReceipt> CreateAsync(CreateGoodsReceiptRequest r, int t) { var gr = new GoodsReceipt { ReceiptNumber = $"GRN-{DateTime.UtcNow:yyyyMMddHHmmss}", PurchaseOrderId = r.PurchaseOrderId, PurchaseId = r.PurchaseId, SupplierId = r.SupplierId, Notes = r.Notes, TenantId = t }; foreach (var i in r.Items) gr.Items.Add(new GoodsReceiptItem { ProductId = i.ProductId, OrderedQuantity = i.OrderedQuantity, ReceivedQuantity = i.ReceivedQuantity, DamagedQuantity = i.DamagedQuantity, Notes = i.Notes, TenantId = t }); _c.GoodsReceipts.Add(gr); await _c.SaveChangesAsync(); return gr; } }
 
-    public class SalesReturnService : ISalesReturnService { private readonly ApplicationDbContext _c; public SalesReturnService(ApplicationDbContext c) { _c = c; } public async Task<List<SalesReturn>> GetAllAsync(int t) => await _c.SalesReturns.Include(r => r.Invoice).Where(r => r.TenantId == t).ToListAsync(); public async Task<SalesReturn?> GetByIdAsync(int id) => await _c.SalesReturns.Include(r => r.Items).FirstOrDefaultAsync(r => r.Id == id); public async Task<SalesReturn> CreateAsync(CreateSalesReturnRequest r, int t) { var ret = new SalesReturn { ReturnNumber = $"SR-{DateTime.UtcNow:yyyyMMddHHmmss}", InvoiceId = r.InvoiceId, CustomerId = r.CustomerId, Reason = r.Reason, Notes = r.Notes, TenantId = t }; foreach (var i in r.Items) { ret.Items.Add(new SalesReturnItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice, TotalPrice = i.Quantity * i.UnitPrice, TenantId = t }); ret.TotalAmount += i.Quantity * i.UnitPrice; } _c.SalesReturns.Add(ret); await _c.SaveChangesAsync(); return ret; } public async Task<bool> DeleteAsync(int id) { var r = await _c.SalesReturns.FindAsync(id) ?? throw new KeyNotFoundException(); _c.SalesReturns.Remove(r); await _c.SaveChangesAsync(); return true; } }
+    public class SalesReturnService : ISalesReturnService
+    {
+        private readonly ApplicationDbContext _c;
+        public SalesReturnService(ApplicationDbContext c) { _c = c; }
 
+        public async Task<List<SalesReturn>> GetAllAsync(int tenantId) =>
+            await _c.SalesReturns.Include(ret => ret.Items)
+                .Where(ret => ret.TenantId == tenantId).OrderByDescending(ret => ret.ReturnDate).ToListAsync();
+
+        public async Task<SalesReturn?> GetByIdAsync(int id) =>
+            await _c.SalesReturns.Include(ret => ret.Items).FirstOrDefaultAsync(ret => ret.Id == id);
+
+        public async Task<SalesReturn> CreateAsync(CreateSalesReturnRequest request, int tenantId)
+        {
+            var invoice = await _c.Invoices.Include(i => i.Items)
+                .FirstOrDefaultAsync(i => i.Id == request.InvoiceId && i.TenantId == tenantId)
+                ?? throw new KeyNotFoundException("Invoice not found");
+            if (request.Items.Count == 0) throw new ArgumentException("Select at least one return item.");
+
+            var ret = new SalesReturn
+            {
+                ReturnNumber = $"SR-{DateTime.UtcNow:yyyyMMddHHmmssfff}",
+                InvoiceId = invoice.Id,
+                CustomerId = request.CustomerId ?? invoice.CustomerId,
+                Reason = request.Reason,
+                Notes = request.Notes,
+                Status = "Completed",
+                TenantId = tenantId
+            };
+            foreach (var item in request.Items)
+            {
+                var sold = invoice.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+                if (sold == null || item.Quantity <= 0 || item.Quantity > sold.Quantity)
+                    throw new ArgumentException("Invalid sales return quantity.");
+                var previouslyReturned = await _c.SalesReturnItems
+                    .Where(i => i.SalesReturn != null && i.SalesReturn.InvoiceId == invoice.Id && i.ProductId == item.ProductId)
+                    .SumAsync(i => i.Quantity);
+                if (previouslyReturned + item.Quantity > sold.Quantity)
+                    throw new ArgumentException("Return quantity exceeds the sold quantity.");
+                var product = await _c.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId && p.TenantId == tenantId)
+                    ?? throw new KeyNotFoundException("Product not found");
+                var previousStock = product.CurrentStock;
+                product.CurrentStock += item.Quantity;
+                _c.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = product.Id, TransactionType = StockTransactionType.Return,
+                    Quantity = item.Quantity, PreviousStock = previousStock, NewStock = product.CurrentStock,
+                    ReferenceNumber = ret.ReturnNumber, ReferenceType = "SalesReturn", TenantId = tenantId
+                });
+                ret.Items.Add(new SalesReturnItem
+                {
+                    ProductId = item.ProductId, Quantity = item.Quantity, UnitPrice = sold.UnitPrice,
+                    TotalPrice = item.Quantity * sold.UnitPrice, TenantId = tenantId
+                });
+                ret.TotalAmount += item.Quantity * sold.UnitPrice;
+            }
+            _c.SalesReturns.Add(ret);
+            await _c.SaveChangesAsync();
+            return ret;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var ret = await _c.SalesReturns.Include(r => r.Items).FirstOrDefaultAsync(r => r.Id == id)
+                ?? throw new KeyNotFoundException("Return not found");
+            foreach (var item in ret.Items)
+            {
+                var product = await _c.Products.FindAsync(item.ProductId)
+                    ?? throw new KeyNotFoundException("Product not found");
+                if (product.CurrentStock < item.Quantity)
+                    throw new InvalidOperationException("Cannot delete return because the restocked items have already been used.");
+                var previousStock = product.CurrentStock;
+                product.CurrentStock -= item.Quantity;
+                _c.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = product.Id, TransactionType = StockTransactionType.Return,
+                    Quantity = -item.Quantity, PreviousStock = previousStock, NewStock = product.CurrentStock,
+                    ReferenceNumber = ret.ReturnNumber, ReferenceType = "SalesReturnReversal", TenantId = ret.TenantId
+                });
+            }
+            ret.IsDeleted = true;
+            await _c.SaveChangesAsync();
+            return true;
+        }
+    }
     public class QuotationService : IQuotationService { private readonly ApplicationDbContext _c; private readonly IInvoiceService _inv; public QuotationService(ApplicationDbContext c, IInvoiceService inv) { _c = c; _inv = inv; } public async Task<List<Quotation>> GetAllAsync(int t) => await _c.Quotations.Include(q => q.Customer).Where(q => q.TenantId == t).ToListAsync(); public async Task<Quotation?> GetByIdAsync(int id) => await _c.Quotations.Include(q => q.Items).ThenInclude(i => i.Product).FirstOrDefaultAsync(q => q.Id == id); public async Task<Quotation> CreateAsync(CreateQuotationRequest r, int t) { var q = new Quotation { QuotationNumber = $"QT-{DateTime.UtcNow:yyyyMMddHHmmss}", CustomerId = r.CustomerId, ValidUntil = r.ValidUntil, Notes = r.Notes, TenantId = t }; foreach (var i in r.Items) { q.Items.Add(new QuotationItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice, DiscountAmount = i.DiscountAmount, TenantId = t }); q.SubTotal += i.Quantity * i.UnitPrice; } q.TotalAmount = q.SubTotal; _c.Quotations.Add(q); await _c.SaveChangesAsync(); return q; } public async Task<Quotation> UpdateAsync(int id, UpdateQuotationRequest r) { var q = await _c.Quotations.FindAsync(id) ?? throw new KeyNotFoundException(); if (r.ValidUntil.HasValue) q.ValidUntil = r.ValidUntil; if (r.Notes != null) q.Notes = r.Notes; if (r.Status.HasValue) q.Status = r.Status.Value; await _c.SaveChangesAsync(); return q; } public async Task<bool> DeleteAsync(int id) { var q = await _c.Quotations.FindAsync(id) ?? throw new KeyNotFoundException(); q.IsDeleted = true; await _c.SaveChangesAsync(); return true; } public async Task<InvoiceResponse> ConvertToInvoiceAsync(int qid, int t) { var q = await _c.Quotations.Include(q => q.Items).FirstOrDefaultAsync(q => q.Id == qid) ?? throw new KeyNotFoundException(); var req = new CreateInvoiceRequest { CustomerId = q.CustomerId, Items = q.Items.Select(i => new CreateInvoiceItemRequest { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice }).ToList() }; var invoice = await _inv.CreateInvoiceAsync(req, t); q.Status = QuotationStatus.ConvertedToInvoice; q.ConvertedInvoiceId = invoice.Id; await _c.SaveChangesAsync(); return invoice; } }
 
     public class SalesOrderService : ISalesOrderService { private readonly ApplicationDbContext _c; private readonly IInvoiceService _inv; public SalesOrderService(ApplicationDbContext c, IInvoiceService inv) { _c = c; _inv = inv; } public async Task<List<SalesOrder>> GetAllAsync(int t) => await _c.SalesOrders.Include(so => so.Customer).Where(so => so.TenantId == t).ToListAsync(); public async Task<SalesOrder?> GetByIdAsync(int id) => await _c.SalesOrders.Include(so => so.Items).FirstOrDefaultAsync(so => so.Id == id); public async Task<SalesOrder> CreateAsync(CreateSalesOrderRequest r, int t) { var so = new SalesOrder { OrderNumber = $"SO-{DateTime.UtcNow:yyyyMMddHHmmss}", CustomerId = r.CustomerId, DeliveryDate = r.DeliveryDate, Notes = r.Notes, ShippingAddress = r.ShippingAddress, TenantId = t }; foreach (var i in r.Items) { so.Items.Add(new SalesOrderItem { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice, DiscountAmount = i.DiscountAmount, TenantId = t }); so.SubTotal += i.Quantity * i.UnitPrice; } so.TotalAmount = so.SubTotal; _c.SalesOrders.Add(so); await _c.SaveChangesAsync(); return so; } public async Task<SalesOrder> UpdateAsync(int id, UpdateSalesOrderRequest r) { var so = await _c.SalesOrders.FindAsync(id) ?? throw new KeyNotFoundException(); if (r.DeliveryDate.HasValue) so.DeliveryDate = r.DeliveryDate; if (r.Notes != null) so.Notes = r.Notes; if (r.Status.HasValue) so.Status = r.Status.Value; await _c.SaveChangesAsync(); return so; } public async Task<bool> DeleteAsync(int id) { var so = await _c.SalesOrders.FindAsync(id) ?? throw new KeyNotFoundException(); so.IsDeleted = true; await _c.SaveChangesAsync(); return true; } public async Task<InvoiceResponse> ConvertToInvoiceAsync(int soid, int t) { var so = await _c.SalesOrders.Include(so => so.Items).FirstOrDefaultAsync(so => so.Id == soid) ?? throw new KeyNotFoundException(); var req = new CreateInvoiceRequest { CustomerId = so.CustomerId, Items = so.Items.Select(i => new CreateInvoiceItemRequest { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice }).ToList() }; var inv = await _inv.CreateInvoiceAsync(req, t); so.Status = SalesOrderStatus.Delivered; so.ConvertedInvoiceId = inv.Id; await _c.SaveChangesAsync(); return inv; } }

@@ -33,7 +33,7 @@ namespace BillingSoftware.API.Middleware
 
             var (statusCode, message) = exception switch
             {
-                UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Unauthorized access"),
+                UnauthorizedAccessException => (HttpStatusCode.Unauthorized, exception.Message),
                 KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
                 ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
                 InvalidOperationException => (HttpStatusCode.Conflict, exception.Message),

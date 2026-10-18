@@ -70,7 +70,8 @@ namespace BillingSoftware.API.Services.Interfaces
     public interface INotificationService
     {
         Task<List<NotificationResponse>> GetNotificationsAsync(int tenantId, int userId);
-        Task<bool> MarkAsReadAsync(int id);
+        Task<bool> MarkAsReadAsync(int id, int tenantId, int userId);
+        Task<bool> MarkAllAsReadAsync(int tenantId, int userId);
         Task<bool> UpdateSettingsAsync(int tenantId, UpdateNotificationSettingsRequest request);
         Task<Notification> CreateNotificationAsync(int tenantId, int userId, string title, string message, string type);
     }

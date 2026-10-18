@@ -54,25 +54,44 @@ namespace BillingSoftware.API.Controllers.Business
         private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
         private int? CurrentUserId { get { var c = User.FindFirst("UserId")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value; return int.TryParse(c, out var id) ? id : null; } }
 
-        [HttpGet("customer/{customerId:int}")] public async Task<ActionResult<ApiResponse<List<Models.Entities.CustomerCredit>>>> GetByCustomer(int customerId) => Ok(ApiResponse<List<Models.Entities.CustomerCredit>>.SuccessResponse(await _credit.GetCreditsAsync(customerId, TenantId)));
-        [HttpGet("user/{userId:int}")] public async Task<ActionResult<ApiResponse<List<Models.Entities.CustomerCredit>>>> GetByUser(int userId) => Ok(ApiResponse<List<Models.Entities.CustomerCredit>>.SuccessResponse(await _credit.GetCreditsByUserAsync(userId, TenantId)));
-        [HttpGet("my")] public async Task<ActionResult<ApiResponse<List<Models.Entities.CustomerCredit>>>> GetMyCredits() { if (CurrentUserId == null) return Unauthorized(ApiResponse<List<Models.Entities.CustomerCredit>>.FailResponse("User not found")); return Ok(ApiResponse<List<Models.Entities.CustomerCredit>>.SuccessResponse(await _credit.GetCreditsByUserAsync(CurrentUserId.Value, TenantId))); }
+        private static CreditBillResponse MapCredit(Models.Entities.CustomerCredit credit) => new()
+        {
+            Id = credit.Id,
+            CreditBillNumber = $"CR-{credit.Id}",
+            CustomerId = credit.CustomerId,
+            CustomerName = credit.Customer?.Name ?? string.Empty,
+            CustomerPhone = credit.Customer?.Phone,
+            InvoiceId = credit.InvoiceId,
+            InvoiceNumber = credit.Invoice?.InvoiceNumber,
+            UserId = credit.UserId,
+            Amount = credit.Amount,
+            SettledAmount = credit.PaidAmount,
+            BalanceAmount = credit.BalanceAmount,
+            DueDate = credit.DueDate,
+            Status = credit.Status == "Paid" ? "settled" : credit.Status == "PartiallyPaid" ? "partially_settled" : "pending",
+            Notes = credit.Notes,
+            CreatedAt = credit.CreatedAt
+        };
+
+        [HttpGet("customer/{customerId:int}")] public async Task<ActionResult<ApiResponse<List<CreditBillResponse>>>> GetByCustomer(int customerId) => Ok(ApiResponse<List<CreditBillResponse>>.SuccessResponse((await _credit.GetCreditsAsync(customerId, TenantId)).Select(MapCredit).ToList()));
+        [HttpGet("user/{userId:int}")] public async Task<ActionResult<ApiResponse<List<CreditBillResponse>>>> GetByUser(int userId) => Ok(ApiResponse<List<CreditBillResponse>>.SuccessResponse((await _credit.GetCreditsByUserAsync(userId, TenantId)).Select(MapCredit).ToList()));
+        [HttpGet("my")] public async Task<ActionResult<ApiResponse<List<CreditBillResponse>>>> GetMyCredits() { if (CurrentUserId == null) return Unauthorized(ApiResponse<List<CreditBillResponse>>.FailResponse("User not found")); return Ok(ApiResponse<List<CreditBillResponse>>.SuccessResponse((await _credit.GetCreditsByUserAsync(CurrentUserId.Value, TenantId)).Select(MapCredit).ToList())); }
         [HttpGet("user/{userId:int}/balance")] public async Task<ActionResult<ApiResponse<decimal>>> GetUserBalance(int userId) => Ok(ApiResponse<decimal>.SuccessResponse(await _credit.GetUserCreditBalanceAsync(userId, TenantId)));
         [HttpGet("my/balance")] public async Task<ActionResult<ApiResponse<decimal>>> GetMyBalance() { if (CurrentUserId == null) return Unauthorized(ApiResponse<decimal>.FailResponse("User not found")); return Ok(ApiResponse<decimal>.SuccessResponse(await _credit.GetUserCreditBalanceAsync(CurrentUserId.Value, TenantId))); }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Models.Entities.CustomerCredit>>> CreateCredit([FromBody] CreateCreditBillRequest r)
+        public async Task<ActionResult<ApiResponse<CreditBillResponse>>> CreateCredit([FromBody] CreateCreditBillRequest r)
         {
             var effectiveUserId = r.UserId ?? CurrentUserId;
-            var result = await _credit.CreateCreditAsync(r.CustomerId, r.InvoiceId, r.Amount, TenantId, effectiveUserId);
-            return Ok(ApiResponse<Models.Entities.CustomerCredit>.SuccessResponse(result, "Credit bill created"));
+            var result = await _credit.CreateCreditAsync(r.CustomerId, r.InvoiceId, r.Amount, TenantId, effectiveUserId, r.DueDate, r.Notes);
+            return Ok(ApiResponse<CreditBillResponse>.SuccessResponse(MapCredit(result), "Credit bill created"));
         }
 
         [HttpPost("settle")]
-        public async Task<ActionResult<ApiResponse<Models.Entities.CustomerCredit>>> SettleCredit([FromBody] SettleCreditRequest r)
+        public async Task<ActionResult<ApiResponse<CreditBillResponse>>> SettleCredit([FromBody] SettleCreditRequest r)
         {
             var result = await _credit.SettleCreditAsync(r.CreditId, r.PaymentAmount, TenantId);
-            return Ok(ApiResponse<Models.Entities.CustomerCredit>.SuccessResponse(result, "Credit settled"));
+            return Ok(ApiResponse<CreditBillResponse>.SuccessResponse(MapCredit(result), "Credit settled"));
         }
     }
 }

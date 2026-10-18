@@ -142,6 +142,7 @@ namespace BillingSoftware.API.Services.Implementations
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new("UserId", user.Id.ToString()),
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.Name, user.FullName),
                 new(ClaimTypes.Role, user.Role.ToString()),

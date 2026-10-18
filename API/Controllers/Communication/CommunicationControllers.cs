@@ -176,7 +176,7 @@ namespace BillingSoftware.API.Controllers.Communication
             _postBilling = postBilling;
         }
         private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
-        private int UserId   => int.Parse(User.FindFirst("UserId")?.Value   ?? "0");
+        private int UserId   => int.Parse(User.FindFirst("UserId")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
 
         /// <summary>Get in-app notifications for the current user.</summary>
         [HttpGet]
@@ -188,7 +188,11 @@ namespace BillingSoftware.API.Controllers.Communication
         [HttpPatch("{id}/read")]
         public async Task<ActionResult<ApiResponse<bool>>> MarkRead(int id)
             => Ok(ApiResponse<bool>.SuccessResponse(
-                await _notify.MarkAsReadAsync(id), "Marked as read"));
+                await _notify.MarkAsReadAsync(id, TenantId, UserId), "Marked as read"));
+
+        [HttpPatch("read-all")]
+        public async Task<ActionResult<ApiResponse<bool>>> MarkAllRead()
+            => Ok(ApiResponse<bool>.SuccessResponse(await _notify.MarkAllAsReadAsync(TenantId, UserId), "Marked all as read"));
 
         /// <summary>Update which channels are enabled for in-app notifications.</summary>
         [HttpPut("settings")]

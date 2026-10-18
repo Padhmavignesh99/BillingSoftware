@@ -40,7 +40,7 @@ namespace BillingSoftware.API.Services.Interfaces
     {
         Task<List<CustomerCredit>> GetCreditsAsync(int customerId, int tenantId);
         /// <summary>Create a credit entry for a billing user. userId tracks which staff/user created the credit.</summary>
-        Task<CustomerCredit> CreateCreditAsync(int customerId, int invoiceId, decimal amount, int tenantId, int? userId = null);
+        Task<CustomerCredit> CreateCreditAsync(int customerId, int? invoiceId, decimal amount, int tenantId, int? userId = null, DateTime? dueDate = null, string? notes = null);
         /// <summary>Get all credit bills created by a specific user (userwise).</summary>
         Task<List<CustomerCredit>> GetCreditsByUserAsync(int userId, int tenantId);
         /// <summary>Settle (partially or fully) a credit bill.</summary>

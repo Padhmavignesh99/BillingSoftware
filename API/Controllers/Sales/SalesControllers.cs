@@ -110,10 +110,16 @@ namespace BillingSoftware.API.Controllers.Sales
         private readonly ISalesReturnService _s;
         public SalesReturnController(ISalesReturnService s) { _s = s; }
         private int TenantId => int.Parse(User.FindFirst("TenantId")?.Value ?? "0");
-        [HttpGet] public async Task<ActionResult<ApiResponse<List<SalesReturn>>>> GetAll() => Ok(ApiResponse<List<SalesReturn>>.SuccessResponse(await _s.GetAllAsync(TenantId)));
-        [HttpGet("{id}")] public async Task<ActionResult<ApiResponse<SalesReturn>>> GetById(int id) { var r = await _s.GetByIdAsync(id); return r == null ? NotFound(ApiResponse<SalesReturn>.FailResponse("Not found")) : Ok(ApiResponse<SalesReturn>.SuccessResponse(r)); }
-        [HttpPost] public async Task<ActionResult<ApiResponse<SalesReturn>>> Create([FromBody] CreateSalesReturnRequest r) => Ok(ApiResponse<SalesReturn>.SuccessResponse(await _s.CreateAsync(r, TenantId), "Created"));
-        [HttpDelete("{id}")] public async Task<ActionResult<ApiResponse<bool>>> Delete(int id) => Ok(ApiResponse<bool>.SuccessResponse(await _s.DeleteAsync(id), "Deleted"));
+        private static SalesReturnResponse Map(SalesReturn ret) => new()
+        {
+            Id = ret.Id, ReturnNumber = ret.ReturnNumber, InvoiceId = ret.InvoiceId, CustomerId = ret.CustomerId,
+            Reason = ret.Reason, ReturnDate = ret.ReturnDate, TotalAmount = ret.TotalAmount, Status = ret.Status,
+            Items = ret.Items.Select(i => new ReturnItemResponse { ProductId = i.ProductId, Quantity = i.Quantity, UnitPrice = i.UnitPrice, TotalPrice = i.TotalPrice }).ToList()
+        };
+        [HttpGet] public async Task<ActionResult<ApiResponse<List<SalesReturnResponse>>>> GetAll() => Ok(ApiResponse<List<SalesReturnResponse>>.SuccessResponse((await _s.GetAllAsync(TenantId)).Select(Map).ToList()));
+        [HttpGet("{id}")] public async Task<ActionResult<ApiResponse<SalesReturnResponse>>> GetById(int id) { var r = await _s.GetByIdAsync(id); return r == null || r.TenantId != TenantId ? NotFound(ApiResponse<SalesReturnResponse>.FailResponse("Not found")) : Ok(ApiResponse<SalesReturnResponse>.SuccessResponse(Map(r))); }
+        [HttpPost] public async Task<ActionResult<ApiResponse<SalesReturnResponse>>> Create([FromBody] CreateSalesReturnRequest r) => Ok(ApiResponse<SalesReturnResponse>.SuccessResponse(Map(await _s.CreateAsync(r, TenantId)), "Created"));
+        [HttpDelete("{id}")] public async Task<ActionResult<ApiResponse<bool>>> Delete(int id) { var ret = await _s.GetByIdAsync(id); if (ret == null || ret.TenantId != TenantId) return NotFound(ApiResponse<bool>.FailResponse("Not found")); return Ok(ApiResponse<bool>.SuccessResponse(await _s.DeleteAsync(id), "Deleted")); }
     }
 
     [ApiController] [Route("api/quotations")] [Authorize]

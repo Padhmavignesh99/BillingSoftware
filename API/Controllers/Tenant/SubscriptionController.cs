@@ -268,7 +268,7 @@ namespace BillingSoftware.API.Controllers.Tenant
                 },
                 Subscriptions = subs.Select(s => new
                 {
-                    s.Id, PlanName = s.Plan?.Name, s.Status, s.BillingCycle,
+                    s.Id, PlanName = s.Plan?.Name, Status = s.Status.ToString(), s.BillingCycle,
                     s.StartDate, s.EndDate, s.AmountPaid, s.AutoRenew,
                     DaysRemaining = Math.Max(0, (int)(s.EndDate - DateTime.UtcNow).TotalDays)
                 }),

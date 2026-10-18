@@ -12,7 +12,13 @@ namespace BillingSoftware.API.Controllers.Auth
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService) { _authService = authService; }
+        private readonly IUserService _userService;
+
+        public AuthController(IAuthService authService, IUserService userService)
+        {
+            _authService = authService;
+            _userService = userService;
+        }
 
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request)
@@ -37,5 +43,21 @@ namespace BillingSoftware.API.Controllers.Auth
         [HttpPost("verify-otp")]
         public async Task<ActionResult<ApiResponse<bool>>> VerifyOtp([FromBody] VerifyOtpRequest request)
         { var result = await _authService.VerifyOtpAsync(request); return Ok(ApiResponse<bool>.SuccessResponse(result, "OTP verified")); }
+
+        /// <summary>Returns the profile of the currently authenticated user (JWT required).</summary>
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<UserResponse>>> GetMe()
+        {
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value
+                         ?? User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
+                return Unauthorized(ApiResponse<UserResponse>.FailResponse("Unable to identify user from token."));
+            var user = await _userService.GetUserByIdAsync(userId);
+            return user == null
+                ? NotFound(ApiResponse<UserResponse>.FailResponse("User not found"))
+                : Ok(ApiResponse<UserResponse>.SuccessResponse(user));
+        }
     }
 }

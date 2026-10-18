@@ -434,10 +434,18 @@ namespace BillingSoftware.API.Services.Implementations
                     Type = n.Type.ToString(), IsRead = n.IsRead, CreatedAt = n.CreatedAt, ActionUrl = n.ActionUrl
                 }).ToListAsync();
 
-        public async Task<bool> MarkAsReadAsync(int id)
+        public async Task<bool> MarkAsReadAsync(int id, int tenantId, int userId)
         {
-            var n = await _context.Notifications.FindAsync(id) ?? throw new KeyNotFoundException("Notification not found");
+            var n = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id && n.TenantId == tenantId && n.UserId == userId) ?? throw new KeyNotFoundException("Notification not found");
             n.IsRead = true; n.ReadAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> MarkAllAsReadAsync(int tenantId, int userId)
+        {
+            var unread = await _context.Notifications.Where(n => n.TenantId == tenantId && n.UserId == userId && !n.IsRead).ToListAsync();
+            foreach (var notification in unread) { notification.IsRead = true; notification.ReadAt = DateTime.UtcNow; }
             await _context.SaveChangesAsync();
             return true;
         }

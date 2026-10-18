@@ -42,7 +42,7 @@ namespace BillingSoftware.API.Services.Implementations
                 CategoryId = request.CategoryId, BrandId = request.BrandId, UnitId = request.UnitId, PurchasePrice = request.PurchasePrice,
                 SellingPrice = request.SellingPrice, MRP = request.MRP, TaxRateId = request.TaxRateId, DiscountId = request.DiscountId,
                 CurrentStock = request.CurrentStock ?? 0, MinStockLevel = request.MinStockLevel, MaxStockLevel = request.MaxStockLevel,
-                ImageUrl = request.ImageUrl, IsService = request.IsService, TenantId = tenantId
+                ImageUrl = request.ImageUrl, IsService = request.IsService, ExpiryDate = request.ExpiryDate, TenantId = tenantId
             };
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -75,6 +75,7 @@ namespace BillingSoftware.API.Services.Implementations
             if (request.MaxStockLevel.HasValue) p.MaxStockLevel = request.MaxStockLevel;
             if (request.ImageUrl != null) p.ImageUrl = request.ImageUrl;
             if (request.IsService.HasValue) p.IsService = request.IsService.Value;
+            if (request.ExpiryDate.HasValue) p.ExpiryDate = request.ExpiryDate.Value;
             await _context.SaveChangesAsync();
             return (await GetProductByIdAsync(id, tenantId))!;
         }
@@ -110,7 +111,7 @@ namespace BillingSoftware.API.Services.Implementations
             Id = p.Id, Name = p.Name, SKU = p.SKU, Barcode = p.Barcode, Description = p.Description, HSNCode = p.HSNCode,
             CategoryName = p.Category?.Name, BrandName = p.Brand?.Name, UnitName = p.Unit?.Name, PurchasePrice = p.PurchasePrice,
             SellingPrice = p.SellingPrice, MRP = p.MRP, TaxRateName = p.TaxRate?.Name, TaxPercentage = p.TaxRate?.Percentage,
-            CurrentStock = p.CurrentStock, MinStockLevel = p.MinStockLevel, ImageUrl = p.ImageUrl, IsService = p.IsService, IsActive = p.IsActive
+            CurrentStock = p.CurrentStock, MinStockLevel = p.MinStockLevel, ImageUrl = p.ImageUrl, IsService = p.IsService, IsActive = p.IsActive, ExpiryDate = p.ExpiryDate
         };
     }
 

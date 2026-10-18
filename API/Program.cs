@@ -2,6 +2,7 @@ using BillingSoftware.API.Configuration;
 using BillingSoftware.API.Data;
 using BillingSoftware.API.Services.Implementations;
 using BillingSoftware.API.Services.Interfaces;
+using BillingSoftware.API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register DataSettings so ApplicationDbContext can read it via IConfiguration
 builder.Services.Configure<DataSettings>(
     builder.Configuration.GetSection("DataSettings"));
+
+// ─── CORS — allow UI dev-server (Vite 5173) and any localhost origin ─────────
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowUI", policy =>
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost:4173"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
 
 // ─── Core Services ────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
@@ -245,6 +261,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // ─── Swagger UI — available in all environments ────────────────────────────────
 app.UseSwagger();
@@ -260,11 +277,16 @@ app.UseSwaggerUI(options =>
 
 // ─── HTTP Pipeline ────────────────────────────────────────────────────────────
 app.UseHttpsRedirection();
+app.UseCors("AllowUI");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 // Redirect root "/" to Swagger UI
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
+// ─── Public health-check endpoint (no auth required) ──────────────────────────
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+   .ExcludeFromDescription();
 
 app.Run();

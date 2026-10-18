@@ -35,6 +35,9 @@ namespace BillingSoftware.API.Services.Implementations
 
         public async Task<InvoiceResponse> CreateInvoiceAsync(CreateInvoiceRequest request, int tenantId)
         {
+            if (request.Items.Count == 0) throw new ArgumentException("Invoice needs at least one item.");
+            if (request.PaymentMethod == PaymentMethod.Credit && !request.CustomerId.HasValue)
+                throw new ArgumentException("Credit sales require a customer.");
             var invoiceNumber = await GetNextInvoiceNumberAsync(tenantId);
             var invoice = new Invoice
             {
@@ -49,8 +52,11 @@ namespace BillingSoftware.API.Services.Implementations
             decimal subTotal = 0, taxTotal = 0;
             foreach (var item in request.Items)
             {
+                if (item.Quantity <= 0 || item.UnitPrice < 0) throw new ArgumentException("Invalid invoice item quantity or price.");
                 var product = await _context.Products.Include(p => p.TaxRate).FirstOrDefaultAsync(p => p.Id == item.ProductId && p.TenantId == tenantId)
                     ?? throw new KeyNotFoundException($"Product {item.ProductId} not found");
+                if (!product.IsService && product.CurrentStock < item.Quantity)
+                    throw new InvalidOperationException($"Insufficient stock for {product.Name}.");
                 var taxRate = item.TaxRateId.HasValue ? await _context.TaxRates.FindAsync(item.TaxRateId) : product.TaxRate;
                 var lineTotal = item.Quantity * item.UnitPrice;
                 var discountAmt = item.DiscountType == DiscountType.Percentage ? lineTotal * (item.DiscountValue ?? 0) / 100 : (item.DiscountValue ?? 0);
@@ -87,7 +93,7 @@ namespace BillingSoftware.API.Services.Implementations
             invoice.Status = InvoiceStatus.Pending;
 
             // If payment method provided, mark as paid
-            if (request.PaymentMethod.HasValue)
+            if (request.PaymentMethod.HasValue && request.PaymentMethod != PaymentMethod.Credit)
             {
                 invoice.PaidAmount = invoice.TotalAmount;
                 invoice.DueAmount = 0;
@@ -113,6 +119,20 @@ namespace BillingSoftware.API.Services.Implementations
             if (settings != null) settings.NextInvoiceNumber++;
 
             _context.Invoices.Add(invoice);
+            if (request.PaymentMethod == PaymentMethod.Credit && request.CustomerId.HasValue)
+            {
+                _context.CustomerCredits.Add(new CustomerCredit
+                {
+                    Invoice = invoice,
+                    CustomerId = request.CustomerId.Value,
+                    Amount = invoice.TotalAmount,
+                    BalanceAmount = invoice.TotalAmount,
+                    DueDate = request.DueDate ?? DateTime.UtcNow.AddDays(30),
+                    Status = "Pending",
+                    UserId = request.SalesPersonId,
+                    TenantId = tenantId
+                });
+            }
             await _context.SaveChangesAsync();
             return (await GetInvoiceByIdAsync(invoice.Id, tenantId))!;
         }
@@ -152,7 +172,7 @@ namespace BillingSoftware.API.Services.Implementations
 
         internal static InvoiceResponse MapToResponseStatic(Invoice i) => new()
         {
-            Id = i.Id, InvoiceNumber = i.InvoiceNumber, CustomerName = i.Customer?.Name, CustomerPhone = i.Customer?.Phone, CustomerEmail = i.Customer?.Email,
+            Id = i.Id, CustomerId = i.CustomerId, InvoiceNumber = i.InvoiceNumber, CustomerName = i.Customer?.Name, CustomerPhone = i.Customer?.Phone, CustomerEmail = i.Customer?.Email,
             InvoiceDate = i.InvoiceDate, DueDate = i.DueDate, SubTotal = i.SubTotal, TaxAmount = i.TaxAmount, DiscountAmount = i.DiscountAmount,
             RoundOff = i.RoundOff, TotalAmount = i.TotalAmount, PaidAmount = i.PaidAmount, DueAmount = i.DueAmount, Status = i.Status.ToString(),
             PaymentMethodName = i.PaymentMethod?.ToString(), Notes = i.Notes, PdfUrl = i.PdfUrl,
@@ -204,17 +224,17 @@ namespace BillingSoftware.API.Services.Implementations
 
         public async Task<(List<PurchaseResponse> Items, int TotalCount)> GetAllPurchasesAsync(int tenantId, PaginationRequest pagination)
         {
-            var query = _context.Purchases.Include(p => p.Supplier).Where(p => p.TenantId == tenantId);
+            var query = _context.Purchases.Include(p => p.Supplier).Include(p => p.Items).ThenInclude(item => item.Product).Where(p => p.TenantId == tenantId);
             var total = await query.CountAsync();
             var items = await query.OrderByDescending(p => p.CreatedAt).Skip((pagination.Page - 1) * pagination.PageSize).Take(pagination.PageSize)
-                .Select(p => new PurchaseResponse { Id = p.Id, PurchaseNumber = p.PurchaseNumber, SupplierName = p.Supplier != null ? p.Supplier.Name : null, PurchaseDate = p.PurchaseDate, DueDate = p.DueDate, SubTotal = p.SubTotal, TaxAmount = p.TaxAmount, DiscountAmount = p.DiscountAmount, TotalAmount = p.TotalAmount, PaidAmount = p.PaidAmount, DueAmount = p.DueAmount, Status = p.Status.ToString() }).ToListAsync();
+                .Select(p => new PurchaseResponse { Id = p.Id, SupplierId = p.SupplierId, PurchaseNumber = p.PurchaseNumber, SupplierName = p.Supplier != null ? p.Supplier.Name : null, PurchaseDate = p.PurchaseDate, DueDate = p.DueDate, SubTotal = p.SubTotal, TaxAmount = p.TaxAmount, DiscountAmount = p.DiscountAmount, TotalAmount = p.TotalAmount, PaidAmount = p.PaidAmount, DueAmount = p.DueAmount, Status = p.Status.ToString(), Items = p.Items.Select(item => new PurchaseItemResponse { ProductId = item.ProductId, ProductName = item.Product != null ? item.Product.Name : string.Empty, Quantity = item.Quantity, UnitPrice = item.UnitPrice, TaxAmount = item.TaxAmount, TotalPrice = item.TotalPrice }).ToList() }).ToListAsync();
             return (items, total);
         }
 
         public async Task<PurchaseResponse?> GetPurchaseByIdAsync(int id, int tenantId)
         {
-            var p = await _context.Purchases.Include(p => p.Supplier).Include(p => p.Items).FirstOrDefaultAsync(p => p.Id == id && p.TenantId == tenantId);
-            return p == null ? null : new PurchaseResponse { Id = p.Id, PurchaseNumber = p.PurchaseNumber, SupplierName = p.Supplier?.Name, PurchaseDate = p.PurchaseDate, DueDate = p.DueDate, SubTotal = p.SubTotal, TaxAmount = p.TaxAmount, DiscountAmount = p.DiscountAmount, TotalAmount = p.TotalAmount, PaidAmount = p.PaidAmount, DueAmount = p.DueAmount, Status = p.Status.ToString() };
+            var p = await _context.Purchases.Include(p => p.Supplier).Include(p => p.Items).ThenInclude(item => item.Product).FirstOrDefaultAsync(p => p.Id == id && p.TenantId == tenantId);
+            return p == null ? null : new PurchaseResponse { Id = p.Id, SupplierId = p.SupplierId, PurchaseNumber = p.PurchaseNumber, SupplierName = p.Supplier?.Name, PurchaseDate = p.PurchaseDate, DueDate = p.DueDate, SubTotal = p.SubTotal, TaxAmount = p.TaxAmount, DiscountAmount = p.DiscountAmount, TotalAmount = p.TotalAmount, PaidAmount = p.PaidAmount, DueAmount = p.DueAmount, Status = p.Status.ToString(), Items = p.Items.Select(item => new PurchaseItemResponse { ProductId = item.ProductId, ProductName = item.Product?.Name ?? string.Empty, Quantity = item.Quantity, UnitPrice = item.UnitPrice, TaxAmount = item.TaxAmount, TotalPrice = item.TotalPrice }).ToList() };
         }
 
         public async Task<PurchaseResponse> CreatePurchaseAsync(CreatePurchaseRequest request, int tenantId)
