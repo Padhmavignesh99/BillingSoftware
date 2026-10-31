@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-fixed-dim":"#bec6e0","surface-container-lowest":"#ffffff","inverse-surface":"#213145","on-tertiary-container":"#28a094","surface-container-low":"#eff4ff","surface-tint":"#545f73","primary-fixed-dim":"#bcc7de","surface-dim":"#cbdbf5","primary-container":"#1e293b","error":"#ba1a1a","error-container":"#ffdad6","on-background":"#0b1c30","primary":"#091426","on-secondary-container":"#5c647a","outline":"#75777d","on-surface":"#0b1c30","inverse-primary":"#bcc7de","on-tertiary-fixed-variant":"#005049","surface":"#f8f9ff","on-primary-fixed-variant":"#3c475a","surface-container-highest":"#d3e4fe","on-error-container":"#93000a","surface-container":"#e5eeff","background":"#f8f9ff","outline-variant":"#c5c6cd","primary-fixed":"#d8e3fb","on-secondary-fixed":"#131b2e","secondary-container":"#dae2fd","secondary-fixed":"#dae2fd","secondary":"#565e74","on-error":"#ffffff","surface-bright":"#f8f9ff","tertiary-fixed-dim":"#6bd8cb","tertiary-fixed":"#89f5e7","on-tertiary-fixed":"#00201d","on-tertiary":"#ffffff","surface-variant":"#d3e4fe","on-primary":"#ffffff","on-surface-variant":"#45474c","on-primary-container":"#8590a6","inverse-on-surface":"#eaf1ff","tertiary":"#001815","tertiary-container":"#002f2a","surface-container-high":"#dce9ff","on-primary-fixed":"#111c2d","on-secondary":"#ffffff","on-secondary-fixed-variant":"#3f465c"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-xl":"1.75rem","space-md":"0.75rem","space-sm":"0.5rem","gutter-desktop":"1.5rem","space-xs":"0.25rem","space-2xl":"2.5rem",margin:"1rem",gutter:"1rem","margin-tablet":"1.5rem","margin-desktop":"2rem","space-lg":"1.25rem"},fontFamily:{"label-md":["Inter"],"body-sm":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"headline-xl":["Hanken Grotesk"],"headline-sm":["Hanken Grotesk"],"label-sm":["Inter"],"headline-xl-mobile":["Hanken Grotesk"],"headline-lg":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"metric-display":["Hanken Grotesk"],"metric-display-mobile":["Hanken Grotesk"],"numeric-table":["JetBrains Mono"],"body-lg":["Inter"],"code-badge":["JetBrains Mono"]},fontSize:{"label-md":["13px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.025em",fontWeight:"700"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.03em",fontWeight:"600"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"metric-display":["32px",{lineHeight:"38px",letterSpacing:"-0.03em",fontWeight:"700"}],"metric-display-mobile":["24px",{lineHeight:"30px",letterSpacing:"-0.02em",fontWeight:"700"}],"numeric-table":["13px",{lineHeight:"18px",letterSpacing:"-0.01em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"400"}],"code-badge":["11px",{lineHeight:"14px",letterSpacing:"0em",fontWeight:"500"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest/50"><div class="flex items-center gap-space-sm"><img alt="OmniBill Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLPi7mm4jRe1QLD7u8yVHxawD3c0jqMpbiiyOs4YgovWZVUHMLfdF2KVR0S8f8G1z0w0yitaSHaaAAx8VO0kGaS4tQzGNgMgeawEY-lAESx592yG6zhY8aKTsshp0qmimCk5YbPt9bGI66wUXX0qMaIe7oTd4irQxC9q85IRKeTnjuMbwEepOliAuNA8oGaBglJVcgcRdcvRR-NsiRtqbJPKkh_S6aRT9oncprRDaGv9qmjMCHLYQlng"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight">LedgerFlow</span></div><span class="font-code-badge text-code-badge bg-surface-container px-space-xs py-0.5 rounded text-on-secondary-container">CORE</span></div><div class="p-space-sm"><div class="p-space-sm rounded-lg bg-surface-container-lowest shadow-[0_1px_2px_0_rgba(15,23,42,0.05)] cursor-pointer"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase text-secondary">Workspace Context</span><span class="material-symbols-outlined text-[16px] text-secondary">swap_horiz</span></div><div class="mt-1 flex items-center justify-between"><span class="font-headline-sm text-headline-sm text-on-surface truncate">Acme Corp Cloud</span><span class="font-code-badge text-code-badge bg-secondary-container text-on-secondary-fixed px-1.5 py-0.5 rounded">TENANT</span></div><span class="font-body-sm text-body-sm text-on-surface-variant block mt-0.5">Switch to SuperAdmin Control</span></div></div><div class="px-space-md py-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Operations &amp; Control</span></div><nav class="flex-1 px-space-sm space-y-0.5 overflow-y-auto" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="superadmin-platform-overview" href="#"><span class="material-symbols-outlined text-[18px]">space_dashboard</span>Platform Overview</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="tenant-registry" href="#"><span class="material-symbols-outlined text-[18px]">domain</span>Tenant Registry</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="global-plans-and-metering" href="#"><span class="material-symbols-outlined text-[18px]">speed</span>Global Plans &amp; Metering</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="gateway-orchestration" href="#"><span class="material-symbols-outlined text-[18px]">account_tree</span>Gateway Orchestration</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="audit-and-security-logs" href="#"><span class="material-symbols-outlined text-[18px]">verified_user</span>Audit &amp; Security Logs</a><div class="pt-space-sm pb-space-xs px-space-sm"><span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Revenue Engine</span></div><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="tenant-invoicing-and-revenue" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span>Tenant Invoicing &amp; Revenue</a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2 transition-all bg-primary-container text-on-primary-container font-semibold rounded-lg" data-path="customer-subscriptions" href="#"><span class="material-symbols-outlined text-[18px]">loyalty</span>Customer Subscriptions</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="payment-runs-and-dunning" href="#"><span class="material-symbols-outlined text-[18px]">sync_saved_locally</span>Payment Runs &amp; Dunning</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="tax-and-compliance" href="#"><span class="material-symbols-outlined text-[18px]">policy</span>Tax &amp; Compliance</a><a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="system-settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span>System Settings</a></nav><div class="p-space-sm bg-surface-container-lowest/60"><div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="font-code-badge text-code-badge text-on-surface-variant font-medium">Live Production v2.4</span></div><span class="material-symbols-outlined text-[16px] text-secondary">shield</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-md z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex items-center justify-between px-gutter-desktop"><div class="flex items-center gap-space-md"><div class="flex items-center text-on-surface-variant font-body-sm text-body-sm gap-2"><span class="font-label-sm text-label-sm uppercase text-secondary font-semibold">Platform</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="font-label-sm text-label-sm uppercase text-secondary font-semibold">Billing Engine</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-primary font-medium">Active Telemetry</span></div><button class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1.5 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]"><span class="material-symbols-outlined text-[16px]">search</span><span>Quick search...</span><kbd class="font-code-badge text-code-badge bg-surface-container px-1 py-0.5 rounded text-secondary">⌘K</kbd></button></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="font-code-badge text-code-badge text-on-surface font-semibold">US-EAST-1</span></div><button class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-4 h-4 bg-error text-on-error font-code-badge text-[10px] rounded-full flex items-center justify-center font-bold">5</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right"><span class="font-label-sm text-label-sm font-semibold text-primary leading-tight">Elena Rostova</span><span class="font-code-badge text-code-badge text-on-surface-variant">VP Revenue Ops</span></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_1px_2px_0_rgba(15,23,42,0.05)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNa5odPWyqrYVcSVUGVmsHc2Q-Afe8kc-EnBIlHzAeTIebGUqyx_cgQWOy-OHA9MXeb7I6Z2Hcet9vVgsqWAavNVPlwnBcu1XwV6HsafOjpdcGdxX7hhoMDmr0LWxKmWBeLYMkXoDWAGRQm-lOcj1WBcRYGepBiFGLdJOc3wB4XBFJat71iWLAJ4hkiwfwb9_bkPZ2S_t0mP-a3zH1Z1aGPfnH3CmBWUOr8CccA-Epv-2bBGwnUBbDJw"/></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-header & Action Bar -->
+<div class="px-gutter-desktop py-space-xl bg-surface-container-lowest shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-1">
+<span>Acme Technologies Corp</span>
+<span>•</span>
+<span class="text-on-tertiary-container font-code-badge">TENANT ID #ACM-8841</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Customer Subscriptions &amp; Dunning Lifecycle</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage customer billing profiles, automated payment retries, recurring plans, and contract add-ons.</p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm shadow-sm" id="btn-export-cohort">
+<span class="material-symbols-outlined text-[18px] text-secondary">download</span>
+<span>Export MRR Cohort</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm shadow-sm" id="btn-manual-retry">
+<span class="material-symbols-outlined text-[18px] text-on-tertiary-container">sync</span>
+<span>Trigger Manual Retry Batch</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary transition-colors font-body-sm text-body-sm shadow-sm" id="btn-pause-selected">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">pause_circle</span>
+<span class="text-on-primary font-medium">Pause Selected (0)</span>
+</button>
+</div>
+</div>
+<!-- Quick Metric Badges / Telemetry Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md mt-space-lg pt-space-md border-t-0">
+<div class="p-space-md rounded-xl bg-surface-container-low/70 flex items-center justify-between shadow-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase">Active MRR Base</span>
+<div class="font-headline-md text-headline-md text-primary mt-0.5">$384,190</div>
+<span class="font-body-sm text-body-sm text-on-tertiary-container flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +8.4% vs last mo
+          </span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low/70 flex items-center justify-between shadow-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase">Delinquent Exposure</span>
+<div class="font-headline-md text-headline-md text-error mt-0.5">$6,440</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+            24 Accounts in Dunning
+          </span>
+</div>
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low/70 flex items-center justify-between shadow-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase">Autonomous Save Rate</span>
+<div class="font-headline-md text-headline-md text-on-tertiary-container mt-0.5">86.4%</div>
+<span class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-0.5">
+            Zero-agent interaction
+          </span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">auto_mode</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low/70 flex items-center justify-between shadow-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase">Renewals (Next 7D)</span>
+<div class="font-headline-md text-headline-md text-primary mt-0.5">142 Accounts</div>
+<span class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-0.5">
+            Est. volume: $62.8k
+          </span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">event_repeat</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filters & Segmentation Control Hub -->
+<div class="px-gutter-desktop py-space-md">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<!-- Status Tabs -->
+<div class="flex items-center gap-1 overflow-x-auto p-1 bg-surface-container rounded-xl shadow-inner">
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap" data-filter-status="all">
+<span>All</span>
+<span class="font-code-badge text-code-badge bg-surface-container-low px-1.5 py-0.5 rounded text-secondary">1,420</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-secondary hover:text-primary font-label-md text-label-md transition-all flex items-center gap-1.5 whitespace-nowrap" data-filter-status="active">
+<span>Active</span>
+<span class="font-code-badge text-code-badge bg-surface-container-low px-1.5 py-0.5 rounded text-on-tertiary-container">1,342</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-secondary hover:text-primary font-label-md text-label-md transition-all flex items-center gap-1.5 whitespace-nowrap" data-filter-status="dunning">
+<span>In Dunning</span>
+<span class="font-code-badge text-code-badge bg-error-container text-on-error-container px-1.5 py-0.5 rounded">24</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-secondary hover:text-primary font-label-md text-label-md transition-all flex items-center gap-1.5 whitespace-nowrap" data-filter-status="paused">
+<span>Paused</span>
+<span class="font-code-badge text-code-badge bg-surface-container-low px-1.5 py-0.5 rounded text-secondary">18</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-secondary hover:text-primary font-label-md text-label-md transition-all flex items-center gap-1.5 whitespace-nowrap" data-filter-status="canceled">
+<span>Canceled</span>
+<span class="font-code-badge text-code-badge bg-surface-container-low px-1.5 py-0.5 rounded text-secondary">36</span>
+</button>
+</div>
+<!-- Cadence & Search Bars -->
+<div class="flex items-center gap-space-sm flex-wrap sm:flex-nowrap">
+<div class="flex items-center bg-surface-container rounded-lg p-0.5 text-secondary text-body-sm font-body-sm">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-medium shadow-sm" data-filter-cadence="all">All Cadences</button>
+<button class="px-3 py-1.5 rounded-lg hover:text-primary transition-colors" data-filter-cadence="monthly">Monthly</button>
+<button class="px-3 py-1.5 rounded-lg hover:text-primary transition-colors" data-filter-cadence="annual">Annual</button>
+<button class="px-3 py-1.5 rounded-lg hover:text-primary transition-colors" data-filter-cadence="multi">Multi-Year</button>
+</div>
+<div class="relative min-w-[240px] flex-1 sm:flex-none">
+<span class="material-symbols-outlined text-[18px] text-secondary absolute left-3 top-2.5">filter_alt</span>
+<input class="w-full pl-9 pr-space-md py-1.5 bg-surface-container-lowest rounded-lg font-body-sm text-body-sm text-primary placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-on-tertiary-container shadow-sm" id="table-search-input" placeholder="Search customer, plan, card..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content Layout (Split: 8 Cols Portfolio Table / 4 Cols Recovery Engine) -->
+<div class="px-gutter-desktop pb-space-2xl grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT 8 COLS: Subscriptions Table Portfolio -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<!-- Table Action Header -->
+<div class="px-space-md py-3 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<input class="rounded text-primary focus:ring-0 cursor-pointer h-4 w-4" id="select-all-customers" type="checkbox"/>
+<span class="font-label-sm text-label-sm uppercase text-secondary">Showing 5 of 1,420 Subscriptions</span>
+</div>
+<div class="flex items-center gap-space-sm font-code-badge text-code-badge text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span> Healthy: 1,342</span>
+<span class="flex items-center gap-1 ml-2"><span class="w-2 h-2 rounded-full bg-error"></span> Action Req: 24</span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left" id="subscription-ledger-table">
+<thead>
+<tr class="bg-surface-container-low/40 text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-2.5 px-space-md w-8"></th>
+<th class="py-2.5 px-space-md">Customer &amp; Company</th>
+<th class="py-2.5 px-space-md">Plan / Cadence</th>
+<th class="py-2.5 px-space-md text-right">MRR Value</th>
+<th class="py-2.5 px-space-md text-right">Next Renewal</th>
+<th class="py-2.5 px-space-md">Payment Method</th>
+<th class="py-2.5 px-space-md text-center">Dunning Stage</th>
+<th class="py-2.5 px-space-md text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-sm text-body-sm">
+<!-- Customer 1: NextGen BioLabs -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-cadence="annual" data-status="active">
+<td class="py-3 px-space-md">
+<input class="row-selector rounded text-primary cursor-pointer h-4 w-4" type="checkbox"/>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-headline-sm text-headline-sm text-primary font-bold">
+                      NB
+                    </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-primary">NextGen BioLabs</div>
+<div class="font-code-badge text-code-badge text-on-surface-variant">cust_9920147a</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md">
+<div class="font-label-md text-label-md text-primary font-medium">Enterprise Core</div>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Annual Contract</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table font-semibold text-primary">$3,200.00</span>
+<span class="text-secondary font-code-badge text-[10px] block">/mo</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table text-on-surface font-medium">Oct 29, 2024</span>
+<span class="font-code-badge text-code-badge text-on-surface-variant block">Renews in 18d</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">credit_card</span>
+<span class="font-code-badge text-code-badge text-primary">MC •••• 8812</span>
+</div>
+<span class="font-code-badge text-[10px] text-on-surface-variant block">Exp 09/27</span>
+</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                    Healthy
+                  </span>
+</td>
+<td class="py-3 px-space-md text-right relative">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="Manage Subscription">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors dropdown-trigger" title="More Actions">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Customer 2: AeroDynamics AI -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group bg-surface-container-low/20" data-cadence="monthly" data-status="dunning">
+<td class="py-3 px-space-md">
+<input class="row-selector rounded text-primary cursor-pointer h-4 w-4" type="checkbox"/>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center font-headline-sm text-headline-sm text-on-secondary-container font-bold">
+                      AA
+                    </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-primary">AeroDynamics AI</div>
+<div class="font-code-badge text-code-badge text-on-surface-variant">cust_4410928f</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md">
+<div class="font-label-md text-label-md text-primary font-medium">Growth Metered</div>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Monthly Flex</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table font-semibold text-primary">$1,850.00</span>
+<span class="text-secondary font-code-badge text-[10px] block">/mo + overage</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table text-primary font-medium">Oct 14, 2024</span>
+<span class="font-code-badge text-code-badge text-error block font-semibold">Renews in 3d</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+<span class="font-code-badge text-code-badge text-primary">Visa •••• 1042</span>
+</div>
+<span class="font-code-badge text-[10px] text-error block font-medium">Expired 09/24</span>
+</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold animate-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Grace Period (Card Expired)
+                  </span>
+</td>
+<td class="py-3 px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="px-2 py-1 rounded bg-error-container text-on-error-container hover:bg-error hover:text-on-error transition-all font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">forward_to_inbox</span>
+<span>Push Link</span>
+</button>
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="More Actions">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Customer 3: Quantum Software -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-cadence="monthly" data-status="active">
+<td class="py-3 px-space-md">
+<input class="row-selector rounded text-primary cursor-pointer h-4 w-4" type="checkbox"/>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center font-headline-sm text-headline-sm text-primary font-bold">
+                      QS
+                    </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-primary">Quantum Software</div>
+<div class="font-code-badge text-code-badge text-on-surface-variant">cust_7721830m</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md">
+<div class="font-label-md text-label-md text-primary font-medium">Scale Tier</div>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Monthly Regular</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table font-semibold text-primary">$940.00</span>
+<span class="text-secondary font-code-badge text-[10px] block">/mo</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table text-on-surface font-medium">Oct 23, 2024</span>
+<span class="font-code-badge text-code-badge text-on-surface-variant block">Renews in 12d</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">credit_card</span>
+<span class="font-code-badge text-code-badge text-primary">AMEX •••• 4001</span>
+</div>
+<span class="font-code-badge text-[10px] text-on-surface-variant block">Exp 12/26</span>
+</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                    Healthy
+                  </span>
+</td>
+<td class="py-3 px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="Manage Subscription">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="More Actions">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Customer 4: Zenith Retail Corp -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group" data-cadence="annual" data-status="active">
+<td class="py-3 px-space-md">
+<input class="row-selector rounded text-primary cursor-pointer h-4 w-4" type="checkbox"/>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-headline-sm text-headline-sm text-primary font-bold">
+                      ZR
+                    </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-primary">Zenith Retail Corp</div>
+<div class="font-code-badge text-code-badge text-on-surface-variant">cust_1092839x</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md">
+<div class="font-label-md text-label-md text-primary font-medium">Custom Enterprise</div>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Annual Prepaid + SLA</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table font-semibold text-primary">$8,500.00</span>
+<span class="text-secondary font-code-badge text-[10px] block">/mo ($102k/yr)</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table text-on-surface font-medium">Nov 25, 2024</span>
+<span class="font-code-badge text-code-badge text-on-surface-variant block">Renews in 45d</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">account_balance</span>
+<span class="font-code-badge text-code-badge text-primary">ACH Auto-Debit</span>
+</div>
+<span class="font-code-badge text-[10px] text-on-surface-variant block">Chase •••• 9102</span>
+</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container-low text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+                    Healthy
+                  </span>
+</td>
+<td class="py-3 px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="Manage Subscription">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="More Actions">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Customer 5: Solaris Energy -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group bg-error-container/10" data-cadence="monthly" data-status="dunning">
+<td class="py-3 px-space-md">
+<input class="row-selector rounded text-primary cursor-pointer h-4 w-4" type="checkbox"/>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-error-container flex items-center justify-center font-headline-sm text-headline-sm text-error font-bold">
+                      SE
+                    </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-primary">Solaris Energy</div>
+<div class="font-code-badge text-code-badge text-on-surface-variant">cust_5592811q</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md">
+<div class="font-label-md text-label-md text-primary font-medium">Team Starter</div>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Monthly Plan</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table font-semibold text-primary">$450.00</span>
+<span class="text-secondary font-code-badge text-[10px] block">/mo</span>
+</td>
+<td class="py-3 px-space-md text-right">
+<span class="font-numeric-table text-numeric-table text-error font-medium">Tomorrow</span>
+<span class="font-code-badge text-code-badge text-error block font-semibold">Renews in 1d</span>
+</td>
+<td class="py-3 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">credit_card_off</span>
+<span class="font-code-badge text-code-badge text-primary">Visa •••• 9921</span>
+</div>
+<span class="font-code-badge text-[10px] text-error block">Card Declined (NSF)</span>
+</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Retry 2 of 3 (Insufficient Funds)
+                  </span>
+</td>
+<td class="py-3 px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="px-2 py-1 rounded bg-primary text-on-primary hover:bg-inverse-surface transition-all font-label-sm text-label-sm font-semibold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>Retry Now</span>
+</button>
+<button class="p-1 rounded text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="More Actions">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Strip -->
+<div class="px-space-md py-3 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span>Rows per page:</span>
+<select class="bg-surface-container-lowest px-2 py-1 rounded font-code-badge text-code-badge text-primary focus:outline-none">
+<option>10</option>
+<option selected="">25</option>
+<option>50</option>
+</select>
+<span class="ml-2">1–5 of 1,420 items</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container text-secondary disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">first_page</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container text-secondary disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-2 py-0.5 bg-surface-container-lowest rounded font-code-badge text-code-badge font-bold text-primary shadow-sm">1</span>
+<span class="px-2 py-0.5 text-secondary font-code-badge text-code-badge">2</span>
+<span class="px-2 py-0.5 text-secondary font-code-badge text-code-badge">3</span>
+<span class="text-secondary">...</span>
+<span class="px-2 py-0.5 text-secondary font-code-badge text-code-badge">57</span>
+<button class="p-1.5 rounded hover:bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[18px]">last_page</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Action Ledger Card: Sub-actions Banner -->
+<div class="p-space-md rounded-xl bg-surface-container-low/80 flex flex-col md:flex-row items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">credit_score</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-primary">Automated Card Account Updater (CAU) Active</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Syncing real-time updates directly via Visa Account Updater and Mastercard ABU.</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="font-code-badge text-code-badge text-on-tertiary-container bg-surface-container-lowest px-2 py-1 rounded shadow-sm flex items-center gap-1 font-semibold">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span> CAU Connected
+          </span>
+<button class="px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-container text-body-sm font-body-sm transition-colors shadow-sm font-medium">
+            View Sync Logs
+          </button>
+</div>
+</div>
+</div>
+<!-- RIGHT 4 COLS: Dunning & Revenue Recovery Rules Engine Side-Card -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Recovery Rules Engine Panel -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">hub</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">Dunning &amp; Revenue Recovery Rules Engine</h2>
+</div>
+<span class="font-code-badge text-code-badge bg-surface-container text-on-tertiary-container font-semibold px-2 py-0.5 rounded">V3.2 ACTIVE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Predictive multi-tiered recovery workflow designed to salvage at-risk MRR before terminal subscription cancellation.
+        </p>
+<!-- Metric Highlight Card -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">Real-Time Dunning Recovery Rate</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">verified</span>
+</div>
+<div class="flex items-baseline gap-space-sm mt-1">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">86.4%</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">+$22,410 recovered MTD</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Success achieved without manual customer service agent contact.
+          </div>
+<!-- Simple Recovery Sparkline / Progress Indicator -->
+<div class="w-full bg-surface-container-highest h-2 rounded-full mt-space-md overflow-hidden flex">
+<div class="bg-on-tertiary-container h-full" style="width: 86.4%;"></div>
+<div class="bg-error h-full" style="width: 13.6%;"></div>
+</div>
+<div class="flex justify-between items-center text-[10px] font-code-badge text-secondary mt-1">
+<span>86.4% Autonomous Recovery</span>
+<span>13.6% Terminal Churn</span>
+</div>
+</div>
+<!-- Sequential Lifecycle Workflow -->
+<div class="flex flex-col gap-space-md mt-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Automated Execution Pipeline</span>
+<div class="relative pl-6 space-y-space-md before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container">
+<!-- Step 1 -->
+<div class="relative group">
+<div class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-primary flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-primary">Day 0: Decline Trigger</span>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">Immediate</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Soft decline webhook detected. Real-time ledger flags delinquency and halts non-essential API bursts while keeping portal accessible.
+              </p>
+</div>
+<!-- Step 2 -->
+<div class="relative group">
+<div class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-on-tertiary-container flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-primary">Day 2: AI Smart Retry</span>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-on-tertiary-container font-medium">+48 Hours</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Autonomous retry using Stripe Network Tokens &amp; optimal card routing time algorithms (off-peak timezone balancing).
+              </p>
+</div>
+<!-- Step 3 -->
+<div class="relative group">
+<div class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-secondary flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-primary">Day 4: Branded Recovery Push</span>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-surface-container text-secondary">+96 Hours</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Automated email delivery containing zero-login self-serve payment portal link with tokenized 1-click Apple Pay &amp; Google Pay card swaps.
+              </p>
+</div>
+<!-- Step 4 -->
+<div class="relative group">
+<div class="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-error flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-error">Day 7: Final Retry &amp; Warning</span>
+<span class="font-code-badge text-code-badge px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-medium">+168 Hours</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Final payment execution run. If unsuccessful, automatic system dispatch of service degradation warning and 72-hour grace suspension timer.
+              </p>
+</div>
+</div>
+</div>
+<!-- Strategy Config Button -->
+<button class="w-full mt-space-sm flex items-center justify-center gap-space-xs px-space-md py-2.5 rounded-lg bg-primary text-on-primary hover:bg-inverse-surface transition-all font-label-md text-label-md font-semibold shadow-sm" id="btn-configure-strategy">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Configure Dunning Strategy &amp; Email Templates</span>
+</button>
+</div>
+<!-- Quick Telemetry & Health Audit Box -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase text-secondary font-semibold">Gateway Processing Health</span>
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-on-surface">Stripe Primary Gateway</span>
+<span class="font-code-badge text-code-badge text-on-tertiary-container font-bold">99.98% SUCCESS</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface">Adyen Fallback Failover</span>
+<span class="font-code-badge text-code-badge text-secondary">HOT STANDBY</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface">Plaid Bank Verification</span>
+<span class="font-code-badge text-code-badge text-on-tertiary-container font-bold">OPERATIONAL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Slide-Over Simulation / Configuration Drawer (Hidden by Default) -->
+<div class="fixed inset-0 z-50 flex justify-end bg-inverse-surface/40 backdrop-blur-sm hidden transition-opacity" id="dunning-config-drawer">
+<div class="w-full max-w-lg bg-surface-container-lowest h-full shadow-2xl flex flex-col justify-between overflow-y-auto">
+<div>
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">tune</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Dunning Recovery Rules</h3>
+<span class="font-code-badge text-code-badge text-on-surface-variant">Acme Technologies Corp • Production</span>
+</div>
+</div>
+<button class="p-1 rounded text-secondary hover:text-primary" id="btn-close-drawer">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<div class="p-space-lg space-y-space-lg">
+<!-- Policy Option 1 -->
+<div>
+<label class="font-label-md text-label-md font-semibold text-primary block mb-1">Max Retry Threshold</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Number of automated attempts before escalating to account lock.</p>
+<select class="w-full p-2 rounded-lg bg-surface-container-lowest border-0 ring-1 ring-secondary/30 font-body-sm text-body-sm text-primary focus:ring-2 focus:ring-on-tertiary-container">
+<option>3 attempts over 7 days (Recommended)</option>
+<option>4 attempts over 10 days</option>
+<option>5 attempts over 14 days (Aggressive retention)</option>
+</select>
+</div>
+<!-- Policy Option 2 -->
+<div>
+<label class="font-label-md text-label-md font-semibold text-primary block mb-1">Client In-App Grace Banner</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Display non-blocking soft warning notification directly inside customer UI during grace window.</p>
+<div class="flex items-center gap-space-sm">
+<input checked="" class="h-4 w-4 rounded text-primary focus:ring-0" id="banner-toggle" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-primary" for="banner-toggle">Display persistent warning banner in Acme Client Portal</label>
+</div>
+</div>
+<!-- Email Customization Previews -->
+<div>
+<label class="font-label-md text-label-md font-semibold text-primary block mb-1">Dunning Email Notification Template</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Branded recovery emails include dynamically generated cryptographic self-service update links.</p>
+<div class="p-space-md rounded-xl bg-surface-container-low font-code-badge text-code-badge text-on-surface-variant leading-relaxed">
+              Subject: Urgent: Payment update required for {{account.name}} subscription<br/><br/>
+              Hi {{customer.first_name}},<br/>
+              We encountered a card authorization decline for invoice {{invoice.number}} ($3,200.00). Please update your details via the secure portal below to avoid service interruption:
+              <br/><br/>
+<span class="text-on-tertiary-container font-semibold">[Update Payment Details Securely]</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-space-lg bg-surface-container-low flex items-center justify-end gap-space-sm">
+<button class="px-space-md py-2 rounded-lg text-secondary hover:text-primary font-body-sm text-body-sm" id="btn-cancel-drawer">Cancel</button>
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary hover:bg-inverse-surface font-label-md text-label-md font-semibold shadow-sm" id="btn-save-drawer">Save Dunning Strategy</button>
+</div>
+</div>
+</div>
+<!-- Inline Micro-interactions Script -->
+<script>
+    (function () {
+      // Elements
+      const selectAll = document.getElementById('select-all-customers');
+      const rowCheckboxes = document.querySelectorAll('.row-selector');
+      const pauseBtn = document.getElementById('btn-pause-selected');
+      const statusButtons = document.querySelectorAll('[data-filter-status]');
+      const cadenceButtons = document.querySelectorAll('[data-filter-cadence]');
+      const searchInput = document.getElementById('table-search-input');
+      const rows = document.querySelectorAll('#subscription-ledger-table tbody tr');
+
+      const configBtn = document.getElementById('btn-configure-strategy');
+      const drawer = document.getElementById('dunning-config-drawer');
+      const closeBtn = document.getElementById('btn-close-drawer');
+      const cancelBtn = document.getElementById('btn-cancel-drawer');
+      const saveBtn = document.getElementById('btn-save-drawer');
+
+      // Selection logic
+      function updateBulkAction() {
+        const checkedCount = document.querySelectorAll('.row-selector:checked').length;
+        if (checkedCount > 0) {
+          pauseBtn.querySelector('span:last-child').textContent = `Pause Selected (${checkedCount})`;
+          pauseBtn.classList.remove('opacity-60');
+        } else {
+          pauseBtn.querySelector('span:last-child').textContent = 'Pause Selected (0)';
+          pauseBtn.classList.add('opacity-60');
+        }
+      }
+
+      if (selectAll) {
+        selectAll.addEventListener('change', function () {
+          rowCheckboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+          });
+          updateBulkAction();
+        });
+      }
+
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          updateBulkAction();
+          if (!cb.checked && selectAll) selectAll.checked = false;
+        });
+      });
+
+      // Filter tabs interactive switching
+      statusButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          statusButtons.forEach(b => {
+            b.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+            b.classList.add('text-secondary');
+          });
+          btn.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+          btn.classList.remove('text-secondary');
+
+          const status = btn.getAttribute('data-filter-status');
+          rows.forEach(r => {
+            if (status === 'all' || r.getAttribute('data-status') === status) {
+              r.style.display = '';
+            } else {
+              r.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      cadenceButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          cadenceButtons.forEach(b => {
+            b.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-medium');
+          });
+          btn.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-medium');
+          
+          const cadence = btn.getAttribute('data-filter-cadence');
+          rows.forEach(r => {
+            if (cadence === 'all' || r.getAttribute('data-cadence') === cadence) {
+              r.style.display = '';
+            } else {
+              r.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Table Search filter
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.toLowerCase();
+          rows.forEach(r => {
+            const text = r.innerText.toLowerCase();
+            r.style.display = text.includes(val) ? '' : 'none';
+          });
+        });
+      }
+
+      // Drawer Open/Close
+      if (configBtn && drawer) {
+        configBtn.addEventListener('click', () => {
+          drawer.classList.remove('hidden');
+        });
+      }
+
+      const closeDrawer = () => {
+        if (drawer) drawer.classList.add('hidden');
+      };
+
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeDrawer);
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          saveBtn.innerText = 'Saved Successfully!';
+          setTimeout(() => {
+            saveBtn.innerText = 'Save Dunning Strategy';
+            closeDrawer();
+          }, 800);
+        });
+      }
+
+      // Manual retry quick feedback
+      const retryBtn = document.getElementById('btn-manual-retry');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => {
+          const originalText = retryBtn.innerHTML;
+          retryBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Executing Batch...</span>`;
+          setTimeout(() => {
+            retryBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] text-on-tertiary-container">done</span><span>24 Invoices Retried</span>`;
+            setTimeout(() => {
+              retryBtn.innerHTML = originalText;
+            }, 2500);
+          }, 1200);
+        });
+      }
+
+      updateBulkAction();
+    })();
+  </script>
+</div></main></div></body></html>

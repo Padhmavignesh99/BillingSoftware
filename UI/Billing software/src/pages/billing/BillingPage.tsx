@@ -30,6 +30,7 @@ import { useToast } from '../../components/common/Toast';
 import { whatsappService } from '../../services/whatsappService';
 import { emailService } from '../../services/emailService';
 import { pdfService } from '../../services/pdfService';
+import { SmartPrintButton } from '../../components/print/SmartPrintButton';
 
 export const BillingPage: React.FC = () => {
   const { showToast } = useToast();
@@ -715,13 +716,13 @@ export const BillingPage: React.FC = () => {
               <span>PDF Bill</span>
             </button>
 
-            <button
-              onClick={() => pdfService.triggerPrint()}
-              className="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold flex flex-col items-center gap-1 transition-colors"
-            >
-              <Printer className="w-5 h-5 text-slate-600" />
-              <span>Print</span>
-            </button>
+            <SmartPrintButton
+              invoiceId={lastInvoice?.id}
+              label="Print"
+              variant="secondary"
+              className="flex-col p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 h-auto"
+              onPrinted={() => {}}
+            />
           </div>
 
           <button

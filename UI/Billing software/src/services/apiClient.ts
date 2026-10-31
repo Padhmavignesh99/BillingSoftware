@@ -563,6 +563,182 @@ class ApiService {
     markAllRead: () =>
       this.request<boolean>('/api/notifications/read-all', { method: 'PATCH' }),
   };
+  // ================= 17. PRINTER REGISTRY API =================
+  public printers = {
+    /** List all registered printers; optionally filter by branchId, counterId, printerType, activeOnly */
+    getAll: (params?: { branchId?: number; counterId?: number; printerType?: string; activeOnly?: boolean }) => {
+      const q = params ? '?' + new URLSearchParams(Object.entries(params ?? {}).filter(([,v]) => v != null).map(([k,v]) => [k, String(v)])).toString() : '';
+      return this.request<any[]>(`/api/printer${q}`);
+    },
+
+    getById: (id: number) =>
+      this.request<any>(`/api/printer/${id}`),
+
+    create: (data: any) =>
+      this.request<any>('/api/printer', { method: 'POST', body: JSON.stringify(data) }),
+
+    update: (id: number, data: any) =>
+      this.request<any>(`/api/printer/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+    patch: (id: number, data: any) =>
+      this.request<any>(`/api/printer/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+
+    delete: (id: number) =>
+      this.request<any>(`/api/printer/${id}`, { method: 'DELETE' }),
+
+    /** Set a printer as the default for its type and scope */
+    setDefault: (id: number) =>
+      this.request<any>(`/api/printer/${id}/set-default`, { method: 'POST' }),
+
+    /** Test TCP connectivity for a registered printer */
+    test: (id: number) =>
+      this.request<any>(`/api/printer/${id}/test`, { method: 'POST' }),
+
+    /** Test a printer address without saving (pre-registration check) */
+    testAddress: (connectionType: string, address?: string, port?: number) =>
+      this.request<any>('/api/printer/test-address', {
+        method: 'POST',
+        body: JSON.stringify({ connectionType, address, port }),
+      }),
+
+    /** Queue a print job for an invoice/bill */
+    printBill: (invoiceId: number, data?: any) =>
+      this.request<any>(`/api/printer/bill/${invoiceId}`, { method: 'POST', body: JSON.stringify(data ?? {}) }),
+
+    /** Create a reprint of a previously printed job */
+    reprint: (printJobId: number) =>
+      this.request<any>(`/api/printer/reprint/${printJobId}`, { method: 'POST' }),
+
+    /** Lookup: all printer types with metadata */
+    getTypes: () => this.request<any[]>('/api/printer/types'),
+
+    /** Lookup: all connection types */
+    getConnectionTypes: () => this.request<any[]>('/api/printer/connection-types'),
+
+    /** Lookup: all supported paper sizes */
+    getPaperSizes: () => this.request<any[]>('/api/printer/paper-sizes'),
+  };
+
+  // ================= 18. PRINT SETTINGS API =================
+  public printSettings = {
+    /** Get effective print settings (counter→branch→tenant fallback) */
+    get: (branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<any>(`/api/print-settings${q.toString() ? '?' + q : ''}`);
+    },
+
+    /** Full replace (PUT) */
+    update: (data: any, branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<any>(`/api/print-settings${q.toString() ? '?' + q : ''}`, {
+        method: 'PUT', body: JSON.stringify(data),
+      });
+    },
+
+    /** Partial update (PATCH) */
+    patch: (data: any, branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<any>(`/api/print-settings${q.toString() ? '?' + q : ''}`, {
+        method: 'PATCH', body: JSON.stringify(data),
+      });
+    },
+
+    /** Reset to system defaults */
+    reset: (branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<any>(`/api/print-settings/reset${q.toString() ? '?' + q : ''}`, { method: 'POST' });
+    },
+
+    /** Get all scoped settings (tenant + all branches + all counters) */
+    getAllScopes: () => this.request<any[]>('/api/print-settings/all-scopes'),
+
+    /** Section-specific reads */
+    getSection: (section: 'invoice' | 'thermal' | 'label' | 'report' | 'printer', branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<any>(`/api/print-settings/section/${section}${q.toString() ? '?' + q : ''}`);
+    },
+
+    /** HTML preview of a sample document */
+    preview: (documentType: 'invoice' | 'quotation' | 'receipt' | 'report', branchId?: number, counterId?: number) => {
+      const q = new URLSearchParams();
+      if (branchId)  q.set('branchId',  String(branchId));
+      if (counterId) q.set('counterId', String(counterId));
+      return this.request<string>(`/api/print-settings/preview/${documentType}${q.toString() ? '?' + q : ''}`);
+    },
+
+    /** Lookup: paper sizes */
+    getPaperSizes: () => this.request<any[]>('/api/print-settings/paper-sizes'),
+
+    /** Lookup: printer types */
+    getPrinterTypes: () => this.request<any[]>('/api/print-settings/printer-types'),
+
+    /** Lookup: connection types */
+    getConnectionTypes: () => this.request<any[]>('/api/print-settings/connection-types'),
+
+    /** Test printer connectivity */
+    test: (data: { printerTarget: string; connectionType: string; ipAddress?: string; port?: number }) =>
+      this.request<any>('/api/print-settings/test', { method: 'POST', body: JSON.stringify(data) }),
+
+    // Print jobs
+    jobs: {
+      queue: (data: any) =>
+        this.request<any>('/api/print-settings/jobs', { method: 'POST', body: JSON.stringify(data) }),
+
+      list: (params?: { status?: string; documentType?: string; page?: number; pageSize?: number }) => {
+        const q = params ? '?' + new URLSearchParams(Object.entries(params ?? {}).filter(([,v]) => v != null).map(([k,v]) => [k, String(v)])).toString() : '';
+        return this.request<any[]>(`/api/print-settings/jobs${q}`);
+      },
+
+      getById: (jobId: number) => this.request<any>(`/api/print-settings/jobs/${jobId}`),
+
+      updateStatus: (jobId: number, status: string, errorMessage?: string) => {
+        const q = `?status=${encodeURIComponent(status)}${errorMessage ? `&errorMessage=${encodeURIComponent(errorMessage)}` : ''}`;
+        return this.request<any>(`/api/print-settings/jobs/${jobId}/status${q}`, { method: 'PATCH' });
+      },
+
+      retry: (jobId: number) =>
+        this.request<any>(`/api/print-settings/jobs/${jobId}/retry`, { method: 'POST' }),
+
+      reprint: (jobId: number) =>
+        this.request<any>(`/api/print-settings/jobs/${jobId}/reprint`, { method: 'POST' }),
+
+      cancel: (jobId: number) =>
+        this.request<any>(`/api/print-settings/jobs/${jobId}`, { method: 'DELETE' }),
+    },
+  };
+
+  // ─── Utility: download a file as Blob ──────────────────────────────────────
+  public async getBlob(endpoint: string): Promise<Blob> {
+    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    const token = this.getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(url, { headers });
+    if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+    return res.blob();
+  }
+
+  // ─── Utility: POST multipart/form-data ────────────────────────────────────
+  public async postForm<T = any>(endpoint: string, form: FormData): Promise<{ data: T }> {
+    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    const token = this.getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(url, { method: 'POST', headers, body: form });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.message || `Upload failed: ${res.status}`);
+    return { data: json?.data ?? json };
+  }
 }
 
 export const api = new ApiService();

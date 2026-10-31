@@ -145,6 +145,9 @@ namespace BillingSoftware.API.Data
         // Print Jobs — tracks every print dispatch with status, retry, and reprint support
         public DbSet<PrintJob> PrintJobs { get; set; }
 
+        // Printer Registry — physical/logical printers per tenant/branch/counter
+        public DbSet<Printer> Printers { get; set; }
+
         // Theme Settings (per-user)
         public DbSet<UserThemeSettings> UserThemeSettings { get; set; }
 
@@ -179,6 +182,20 @@ namespace BillingSoftware.API.Data
 
         /// <summary>QR code scan events across all modules.</summary>
         public DbSet<QRScanEvent> QRScanEvents { get; set; }
+
+        // ── New Feature Entities ──────────────────────────────────────────────────
+        public DbSet<DeliveryChallan>      DeliveryChallans     { get; set; }
+        public DbSet<DeliveryChallanItem>  DeliveryChallanItems { get; set; }
+        public DbSet<RecurringInvoice>     RecurringInvoices    { get; set; }
+        public DbSet<RecurringInvoiceItem> RecurringInvoiceItems { get; set; }
+        public DbSet<StockTakeSession>     StockTakeSessions    { get; set; }
+        public DbSet<StockTakeItem>        StockTakeItems       { get; set; }
+        public DbSet<LoyaltyProgram>       LoyaltyPrograms      { get; set; }
+        public DbSet<LoyaltyTier>          LoyaltyTiers         { get; set; }
+        public DbSet<CustomerLoyaltyAccount> CustomerLoyaltyAccounts { get; set; }
+        public DbSet<LoyaltyTransaction>   LoyaltyTransactions  { get; set; }
+        public DbSet<ReminderRule>         ReminderRules        { get; set; }
+        public DbSet<ReminderLog>          ReminderLogs         { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -289,6 +306,7 @@ namespace BillingSoftware.API.Data
             modelBuilder.Entity<PurchaseOrder>().HasQueryFilter(p => _tenantId == null || p.TenantId == _tenantId);
             modelBuilder.Entity<PrintSettings>().HasQueryFilter(ps => _tenantId == null || ps.TenantId == _tenantId);
             modelBuilder.Entity<PrintJob>().HasQueryFilter(pj => _tenantId == null || pj.TenantId == _tenantId);
+            modelBuilder.Entity<Printer>().HasQueryFilter(p => _tenantId == null || p.TenantId == _tenantId);
             modelBuilder.Entity<UserThemeSettings>().HasQueryFilter(t => _tenantId == null || t.TenantId == _tenantId);
 
             // ── Device Integration Layer — tenant-scoped filters ───────────────────
@@ -338,6 +356,13 @@ namespace BillingSoftware.API.Data
                 .WithMany()
                 .HasForeignKey(ps => ps.BranchId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Printer Registry — index for fast per-tenant queries by type and scope
+            modelBuilder.Entity<Printer>()
+                .HasIndex(p => new { p.TenantId, p.PrinterType });
+
+            modelBuilder.Entity<Printer>()
+                .HasIndex(p => new { p.TenantId, p.BranchId, p.CounterId });
 
             // Category self-referencing relationship
             modelBuilder.Entity<ProductCategory>()
@@ -421,6 +446,67 @@ namespace BillingSoftware.API.Data
                 CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
 
+            // ─── Seed Demo Business (Vignesh Tex) ────────────────────────────────────
+            modelBuilder.Entity<Business>().HasData(new Business
+            {
+                Id           = 9999,
+                Name         = "Vignesh Tex",
+                Email        = "padhmavignesh99@gmail.com",
+                CurrencyCode = "INR",
+                CurrencySymbol = "₹",
+                Status       = BusinessStatus.Active,
+                IsActive     = true,
+                IsDeleted    = false,
+                CreatedAt    = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
+            // ─── Seed Demo Admin User ─────────────────────────────────────────────────
+            // Demo credentials: padhmavignesh99@gmail.com / Vignesh@123
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id             = 9999,
+                FullName       = "Vignesh",
+                Email          = "padhmavignesh99@gmail.com",
+                PasswordHash   = BCrypt.Net.BCrypt.HashPassword("Vignesh@123"),
+                Role           = UserRole.Owner,
+                TenantId       = 9999,
+                IsActive       = true,
+                IsDeleted      = false,
+                CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
+            // ─── Seed Demo Business Settings ──────────────────────────────────────────
+            modelBuilder.Entity<BusinessSettings>().HasData(new BusinessSettings
+            {
+                Id       = 9999,
+                TenantId = 9999,
+                IsActive = true,
+                IsDeleted = false,
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
+            modelBuilder.Entity<InvoiceSettings>().HasData(new InvoiceSettings
+            {
+                Id       = 9999,
+                TenantId = 9999,
+                IsActive = true,
+                IsDeleted = false,
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
+            // ─── Seed Demo Trial ──────────────────────────────────────────────────────
+            modelBuilder.Entity<Trial>().HasData(new Trial
+            {
+                Id         = 9999,
+                BusinessId = 9999,
+                StartDate  = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                EndDate    = new DateTime(2024, 1, 31, 0, 0, 0, DateTimeKind.Utc),
+                IsConverted = false,
+                IsActive   = true,
+                IsDeleted  = false,
+                CreatedAt  = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+
             // ─── Seed Subscription Plans ──────────────────────────────────────────────
             // Plan 1: Starter (Free Trial)
             // Plan 2: Basic
@@ -432,7 +518,7 @@ namespace BillingSoftware.API.Data
                     Id = 1, Name = "Starter", Description = "Perfect for small shops getting started. Includes a 30-day free trial.",
                     MonthlyPrice = 0, YearlyPrice = 0,
                     MaxProducts = 50, MaxUsers = 2, MaxBranches = 1, MaxInvoicesPerMonth = 100,
-                    HasWhatsAppIntegration = false, HasEmailIntegration = true, HasReports = false,
+                    HasWhatsAppIntegration = false, HasSmsIntegration = false, HasEmailIntegration = true, HasReports = false,
                     HasMultiCurrency = false, HasInventoryManagement = true, HasDeviceIntegration = false, HasApiAccess = false,
                     TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 1,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
@@ -442,7 +528,7 @@ namespace BillingSoftware.API.Data
                     Id = 2, Name = "Basic", Description = "Ideal for growing businesses with essential billing features.",
                     MonthlyPrice = 499, YearlyPrice = 4999,
                     MaxProducts = 500, MaxUsers = 5, MaxBranches = 1, MaxInvoicesPerMonth = 1000,
-                    HasWhatsAppIntegration = false, HasEmailIntegration = true, HasReports = true,
+                    HasWhatsAppIntegration = false, HasSmsIntegration = false, HasEmailIntegration = true, HasReports = true,
                     HasMultiCurrency = false, HasInventoryManagement = true, HasDeviceIntegration = false, HasApiAccess = false,
                     TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 2,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
@@ -452,7 +538,7 @@ namespace BillingSoftware.API.Data
                     Id = 3, Name = "Professional", Description = "For established businesses needing advanced features and integrations.",
                     MonthlyPrice = 999, YearlyPrice = 9999,
                     MaxProducts = 5000, MaxUsers = 15, MaxBranches = 3, MaxInvoicesPerMonth = 10000,
-                    HasWhatsAppIntegration = true, HasEmailIntegration = true, HasReports = true,
+                    HasWhatsAppIntegration = true, HasSmsIntegration = true, HasEmailIntegration = true, HasReports = true,
                     HasMultiCurrency = true, HasInventoryManagement = true, HasDeviceIntegration = true, HasApiAccess = false,
                     TrialDays = 30, IsActive = true, IsPopular = true, SortOrder = 3,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
@@ -462,7 +548,7 @@ namespace BillingSoftware.API.Data
                     Id = 4, Name = "Enterprise", Description = "Unlimited features for large enterprises with API access and dedicated support.",
                     MonthlyPrice = 2499, YearlyPrice = 24999,
                     MaxProducts = int.MaxValue, MaxUsers = int.MaxValue, MaxBranches = int.MaxValue, MaxInvoicesPerMonth = int.MaxValue,
-                    HasWhatsAppIntegration = true, HasEmailIntegration = true, HasReports = true,
+                    HasWhatsAppIntegration = true, HasSmsIntegration = true, HasEmailIntegration = true, HasReports = true,
                     HasMultiCurrency = true, HasInventoryManagement = true, HasDeviceIntegration = true, HasApiAccess = true,
                     TrialDays = 30, IsActive = true, IsPopular = false, SortOrder = 4,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)

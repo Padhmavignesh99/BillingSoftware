@@ -1,10 +1,11 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Printer, Download, Smartphone, CheckCircle2, Building, User } from 'lucide-react';
+import { ArrowLeft, Download } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Badge } from '../../components/ui/Badge';
 import { pdfService } from '../../services/pdfService';
 import { useToast } from '../../components/common/Toast';
+import { SmartPrintButton } from '../../components/print/SmartPrintButton';
 
 export const InvoiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,13 +47,11 @@ export const InvoiceDetailPage: React.FC = () => {
             <span>Download PDF</span>
           </button>
 
-          <button
-            onClick={() => pdfService.triggerPrint()}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all"
-          >
-            <Printer className="w-4 h-4" />
-            <span>Print Tax Invoice</span>
-          </button>
+          <SmartPrintButton
+            invoiceId={invoice.id}
+            label="Print Tax Invoice"
+            variant="primary"
+          />
         </div>
       </div>
 

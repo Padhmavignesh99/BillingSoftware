@@ -25,6 +25,7 @@ import { StaffPage } from '../../pages/staff/StaffPage';
 import { NotificationsPage } from '../../pages/notifications/NotificationsPage';
 import { AIInsightsPage } from '../../pages/ai/AIInsightsPage';
 import { SettingsPage } from '../../pages/settings/SettingsPage';
+import { PrinterSettingsPage } from '../../pages/settings/PrinterSettingsPage';
 import { SubscriptionPage } from '../../pages/saas/SubscriptionPage';
 import { PlatformAdminPage } from '../../pages/saas/PlatformAdminPage';
 import { SalesReturnsPage } from '../../pages/returns/SalesReturnsPage';
@@ -68,6 +69,7 @@ export const router = createBrowserRouter([
       { path: '/notifications', element: <NotificationsPage /> },
       { path: '/ai-insights', element: <AIInsightsPage /> },
       { path: '/settings', element: <SettingsPage /> },
+      { path: '/settings/printers', element: <PrinterSettingsPage /> },
       { path: '/subscription', element: <SubscriptionPage /> },
       { path: '/platform-admin', element: <PlatformAdminPage /> },
     ],

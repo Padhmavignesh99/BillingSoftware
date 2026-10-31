@@ -91,6 +91,7 @@ builder.Services.AddScoped<ITenantService, TenantService>();
 
 // ─── Print & Theme Settings ───────────────────────────────────────────────────
 builder.Services.AddScoped<IPrintSettingsService, PrintSettingsService>();
+builder.Services.AddScoped<IPrinterService, PrinterService>();
 builder.Services.AddScoped<IThemeSettingsService, ThemeSettingsService>();
 
 // ─── Communication Configuration ─────────────────────────────────────────────
@@ -207,6 +208,15 @@ builder.Services.AddScoped<IOcrScannerService,          OcrScannerService>();
 builder.Services.AddScoped<ICardPaymentService,         CardPaymentService>();
 builder.Services.AddScoped<ICashDrawerService,          CashDrawerService>();
 
+// ─── New Feature Services ──────────────────────────────────────────────────────
+builder.Services.AddScoped<IExportImportService,        ExportImportService>();
+builder.Services.AddScoped<IAuditLogService,            AuditLogService>();
+builder.Services.AddScoped<IDeliveryChallanService,     DeliveryChallanService>();
+builder.Services.AddScoped<IRecurringInvoiceService,    RecurringInvoiceService>();
+builder.Services.AddScoped<IStockTakeService,           StockTakeService>();
+builder.Services.AddScoped<ILoyaltyService,             LoyaltyService>();
+builder.Services.AddScoped<IReminderService,            ReminderService>();
+builder.Services.AddScoped<IReorderService,             ReorderService>();
 
 // ─── Swagger / OpenAPI ────────────────────────────────────────────────────────
 builder.Services.AddSwaggerGen(options =>

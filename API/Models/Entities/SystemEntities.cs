@@ -266,4 +266,89 @@ namespace BillingSoftware.API.Models.Entities
         /// <summary>Counter number from which the print was initiated</summary>
         public int?    CounterId           { get; set; }
     }
+
+    // ==================== PRINTER REGISTRY ====================
+    /// <summary>
+    /// Represents a physical or logical printer registered for a tenant.
+    /// Supports all printer types and connection modes.
+    /// A tenant can register multiple printers; exactly one should be marked IsDefault per type.
+    /// </summary>
+    public class Printer : TenantEntity
+    {
+        // ── Identity ─────────────────────────────────────────────────────────────
+        /// <summary>Friendly display name, e.g. "Front Counter Thermal" or "Office A4"</summary>
+        public string  PrinterName       { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Printer category: Thermal | Laser | Inkjet | DotMatrix | Label | Portable | Multifunction
+        /// </summary>
+        public string  PrinterType       { get; set; } = "Thermal";
+
+        // ── Connection ───────────────────────────────────────────────────────────
+        /// <summary>
+        /// How the printer is connected: USB | Ethernet | WiFi | Bluetooth | Shared | Cloud
+        /// </summary>
+        public string  ConnectionType    { get; set; } = "USB";
+
+        /// <summary>
+        /// Network printers: "192.168.1.100". Shared printers: "\\\\SERVER\\PRINTER".
+        /// USB/Bluetooth: null or COM port (e.g. "COM3"). Cloud: endpoint URL.
+        /// </summary>
+        public string? ConnectionAddress { get; set; }
+
+        /// <summary>Raw TCP port for network/Ethernet printers — default 9100 (ESC/POS)</summary>
+        public int?    Port              { get; set; }
+
+        /// <summary>Driver name as seen by the OS — used for browser window.print() targeting</summary>
+        public string? OsDriverName      { get; set; }
+
+        // ── Paper / Format ───────────────────────────────────────────────────────
+        /// <summary>Default paper size: A4 | A5 | 58mm | 80mm | Custom | etc.</summary>
+        public string  PaperSize         { get; set; } = "A4";
+
+        /// <summary>Portrait | Landscape</summary>
+        public string  Orientation       { get; set; } = "Portrait";
+
+        /// <summary>Characters per line for thermal/dot-matrix text mode</summary>
+        public int?    CharsPerLine      { get; set; }
+
+        /// <summary>Print DPI — relevant for label/barcode printers</summary>
+        public int?    DpiResolution     { get; set; }
+
+        // ── Capabilities (advertised by the driver or configured manually) ────────
+        public bool    SupportsColor     { get; set; } = false;
+        public bool    SupportsAutoCut   { get; set; } = false;
+        public bool    SupportsCashDrawer{ get; set; } = false;
+        public bool    SupportsBarcodes  { get; set; } = false;
+        public bool    SupportsQRCode    { get; set; } = false;
+        public bool    SupportsLogo      { get; set; } = false;
+        public bool    SupportsEscPos    { get; set; } = false;
+        public bool    SupportsPdf       { get; set; } = true;
+
+        // ── Operational ──────────────────────────────────────────────────────────
+        /// <summary>True = this is the default printer for its type in the scoped branch/counter</summary>
+        public bool    IsDefault         { get; set; } = false;
+
+        // IsActive is inherited from BaseEntity
+
+        // ── Scope ────────────────────────────────────────────────────────────────
+        /// <summary>Branch this printer belongs to; null = available to all branches</summary>
+        public int?    BranchId         { get; set; }
+
+        /// <summary>Counter/terminal ID for counter-level assignment; null = branch-wide</summary>
+        public int?    CounterId        { get; set; }
+
+        // ── ESC/POS specific ─────────────────────────────────────────────────────
+        /// <summary>Code page number sent to the printer for language support (e.g. 16 = WPC1252)</summary>
+        public int?    CodePage         { get; set; }
+
+        /// <summary>Number of feed lines to add before auto-cut</summary>
+        public int     LineFeedCount    { get; set; } = 4;
+
+        // ── Tracking ─────────────────────────────────────────────────────────────
+        public DateTime? LastTestedAt   { get; set; }
+        public string?   LastTestStatus { get; set; }
+        public string?   Notes          { get; set; }
+    }
 }
+

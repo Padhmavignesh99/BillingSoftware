@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   RotateCcw,
   Wallet,
+  Printer,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useStore } from '../../store/useStore';
@@ -67,10 +68,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
   const saasNav = [
     { name: 'Subscription & Plan', path: '/subscription', icon: CreditCard, highlight: true },
     ...(api.hasRole('SuperAdmin') ? [{ name: 'Platform Admin', path: '/platform-admin', icon: ShieldCheck, badge: 'SaaS' }] : []),
+    { name: 'Printer Setup', path: '/settings/printers', icon: Printer },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {
+    if (path === '/settings') return location.pathname === '/settings';
     if (path === '/dashboard') return location.pathname === '/dashboard';
     return location.pathname.startsWith(path);
   };

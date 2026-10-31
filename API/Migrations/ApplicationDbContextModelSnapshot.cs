@@ -491,6 +491,20 @@ namespace BillingSoftware.API.Migrations
                         .HasFilter("\"GSTNumber\" IS NOT NULL");
 
                     b.ToTable("Businesses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 9999,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CurrencyCode = "INR",
+                            CurrencySymbol = "₹",
+                            Email = "padhmavignesh99@gmail.com",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "Vignesh Tex",
+                            Status = 1
+                        });
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.BusinessSettings", b =>
@@ -561,6 +575,27 @@ namespace BillingSoftware.API.Migrations
                         .IsUnique();
 
                     b.ToTable("BusinessSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 9999,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateFormat = "dd-MM-yyyy",
+                            EnableBarcode = true,
+                            EnableEmailNotifications = true,
+                            EnableGST = true,
+                            EnableLowStockAlert = true,
+                            EnableMultiBranch = false,
+                            EnableSmsNotifications = false,
+                            EnableWhatsAppNotifications = false,
+                            IsActive = true,
+                            IsDeleted = false,
+                            Language = "en",
+                            LowStockThreshold = 10,
+                            TenantId = 9999,
+                            TimeZone = "Asia/Kolkata"
+                        });
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.BusinessType", b =>
@@ -607,7 +642,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2165),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(230),
                             Description = "General retail shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -616,7 +651,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2175),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(234),
                             Description = "Wholesale business",
                             IsActive = true,
                             IsDeleted = false,
@@ -625,7 +660,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2180),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(236),
                             Description = "Food & beverage",
                             IsActive = true,
                             IsDeleted = false,
@@ -634,7 +669,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2184),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(237),
                             Description = "Medical store",
                             IsActive = true,
                             IsDeleted = false,
@@ -643,7 +678,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2188),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(238),
                             Description = "Electronics shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -652,7 +687,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2191),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(239),
                             Description = "Fashion & apparel",
                             IsActive = true,
                             IsDeleted = false,
@@ -661,7 +696,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2195),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(240),
                             Description = "Grocery & supermarket",
                             IsActive = true,
                             IsDeleted = false,
@@ -670,7 +705,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2198),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(241),
                             Description = "Service-based business",
                             IsActive = true,
                             IsDeleted = false,
@@ -679,7 +714,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2202),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(242),
                             Description = "Manufacturing unit",
                             IsActive = true,
                             IsDeleted = false,
@@ -688,7 +723,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 26, DateTimeKind.Utc).AddTicks(2206),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(243),
                             Description = "Other business type",
                             IsActive = true,
                             IsDeleted = false,
@@ -2500,6 +2535,25 @@ namespace BillingSoftware.API.Migrations
                         .IsUnique();
 
                     b.ToTable("InvoiceSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 9999,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            InvoiceNumberFormat = "{PREFIX}-{YEAR}-{NUMBER:5}",
+                            InvoicePrefix = "INV",
+                            IsActive = true,
+                            IsDeleted = false,
+                            NextInvoiceNumber = 1,
+                            PrimaryColor = "#1a73e8",
+                            ShowDiscount = true,
+                            ShowGST = true,
+                            ShowLogo = true,
+                            ShowSignature = false,
+                            TemplateName = "Default",
+                            TenantId = 9999
+                        });
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Lookup", b =>
@@ -2558,7 +2612,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 1,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6889),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7660),
                             Description = "Indian Rupee",
                             IsActive = true,
                             IsDeleted = false,
@@ -2570,7 +2624,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 2,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6899),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7664),
                             Description = "US Dollar",
                             IsActive = true,
                             IsDeleted = false,
@@ -2582,7 +2636,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 3,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6907),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7666),
                             Description = "Euro",
                             IsActive = true,
                             IsDeleted = false,
@@ -2594,7 +2648,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 4,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6912),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7779),
                             Description = "India",
                             IsActive = true,
                             IsDeleted = false,
@@ -2606,7 +2660,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 5,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 14, 16, 43, 5, 428, DateTimeKind.Utc).AddTicks(6916),
+                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7781),
                             Description = "United States",
                             IsActive = true,
                             IsDeleted = false,
@@ -3568,6 +3622,127 @@ namespace BillingSoftware.API.Migrations
                         .IsUnique();
 
                     b.ToTable("PrintSettings");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.Printer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CharsPerLine")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CodePage")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConnectionAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConnectionType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CounterId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("DpiResolution")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastTestStatus")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastTestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LineFeedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Orientation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OsDriverName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaperSize")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Port")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PrinterName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrinterType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("SupportsAutoCut")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsBarcodes")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsCashDrawer")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsColor")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsEscPos")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsLogo")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsPdf")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsQRCode")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "PrinterType");
+
+                    b.HasIndex("TenantId", "BranchId", "CounterId");
+
+                    b.ToTable("Printers");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Product", b =>
@@ -5631,7 +5806,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = true,
                             HasReports = true,
-                            HasSmsIntegration = false,
+                            HasSmsIntegration = true,
                             HasWhatsAppIntegration = true,
                             IsActive = true,
                             IsDeleted = false,
@@ -5657,7 +5832,7 @@ namespace BillingSoftware.API.Migrations
                             HasInventoryManagement = true,
                             HasMultiCurrency = true,
                             HasReports = true,
-                            HasSmsIntegration = false,
+                            HasSmsIntegration = true,
                             HasWhatsAppIntegration = true,
                             IsActive = true,
                             IsDeleted = false,
@@ -6242,6 +6417,19 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("ConvertedSubscriptionId");
 
                     b.ToTable("Trials");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 9999,
+                            BusinessId = 9999,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2024, 1, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsActive = true,
+                            IsConverted = false,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Unit", b =>
@@ -6438,7 +6626,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$XohkG/B.5Q//ss2Dn3EzOuh61XLJqwrQdNQjQdBxFzyFVxAwLGcdq",
+                            PasswordHash = "$2a$11$05W1F29NgHfQGlVfC7Vld.haW0NhwFk0Xaa9.6zW/.CJxy0gckhEm",
                             Role = 1
                         },
                         new
@@ -6449,8 +6637,20 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$qtq8oS0rN6kHzUU1gGB6mObHJBaxSFhYVyWwtBYkrXqhDC7wOwcjC",
+                            PasswordHash = "$2a$11$AejEM1corgPQOu7Vp3yHoerPDDvwCVoZURw/qH0f/yQxTNHnWiOB.",
                             Role = 1
+                        },
+                        new
+                        {
+                            Id = 9999,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "padhmavignesh99@gmail.com",
+                            FullName = "Vignesh",
+                            IsActive = true,
+                            IsDeleted = false,
+                            PasswordHash = "$2a$11$W5uBpRk28gT.2aYkQ3cZdOtqU8CSj5Fwe3Pc8DgGfEbp8N52dwHDa",
+                            Role = 2,
+                            TenantId = 9999
                         });
                 });
 
@@ -7518,6 +7718,17 @@ namespace BillingSoftware.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.Printer", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tenant");
                 });

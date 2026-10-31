@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Store, Receipt, Percent, Palette, Save } from 'lucide-react';
+import { Store, Receipt, Percent, Palette, Save, Printer } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/useStore';
 import { useToast } from '../../components/common/Toast';
 import { api } from '../../services/apiClient';
@@ -7,6 +8,7 @@ import { api } from '../../services/apiClient';
 export const SettingsPage: React.FC = () => {
   const { businessProfile, setBusinessProfile, theme, toggleTheme, backendStatus } = useStore();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'invoice' | 'tax' | 'payment'>('profile');
   const [saving, setSaving] = useState(false);
@@ -86,6 +88,14 @@ export const SettingsPage: React.FC = () => {
             </button>
           );
         })}
+        {/* Printer Settings — navigates to dedicated page */}
+        <button
+          onClick={() => navigate('/settings/printers')}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-transparent hover:border-emerald-200"
+        >
+          <Printer className="w-4 h-4" />
+          <span>Printer Setup</span>
+        </button>
       </div>
 
       <form onSubmit={handleSaveSettings} className="space-y-6">
