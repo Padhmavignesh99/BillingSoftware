@@ -217,6 +217,8 @@ builder.Services.AddScoped<IStockTakeService,           StockTakeService>();
 builder.Services.AddScoped<ILoyaltyService,             LoyaltyService>();
 builder.Services.AddScoped<IReminderService,            ReminderService>();
 builder.Services.AddScoped<IReorderService,             ReorderService>();
+builder.Services.AddScoped<ProductVariantService>();
+builder.Services.AddScoped<TallyExportService>();
 
 // ─── Swagger / OpenAPI ────────────────────────────────────────────────────────
 builder.Services.AddSwaggerGen(options =>

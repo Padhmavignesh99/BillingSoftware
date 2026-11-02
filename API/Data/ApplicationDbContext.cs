@@ -197,6 +197,12 @@ namespace BillingSoftware.API.Data
         public DbSet<ReminderRule>         ReminderRules        { get; set; }
         public DbSet<ReminderLog>          ReminderLogs         { get; set; }
 
+        // ── Product Variants ──────────────────────────────────────────────────
+        public DbSet<VariantAttribute>        VariantAttributes        { get; set; }
+        public DbSet<VariantAttributeValue>   VariantAttributeValues   { get; set; }
+        public DbSet<ProductVariant>          ProductVariants          { get; set; }
+        public DbSet<ProductVariantAttribute> ProductVariantAttributes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,3 +1,4 @@
+using BillingSoftware.API.DTOs.Common;
 using BillingSoftware.API.DTOs.Requests;
 using BillingSoftware.API.DTOs.Responses;
 

@@ -22,6 +22,7 @@ import {
 import { useStore } from '../../store/useStore';
 import { Badge } from '../../components/ui/Badge';
 import { CreateTenantModal } from '../../components/saas/CreateTenantModal';
+import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 import { api } from '../../services/apiClient';
 
 interface TopbarProps {
@@ -175,6 +176,11 @@ export const Topbar: React.FC<TopbarProps> = ({ onOpenMobileSidebar, onOpenComma
 
         {/* Right section */}
         <div className="flex items-center gap-2 sm:gap-2.5">
+
+          {/* Language Switcher */}
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
 
           {/* Backend API Status Pill */}
           <div

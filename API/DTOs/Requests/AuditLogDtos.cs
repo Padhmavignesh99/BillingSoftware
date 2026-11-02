@@ -1,3 +1,5 @@
+using BillingSoftware.API.DTOs.Common;
+
 namespace BillingSoftware.API.DTOs.Requests
 {
     public class AuditLogFilterRequest : PaginationRequest
@@ -26,4 +28,3 @@ namespace BillingSoftware.API.DTOs.Requests
         public DateTime Timestamp { get; set; }
     }
 }
-

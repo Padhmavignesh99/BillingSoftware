@@ -17,7 +17,7 @@ namespace BillingSoftware.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.32")
+                .HasAnnotation("ProductVersion", "8.0.33")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -642,7 +642,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(230),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5270),
                             Description = "General retail shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -651,7 +651,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(234),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5274),
                             Description = "Wholesale business",
                             IsActive = true,
                             IsDeleted = false,
@@ -660,7 +660,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(236),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5275),
                             Description = "Food & beverage",
                             IsActive = true,
                             IsDeleted = false,
@@ -669,7 +669,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(237),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5276),
                             Description = "Medical store",
                             IsActive = true,
                             IsDeleted = false,
@@ -678,7 +678,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(238),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5277),
                             Description = "Electronics shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -687,7 +687,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(239),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5278),
                             Description = "Fashion & apparel",
                             IsActive = true,
                             IsDeleted = false,
@@ -696,7 +696,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(240),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5279),
                             Description = "Grocery & supermarket",
                             IsActive = true,
                             IsDeleted = false,
@@ -705,7 +705,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(241),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5279),
                             Description = "Service-based business",
                             IsActive = true,
                             IsDeleted = false,
@@ -714,7 +714,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(242),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5280),
                             Description = "Manufacturing unit",
                             IsActive = true,
                             IsDeleted = false,
@@ -723,7 +723,7 @@ namespace BillingSoftware.API.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 237, DateTimeKind.Utc).AddTicks(243),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5289),
                             Description = "Other business type",
                             IsActive = true,
                             IsDeleted = false,
@@ -1238,6 +1238,72 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("CustomerLedgers");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerLoyaltyAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("CurrentPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastActivityDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("LifetimeSpend")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("LoyaltyProgramId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("LoyaltyTierId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalEarnedPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalRedeemedPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("LoyaltyProgramId");
+
+                    b.HasIndex("LoyaltyTierId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("CustomerLoyaltyAccounts");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerPayment", b =>
                 {
                     b.Property<int>("Id")
@@ -1301,6 +1367,151 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("CustomerPayments");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeliveryChallan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ChallanDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ChallanNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeliveryAddress")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DispatchedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DriverName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LRNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransportMode")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("VehicleNumber")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("DeliveryChallans");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeliveryChallanItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DeliveryChallanId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryChallanId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("DeliveryChallanItems");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeviceConfiguration", b =>
@@ -2612,7 +2823,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 1,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7660),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3560),
                             Description = "Indian Rupee",
                             IsActive = true,
                             IsDeleted = false,
@@ -2624,7 +2835,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 2,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7664),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3562),
                             Description = "US Dollar",
                             IsActive = true,
                             IsDeleted = false,
@@ -2636,7 +2847,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 3,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7666),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3564),
                             Description = "Euro",
                             IsActive = true,
                             IsDeleted = false,
@@ -2648,7 +2859,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 4,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7779),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3565),
                             Description = "India",
                             IsActive = true,
                             IsDeleted = false,
@@ -2660,7 +2871,7 @@ namespace BillingSoftware.API.Migrations
                         {
                             Id = 5,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 10, 27, 9, 30, 46, 424, DateTimeKind.Utc).AddTicks(7781),
+                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3566),
                             Description = "United States",
                             IsActive = true,
                             IsDeleted = false,
@@ -2668,6 +2879,192 @@ namespace BillingSoftware.API.Migrations
                             SortOrder = 0,
                             Value = "United States"
                         });
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyProgram", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("MaxRedemptionPercent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MinRedemptionPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PointsExpiryDays")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PointsPerRupee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RupeePerPoint")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TermsAndConditions")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("LoyaltyPrograms");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyTier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BadgeColor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Benefits")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("BonusMultiplier")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LoyaltyProgramId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("MaxPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MinPoints")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LoyaltyProgramId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("LoyaltyTiers");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CustomerLoyaltyAccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("InvoiceAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Points")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerLoyaltyAccountId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("LoyaltyTransactions");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Notification", b =>
@@ -3969,6 +4366,89 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("ProductImages");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ProductVariant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CurrentStock")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal?>("MRP")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("PurchasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("SellingPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ProductVariants");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ProductVariantAttribute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttributeValueId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductVariantId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeValueId");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.ToTable("ProductVariantAttributes");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Purchase", b =>
                 {
                     b.Property<int>("Id")
@@ -4635,6 +5115,166 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("QuotationItems");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.RecurringInvoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("FrequencyValue")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastRunDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("MaxRuns")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("NextRunDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RunCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("RecurringInvoices");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.RecurringInvoiceItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RecurringInvoiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TaxPercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("RecurringInvoiceId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("RecurringInvoiceItems");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Refund", b =>
                 {
                     b.Property<int>("Id")
@@ -4706,6 +5346,136 @@ namespace BillingSoftware.API.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Refunds");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ReminderLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReminderRuleId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ReminderRuleId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ReminderLogs");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ReminderRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DaysOverdue")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MessageTemplate")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("SendEmail")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SendSms")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SendWhatsApp")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ReminderRules");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Role", b =>
@@ -5364,6 +6134,150 @@ namespace BillingSoftware.API.Migrations
                     b.ToTable("StockAdjustments");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTakeItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("CountedStock")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Discrepancy")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsAdjusted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SKU")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StockTakeSessionId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("SystemStock")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StockTakeSessionId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("StockTakeItems");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTakeSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CountedProducts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DiscrepancyCount")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SessionNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalProducts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("StockTakeSessions");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -5555,16 +6469,31 @@ namespace BillingSoftware.API.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("GrantNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("GrantedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsGrantedBySuperAdmin")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PaymentGatewayId")
                         .HasColumnType("text");
 
+                    b.Property<int?>("PermitDuration")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PlanId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlanPermit")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
@@ -6626,7 +7555,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$05W1F29NgHfQGlVfC7Vld.haW0NhwFk0Xaa9.6zW/.CJxy0gckhEm",
+                            PasswordHash = "$2a$11$J9Oxq3zBahBqV.Uy.o2iZugbG.Ed3JilfiIxZLv2.EJ5OtkYWTZZG",
                             Role = 1
                         },
                         new
@@ -6637,7 +7566,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$AejEM1corgPQOu7Vp3yHoerPDDvwCVoZURw/qH0f/yQxTNHnWiOB.",
+                            PasswordHash = "$2a$11$8p4bJXk1rDKdI5FCeGrQs.WeV8A5DacKbOGRrFDJblQA57hKFc0Hi",
                             Role = 1
                         },
                         new
@@ -6648,7 +7577,7 @@ namespace BillingSoftware.API.Migrations
                             FullName = "Vignesh",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$W5uBpRk28gT.2aYkQ3cZdOtqU8CSj5Fwe3Pc8DgGfEbp8N52dwHDa",
+                            PasswordHash = "$2a$11$/bycItNE2DQeSBLq6/AF0OkCH/fN48LfUhz8TfNnYxRklHZe1Dv5e",
                             Role = 2,
                             TenantId = 9999
                         });
@@ -6772,6 +7701,103 @@ namespace BillingSoftware.API.Migrations
                         .IsUnique();
 
                     b.ToTable("UserThemeSettings");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.VariantAttribute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("VariantAttributes");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.VariantAttributeValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttributeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("VariantAttributeValues");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Warehouse", b =>
@@ -7246,6 +8272,39 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerLoyaltyAccount", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.LoyaltyProgram", "LoyaltyProgram")
+                        .WithMany()
+                        .HasForeignKey("LoyaltyProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.LoyaltyTier", "LoyaltyTier")
+                        .WithMany()
+                        .HasForeignKey("LoyaltyTierId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("LoyaltyProgram");
+
+                    b.Navigation("LoyaltyTier");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerPayment", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
@@ -7267,6 +8326,62 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Invoice");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeliveryChallan", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeliveryChallanItem", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.DeliveryChallan", "DeliveryChallan")
+                        .WithMany("Items")
+                        .HasForeignKey("DeliveryChallanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryChallan");
+
+                    b.Navigation("Product");
 
                     b.Navigation("Tenant");
                 });
@@ -7578,6 +8693,61 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyProgram", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyTier", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.LoyaltyProgram", "LoyaltyProgram")
+                        .WithMany()
+                        .HasForeignKey("LoyaltyProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LoyaltyProgram");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.LoyaltyTransaction", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.CustomerLoyaltyAccount", "LoyaltyAccount")
+                        .WithMany("Transactions")
+                        .HasForeignKey("CustomerLoyaltyAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("LoyaltyAccount");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Notification", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
@@ -7809,6 +8979,44 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ProductVariant", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ProductVariantAttribute", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.VariantAttributeValue", "AttributeValue")
+                        .WithMany()
+                        .HasForeignKey("AttributeValueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.ProductVariant", "ProductVariant")
+                        .WithMany("VariantAttributes")
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttributeValue");
+
+                    b.Navigation("ProductVariant");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Purchase", b =>
@@ -8067,6 +9275,50 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.RecurringInvoice", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.RecurringInvoiceItem", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.RecurringInvoice", "RecurringInvoice")
+                        .WithMany("Items")
+                        .HasForeignKey("RecurringInvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("RecurringInvoice");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Refund", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
@@ -8092,6 +9344,48 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Payment");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ReminderLog", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.ReminderRule", "ReminderRule")
+                        .WithMany()
+                        .HasForeignKey("ReminderRuleId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("ReminderRule");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ReminderRule", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tenant");
                 });
@@ -8361,6 +9655,56 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTakeItem", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.StockTakeSession", "Session")
+                        .WithMany("Items")
+                        .HasForeignKey("StockTakeSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Session");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTakeSession", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTransaction", b =>
@@ -8716,6 +10060,36 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.VariantAttribute", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.VariantAttributeValue", b =>
+                {
+                    b.HasOne("BillingSoftware.API.Models.Entities.VariantAttribute", "Attribute")
+                        .WithMany("Values")
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BillingSoftware.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attribute");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Warehouse", b =>
                 {
                     b.HasOne("BillingSoftware.API.Models.Entities.Branch", "Branch")
@@ -8798,6 +10172,16 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Customers");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.CustomerLoyaltyAccount", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.DeliveryChallan", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.EmployeeRole", b =>
                 {
                     b.Navigation("Permissions");
@@ -8844,6 +10228,11 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("SubCategories");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.ProductVariant", b =>
+                {
+                    b.Navigation("VariantAttributes");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Purchase", b =>
                 {
                     b.Navigation("Items");
@@ -8866,6 +10255,11 @@ namespace BillingSoftware.API.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.RecurringInvoice", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.Role", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -8877,6 +10271,11 @@ namespace BillingSoftware.API.Migrations
                 });
 
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.SalesReturn", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.StockTakeSession", b =>
                 {
                     b.Navigation("Items");
                 });
@@ -8894,6 +10293,11 @@ namespace BillingSoftware.API.Migrations
             modelBuilder.Entity("BillingSoftware.API.Models.Entities.SupplierGroup", b =>
                 {
                     b.Navigation("Suppliers");
+                });
+
+            modelBuilder.Entity("BillingSoftware.API.Models.Entities.VariantAttribute", b =>
+                {
+                    b.Navigation("Values");
                 });
 #pragma warning restore 612, 618
         }

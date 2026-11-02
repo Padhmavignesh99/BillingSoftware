@@ -31,7 +31,7 @@ namespace BillingSoftware.API.Services.Implementations
 
             foreach (var p in products)
             {
-                sb.AppendLine($"\"{EscapeCsv(p.Name)}\",\"{EscapeCsv(p.SKU)}\",\"{EscapeCsv(p.Barcode)}\",\"{EscapeCsv(p.Description)}\",\"{EscapeCsv(p.HSNCode)}\",\"{EscapeCsv(p.Category?.Name)}\",\"{EscapeCsv(p.Brand?.Name)}\",\"{EscapeCsv(p.Unit?.Name)}\",{p.PurchasePrice},{p.SellingPrice},{p.MRP},{p.TaxRate?.Rate},{p.CurrentStock},{p.MinStockLevel},{p.MaxStockLevel},{p.ReorderLevel},{p.IsService},{p.ExpiryDate?.ToString("yyyy-MM-dd")}");
+                sb.AppendLine($"\"{EscapeCsv(p.Name)}\",\"{EscapeCsv(p.SKU)}\",\"{EscapeCsv(p.Barcode)}\",\"{EscapeCsv(p.Description)}\",\"{EscapeCsv(p.HSNCode)}\",\"{EscapeCsv(p.Category?.Name)}\",\"{EscapeCsv(p.Brand?.Name)}\",\"{EscapeCsv(p.Unit?.Name)}\",{p.PurchasePrice},{p.SellingPrice},{p.MRP},{p.TaxRate?.Percentage},{p.CurrentStock},{p.MinStockLevel},{p.MaxStockLevel},{p.ReorderLevel},{p.IsService},{p.ExpiryDate?.ToString("yyyy-MM-dd")}");
             }
 
             return Encoding.UTF8.GetBytes(sb.ToString());

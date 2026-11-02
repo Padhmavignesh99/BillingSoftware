@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BillingSoftware.API.Data;
 using BillingSoftware.API.DTOs.Common;
 using BillingSoftware.API.DTOs.Requests;
 using BillingSoftware.API.DTOs.Responses;
+using BillingSoftware.API.Models.Entities;
+using BillingSoftware.API.Models.Enums;
 using BillingSoftware.API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BillingSoftware.API.Controllers.Auth
 {
@@ -23,7 +27,12 @@ namespace BillingSoftware.API.Controllers.Auth
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _admin;
-        public AdminController(IAdminService admin) => _admin = admin;
+        private readonly ApplicationDbContext _db;
+        public AdminController(IAdminService admin, ApplicationDbContext db)
+        {
+            _admin = admin;
+            _db = db;
+        }
 
         // ── DASHBOARD ───────────────────────────────────────────────────────────────
 
@@ -248,5 +257,174 @@ namespace BillingSoftware.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<List<AdminAuditLogResponse>>>> GetAuditLogs(
             [FromQuery] int page = 1, [FromQuery] int pageSize = 50, [FromQuery] int? tenantId = null)
             => Ok(ApiResponse<List<AdminAuditLogResponse>>.SuccessResponse(await _admin.GetAuditLogsAsync(page, pageSize, tenantId), "Audit logs loaded"));
+
+        // ── PLAN PERMIT (SuperAdmin free grants) ─────────────────────────────────────
+
+        /// <summary>List all businesses with their current plan permit status.</summary>
+        [HttpGet("plan-permits")]
+        public async Task<IActionResult> GetPlanPermits()
+        {
+            var permits = await _db.Subscriptions
+                .Include(s => s.Business)
+                .Include(s => s.Plan)
+                .Where(s => s.IsGrantedBySuperAdmin)
+                .OrderByDescending(s => s.GrantedAt)
+                .Select(s => new
+                {
+                    s.Id,
+                    BusinessId = s.BusinessId,
+                    BusinessName = s.Business != null ? s.Business.Name : "",
+                    BusinessEmail = s.Business != null ? s.Business.Email : "",
+                    PlanName = s.Plan != null ? s.Plan.Name : "",
+                    PlanPermit = s.PlanPermit.ToString(),
+                    PermitDuration = s.PermitDuration.HasValue ? s.PermitDuration.ToString() : null,
+                    Status = s.Status.ToString(),
+                    s.StartDate,
+                    s.EndDate,
+                    s.GrantedAt,
+                    s.GrantNote,
+                    IsLifetime = s.Status == SubscriptionStatus.LifetimeFree
+                })
+                .ToListAsync();
+
+            return Ok(ApiResponse<object>.SuccessResponse(permits));
+        }
+
+        /// <summary>
+        /// Grant a business free access (1-month or lifetime) — called by SuperAdmin.
+        /// </summary>
+        [HttpPost("shops/{businessId}/grant-permit")]
+        public async Task<IActionResult> GrantPermit(int businessId, [FromBody] GrantPermitRequest req)
+        {
+            var now = DateTime.UtcNow;
+
+            var business = await _db.Businesses.FindAsync(businessId);
+            if (business == null)
+                return NotFound(ApiResponse<object>.FailResponse("Business not found."));
+
+            // Get or create the default/free plan (use lowest-price active plan)
+            var plan = await _db.SubscriptionPlans
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.MonthlyPrice)
+                .FirstOrDefaultAsync();
+
+            if (plan == null)
+                return BadRequest(ApiResponse<object>.FailResponse("No active subscription plan found. Create at least one plan first."));
+
+            // Cancel any existing active subscriptions for this business
+            var existing = await _db.Subscriptions
+                .Where(s => s.BusinessId == businessId &&
+                            (s.Status == SubscriptionStatus.Active ||
+                             s.Status == SubscriptionStatus.LifetimeFree ||
+                             s.Status == SubscriptionStatus.MonthlyFree))
+                .ToListAsync();
+
+            foreach (var old in existing)
+            {
+                old.Status = SubscriptionStatus.Cancelled;
+                old.CancelledAt = now;
+                old.CancellationReason = "Superseded by SuperAdmin permit";
+            }
+
+            // Determine status and end date
+            var isLifetime = req.PermitDuration == "LifetimeFree";
+            var status = isLifetime ? SubscriptionStatus.LifetimeFree : SubscriptionStatus.MonthlyFree;
+            var endDate = isLifetime ? DateTime.MaxValue.Date : now.AddMonths(1);
+
+            var sub = new Subscription
+            {
+                BusinessId = businessId,
+                PlanId = plan.Id,
+                StartDate = now,
+                EndDate = endDate,
+                Status = status,
+                AmountPaid = 0,
+                AutoRenew = false,
+                BillingCycle = isLifetime ? "Lifetime" : "Monthly",
+                PlanPermit = PlanPermitType.Free,
+                PermitDuration = isLifetime ? PlanPermitDuration.LifetimeFree : PlanPermitDuration.OneMonth,
+                IsGrantedBySuperAdmin = true,
+                GrantedAt = now,
+                GrantNote = req.Note
+            };
+            _db.Subscriptions.Add(sub);
+            await _db.SaveChangesAsync();
+
+            return Ok(ApiResponse<object>.SuccessResponse(new
+            {
+                sub.Id,
+                BusinessId = businessId,
+                BusinessName = business.Name,
+                PlanPermit = "Free",
+                PermitDuration = req.PermitDuration,
+                Status = status.ToString(),
+                sub.StartDate,
+                EndDate = isLifetime ? "Lifetime" : endDate.ToString("dd-MMM-yyyy"),
+                sub.GrantedAt,
+                sub.GrantNote
+            }, isLifetime
+                ? $"✅ {business.Name} now has lifetime free access!"
+                : $"✅ {business.Name} granted 1-month free access until {endDate:dd-MMM-yyyy}."));
+        }
+
+        /// <summary>Revoke SuperAdmin free permit — business reverts to normal (must pay).</summary>
+        [HttpPost("shops/{businessId}/revoke-permit")]
+        public async Task<IActionResult> RevokePermit(int businessId)
+        {
+            var now = DateTime.UtcNow;
+
+            var activeFreePerms = await _db.Subscriptions
+                .Where(s => s.BusinessId == businessId && s.IsGrantedBySuperAdmin &&
+                            (s.Status == SubscriptionStatus.LifetimeFree ||
+                             s.Status == SubscriptionStatus.MonthlyFree))
+                .ToListAsync();
+
+            if (!activeFreePerms.Any())
+                return NotFound(ApiResponse<object>.FailResponse("No active free permit found for this business."));
+
+            foreach (var p in activeFreePerms)
+            {
+                p.Status = SubscriptionStatus.Cancelled;
+                p.CancelledAt = now;
+                p.CancellationReason = "Revoked by SuperAdmin";
+            }
+
+            await _db.SaveChangesAsync();
+
+            return Ok(ApiResponse<object>.SuccessResponse(null, "Free permit revoked. Business must now subscribe to continue."));
+        }
+
+        /// <summary>Get plan permit status for a single business.</summary>
+        [HttpGet("shops/{businessId}/permit-status")]
+        public async Task<IActionResult> GetPermitStatus(int businessId)
+        {
+            var now = DateTime.UtcNow;
+            var perm = await _db.Subscriptions
+                .Include(s => s.Plan)
+                .Where(s => s.BusinessId == businessId && s.IsGrantedBySuperAdmin &&
+                            (s.Status == SubscriptionStatus.LifetimeFree ||
+                             s.Status == SubscriptionStatus.MonthlyFree))
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (perm == null)
+                return Ok(ApiResponse<object>.SuccessResponse(new { HasFreePermit = false }));
+
+            var isLifetime = perm.Status == SubscriptionStatus.LifetimeFree;
+            return Ok(ApiResponse<object>.SuccessResponse(new
+            {
+                HasFreePermit = true,
+                PlanPermit = perm.PlanPermit.ToString(),
+                PermitDuration = perm.PermitDuration?.ToString(),
+                Status = perm.Status.ToString(),
+                IsLifetime = isLifetime,
+                perm.StartDate,
+                EndDate = isLifetime ? "Lifetime" : perm.EndDate.ToString("dd-MMM-yyyy"),
+                DaysRemaining = isLifetime ? -1 : Math.Max(0, (int)(perm.EndDate - now).TotalDays),
+                perm.GrantedAt,
+                perm.GrantNote,
+                PlanName = perm.Plan?.Name
+            }));
+        }
     }
 }

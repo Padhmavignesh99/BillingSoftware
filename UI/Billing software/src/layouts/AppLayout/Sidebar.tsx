@@ -21,6 +21,20 @@ import {
   RotateCcw,
   Wallet,
   Printer,
+  FileUp,
+  Activity,
+  ClipboardList,
+  ClipboardCheck,
+  Zap,
+  RefreshCw,
+  Star,
+  TrendingUp,
+  FileText,
+  Warehouse,
+  Layers,
+  Shield,
+  Database,
+  Gift,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useStore } from '../../store/useStore';
@@ -47,28 +61,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Billing (POS)', path: '/billing', icon: ShoppingBag, badge: 'F2' },
     { name: 'Invoices', path: '/invoices', icon: Receipt },
+    { name: 'Recurring Invoices', path: '/recurring-invoices', icon: RefreshCw },
     { name: 'Products', path: '/products', icon: Package },
+    { name: 'Product Variants', path: '/products/variants', icon: Layers },
     { name: 'Inventory', path: '/inventory', icon: Boxes },
+    { name: 'Reorder Alerts', path: '/reorder', icon: Zap },
     { name: 'Customers', path: '/customers', icon: Users },
     { name: 'Suppliers', path: '/suppliers', icon: Truck },
+    { name: 'Loyalty Program', path: '/loyalty', icon: Star },
   ];
 
   const operationsNav = [
     { name: 'Purchases', path: '/purchases', icon: ShoppingCart },
+    { name: 'Delivery Challans', path: '/challans', icon: Truck },
     { name: 'Expenses', path: '/expenses', icon: ReceiptIndianRupee },
     { name: 'Sales Returns', path: '/sales-returns', icon: RotateCcw },
     { name: 'Purchase Returns', path: '/purchase-returns', icon: Truck },
     { name: 'Credit Bills (Khata)', path: '/credit-bills', icon: Wallet, highlight: true },
+    { name: 'Stock Take', path: '/stock-take', icon: ClipboardList },
+    { name: 'Payment Reminders', path: '/reminders', icon: Bell },
+    { name: 'Import / Export', path: '/import-export', icon: FileUp },
     { name: 'Reports', path: '/reports', icon: BarChart3 },
+    { name: 'P&L Statement', path: '/reports/profit-loss', icon: TrendingUp },
+    { name: 'GST Reports', path: '/reports/gst', icon: FileText },
     { name: 'Staff & Roles', path: '/staff', icon: UserCheck },
+    { name: 'Roles & Permissions', path: '/staff/roles', icon: Shield },
     { name: 'AI Insights', path: '/ai-insights', icon: Sparkles, highlight: true },
     { name: 'Notifications', path: '/notifications', icon: Bell, count: unreadCount },
+    { name: 'Activity Log', path: '/activity-log', icon: Activity },
   ];
 
   const saasNav = [
     { name: 'Subscription & Plan', path: '/subscription', icon: CreditCard, highlight: true },
     ...(api.hasRole('SuperAdmin') ? [{ name: 'Platform Admin', path: '/platform-admin', icon: ShieldCheck, badge: 'SaaS' }] : []),
+    ...(api.hasRole('SuperAdmin') ? [{ name: 'Plan Permits', path: '/admin/plan-permits', icon: Gift, badge: 'Admin' }] : []),
     { name: 'Printer Setup', path: '/settings/printers', icon: Printer },
+    { name: 'Data Backup', path: '/settings/backup', icon: Database },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
 

@@ -50,6 +50,35 @@ namespace BillingSoftware.API.Controllers.Tenant
             var businessId = CurrentBusinessId;
             var now = DateTime.UtcNow;
 
+            // ── 1. Check SuperAdmin-granted free permit ──────────────────────────────
+            var freeSub = await _db.Subscriptions
+                .Include(s => s.Plan)
+                .Where(s => s.BusinessId == businessId && s.IsGrantedBySuperAdmin &&
+                            (s.Status == SubscriptionStatus.LifetimeFree ||
+                             (s.Status == SubscriptionStatus.MonthlyFree && s.EndDate >= now)))
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (freeSub != null)
+            {
+                var isLifetime = freeSub.Status == SubscriptionStatus.LifetimeFree;
+                return Ok(ApiResponse<SubscriptionStatusResponse>.SuccessResponse(new SubscriptionStatusResponse
+                {
+                    IsAllowed = true,
+                    Status = isLifetime ? "LifetimeFree" : "MonthlyFree",
+                    IsTrial = false,
+                    IsExpired = false,
+                    Message = isLifetime
+                        ? "🎉 You have lifetime free access, granted by the admin."
+                        : $"🎁 Free access granted. Valid until {freeSub.EndDate:dd-MMM-yyyy}.",
+                    ExpiryDate = isLifetime ? null : freeSub.EndDate,
+                    DaysRemaining = isLifetime ? int.MaxValue : (int)(freeSub.EndDate - now).TotalDays,
+                    CurrentPlanName = freeSub.Plan?.Name,
+                    PlanPermit = freeSub.PlanPermit.ToString(),
+                    PermitDuration = freeSub.PermitDuration?.ToString()
+                }));
+            }
+
             // Check active subscription
             var sub = await _db.Subscriptions
                 .Include(s => s.Plan)

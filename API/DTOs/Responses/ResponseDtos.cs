@@ -1183,7 +1183,7 @@ namespace BillingSoftware.API.DTOs.Responses
     public class SubscriptionStatusResponse
     {
         public bool IsAllowed { get; set; }
-        public string Status { get; set; } = string.Empty; // Trial | Active | Expired | NoSubscription
+        public string Status { get; set; } = string.Empty; // Trial | Active | Expired | NoSubscription | LifetimeFree | MonthlyFree
         public string Message { get; set; } = string.Empty;
         public DateTime? ExpiryDate { get; set; }
         public int? DaysRemaining { get; set; }
@@ -1191,6 +1191,10 @@ namespace BillingSoftware.API.DTOs.Responses
         public bool IsExpired { get; set; }
         public string? CurrentPlanName { get; set; }
         public List<SubscriptionPlanResponse>? AvailablePlans { get; set; }
+        // ── Plan Permit fields (set when SuperAdmin grants free access) ───────────
+        public string? PlanPermit { get; set; }      // "Paid" | "Free"
+        public string? PermitDuration { get; set; }  // "OneMonth" | "LifetimeFree"
+        public bool IsGrantedBySuperAdmin { get; set; } = false;
     }
 
     // ==================== PRINT SETTINGS — LOOKUP DATA ====================

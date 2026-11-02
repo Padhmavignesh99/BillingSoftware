@@ -43,6 +43,18 @@ namespace BillingSoftware.API.Models.Entities
         public DateTime? CancelledAt { get; set; }
         public string? CancellationReason { get; set; }
         public bool AutoRenew { get; set; } = true;
+
+        // ── SuperAdmin Plan Permit Fields ─────────────────────────────────────────
+        /// <summary>Whether this subscription was granted free by a SuperAdmin.</summary>
+        public PlanPermitType PlanPermit { get; set; } = PlanPermitType.Paid;
+        /// <summary>Free permit duration: 1 Month or Lifetime. Null if PlanPermit = Paid.</summary>
+        public PlanPermitDuration? PermitDuration { get; set; }
+        /// <summary>True when SuperAdmin explicitly granted free access.</summary>
+        public bool IsGrantedBySuperAdmin { get; set; } = false;
+        /// <summary>When the SuperAdmin granted this permit.</summary>
+        public DateTime? GrantedAt { get; set; }
+        /// <summary>Internal note/reason for the grant (e.g. "Beta tester", "Partner").</summary>
+        public string? GrantNote { get; set; }
     }
 
     public class SubscriptionPayment : BaseEntity
