@@ -71,20 +71,19 @@ body {
   background: #4ade80;
 }
 
-/* Print Invoice Styling */
+/* Print Invoice Styling — base rules (paper-specific rules injected dynamically by pdfService) */
 @media print {
   body * {
     visibility: hidden;
   }
-  #printable-invoice, #printable-invoice * {
+  #printable-invoice,
+  #printable-invoice * {
     visibility: visible;
   }
   #printable-invoice {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    padding: 20px;
     background: white;
     color: black;
   }

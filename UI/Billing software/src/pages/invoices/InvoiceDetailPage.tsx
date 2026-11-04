@@ -99,10 +99,10 @@ export const InvoiceDetailPage: React.FC = () => {
               <tr>
                 <th className="py-2.5 px-3">#</th>
                 <th className="py-2.5 px-3">Product Description</th>
-                <th className="py-2.5 px-3">SKU</th>
+                <th className="py-2.5 px-3 hide-on-thermal">SKU</th>
                 <th className="py-2.5 px-3 text-center">Qty</th>
                 <th className="py-2.5 px-3 text-right">Price (₹)</th>
-                <th className="py-2.5 px-3 text-right">GST %</th>
+                <th className="py-2.5 px-3 text-right hide-on-thermal">GST %</th>
                 <th className="py-2.5 px-3 text-right">Amount (₹)</th>
               </tr>
             </thead>
@@ -111,12 +111,12 @@ export const InvoiceDetailPage: React.FC = () => {
                 <tr key={idx}>
                   <td className="py-3 px-3 font-mono text-slate-400">{idx + 1}</td>
                   <td className="py-3 px-3 font-semibold text-slate-900">{item.productName}</td>
-                  <td className="py-3 px-3 font-mono text-slate-500">{item.sku}</td>
+                  <td className="py-3 px-3 font-mono text-slate-500 hide-on-thermal">{item.sku}</td>
                   <td className="py-3 px-3 text-center font-bold text-slate-800">
                     {item.quantity} {item.unit}
                   </td>
                   <td className="py-3 px-3 text-right font-mono">₹{item.price.toFixed(2)}</td>
-                  <td className="py-3 px-3 text-right font-mono text-slate-500">{item.taxRate}%</td>
+                  <td className="py-3 px-3 text-right font-mono text-slate-500 hide-on-thermal">{item.taxRate}%</td>
                   <td className="py-3 px-3 text-right font-mono font-bold text-slate-900">₹{item.total.toFixed(2)}</td>
                 </tr>
               ))}

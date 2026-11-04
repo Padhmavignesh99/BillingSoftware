@@ -6,10 +6,11 @@ import {
   Search, Filter, Eye, Settings2, Bell, Database, BarChart3,
   ArrowUpRight, ArrowDownRight, DollarSign, Target, Shield, Gauge,
   Circle, Star, TrendingUp, Activity, Package, ChevronDown, Cpu,
-  AlertCircle, Plus, PauseCircle, Wifi, WifiOff
+  AlertCircle, Plus, PauseCircle, Wifi, WifiOff, Gift
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { api } from '../../services/apiClient';
+import { PlanPermitManager } from './PlanPermitManagerPage';
 import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -652,7 +653,7 @@ const TenantRegistry: React.FC<{ shops: Shop[]; plans: Plan[]; onToggleShop: (s:
         <table className="w-full text-[11px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/70">
-              {['Tenant Organization', 'Plan Tier', 'End Users', 'Billed Vol / Mo', 'Gateway Fabric', 'Metering Quota', 'Status', 'Control'].map(h => (
+              {['Tenant Organization', 'Plan Tier', 'End Users', 'Billed Vol / Mo', 'Gateway Fabric', 'Metering Quota', 'Permit', 'Status', 'Control'].map(h => (
                 <th key={h} className="text-left py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">{h}</th>
               ))}
             </tr>
@@ -709,6 +710,15 @@ const TenantRegistry: React.FC<{ shops: Shop[]; plans: Plan[]; onToggleShop: (s:
                       </div>
                       {q >= 95 && <span className="text-[9px] text-rose-600 font-bold">Cap Warning</span>}
                     </div>
+                  </td>
+                  <td className="px-3">
+                    {shop.subscriptionStatus === 'LifetimeFree' ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-700">♾ Lifetime Free</span>
+                    ) : shop.subscriptionStatus === 'MonthlyFree' ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-700">🕐 1 Month Free</span>
+                    ) : (
+                      <span className="text-[10px] text-gray-400">Paid</span>
+                    )}
                   </td>
                   <td className="px-3">
                     <StatusBadge status={isOverdue ? 'Overdue' : shop.status === 'Suspended' ? 'Suspended' : 'Active'} />
@@ -1302,6 +1312,7 @@ const VIEWS = [
   { id: 'tenants', label: 'Tenant Registry', icon: Building2, section: 'OPERATIONS & CONTROL' },
   { id: 'plans', label: 'Global Plans & Metering', icon: Globe, section: 'OPERATIONS & CONTROL' },
   { id: 'gateway', label: 'Gateway Orchestration', icon: GitBranch, section: 'OPERATIONS & CONTROL' },
+  { id: 'plan-permits', label: 'Plan Permit Manager', icon: Gift, section: 'OPERATIONS & CONTROL' },
   { id: 'audit', label: 'Audit & Security Logs', icon: ShieldAlert, section: 'OPERATIONS & CONTROL' },
   { id: 'invoicing', label: 'Tenant Invoicing & Revenue', icon: Receipt, section: 'REVENUE ENGINE' },
   { id: 'subscriptions', label: 'Customer Subscriptions', icon: Users, section: 'REVENUE ENGINE' },
@@ -1427,6 +1438,7 @@ export const PlatformAdminPage: React.FC = () => {
       case 'invoicing': return <RevenueEngine dash={dash} />;
       case 'subscriptions': return <CustomerSubscriptions shops={shops} />;
       case 'audit': return <AuditLogs logs={logs} />;
+      case 'plan-permits': return <PlanPermitManager businesses={shops} />;
       default:
         return (
           <div className="flex items-center justify-center h-64 bg-white rounded-xl border border-gray-200">

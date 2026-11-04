@@ -491,6 +491,30 @@ class ApiService {
   };
 
   // ================= 13. USERS & ROLES API =================
+
+  // ================= STAFF / ROLES MANAGEMENT API =================
+  public staff = {
+    getRoles: () => this.request<any[]>('/api/roles'),
+
+    createRole: (data: { name: string; description: string }) =>
+      this.request<any>('/api/roles', { method: 'POST', body: JSON.stringify(data) }),
+
+    updateRole: (id: string, data: any) =>
+      this.request<any>(`/api/roles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+    deleteRole: (id: string) =>
+      this.request<any>(`/api/roles/${id}`, { method: 'DELETE' }),
+
+    getRolePermissions: (roleId: string) =>
+      this.request<any[]>(`/api/roles/${roleId}/permissions`),
+
+    setRolePermissions: (roleId: string, permissions: string[]) =>
+      this.request<any>(`/api/roles/${roleId}/permissions`, {
+        method: 'PUT',
+        body: JSON.stringify({ permissions }),
+      }),
+  };
+
   public users = {
     list: () => this.request<UserStaff[]>('/api/user'),
 

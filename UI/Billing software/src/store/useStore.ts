@@ -263,6 +263,11 @@ interface AppState {
 
   // Staff & Roles Actions
   addStaff: (data: Omit<UserStaff, 'id'> & { password: string }) => Promise<UserStaff>;
+  updateStaff: (id: string, data: Partial<UserStaff>) => Promise<void>;
+  deleteStaff: (id: string) => Promise<void>;
+  addRole: (data: { name: string; description: string; permissions: string[] }) => Promise<Role>;
+  updateRole: (id: string, data: Partial<Role>) => Promise<void>;
+  deleteRole: (id: string) => Promise<void>;
 
   // Warehouses & Branches
   addWarehouse: (data: Omit<Warehouse, 'id'>) => Warehouse;
@@ -1722,6 +1727,73 @@ export const useStore = create<AppState>((set, get) => {
       const staff = mapApiStaff(created);
       set((state) => ({ staff: [...state.staff, staff] }));
       return staff;
+    },
+
+    updateStaff: async (id, data) => {
+      try {
+        await api.users.update(id, {
+          fullName: data.name,
+          email: data.email,
+          phone: data.phone,
+          role: data.role,
+        } as any);
+      } catch {
+        // fallback to local only
+      }
+      set((state) => ({
+        staff: state.staff.map((s) => (s.id === id ? { ...s, ...data } : s)),
+      }));
+    },
+
+    deleteStaff: async (id) => {
+      try {
+        await api.users.delete(id);
+      } catch {
+        // fallback to local only
+      }
+      set((state) => ({ staff: state.staff.filter((s) => s.id !== id) }));
+    },
+
+    addRole: async (data) => {
+      let newRole: Role;
+      try {
+        const created = await api.staff.createRole({ name: data.name, description: data.description });
+        newRole = {
+          id: String(created?.id ?? `role-${Date.now()}`),
+          name: data.name,
+          description: data.description,
+          permissions: data.permissions,
+        };
+      } catch {
+        newRole = {
+          id: `role-${Date.now()}`,
+          name: data.name,
+          description: data.description,
+          permissions: data.permissions,
+        };
+      }
+      set((state) => ({ roles: [...state.roles, newRole] }));
+      return newRole;
+    },
+
+    updateRole: async (id, data) => {
+      try {
+        await api.staff.updateRole(id, data);
+      } catch {
+        // fallback to local only
+      }
+      set((state) => ({
+        roles: state.roles.map((r) => (r.id === id ? { ...r, ...data } : r)),
+      }));
+    },
+
+    deleteRole: async (id) => {
+      try {
+        await api.staff.deleteRole(id);
+      } catch {
+        // fallback to local only
+      }
+      set((state) => ({ roles: state.roles.filter((r) => r.id !== id) }));
     },
     addWarehouse: (data) => {
       const newWarehouse: Warehouse = {

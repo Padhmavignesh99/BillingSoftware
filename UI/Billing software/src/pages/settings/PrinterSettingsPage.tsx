@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+﻿import React, { useEffect, useState, useCallback } from 'react';
 import {
   Printer, Wifi, Usb, Bluetooth, Network, Cloud, Settings2, Plus,
   Trash2, CheckCircle2, XCircle, RefreshCw, TestTube2, Star, StarOff,
@@ -95,20 +95,134 @@ const defaultForm: PrinterForm = {
   notes: '',
 };
 
-// ─── Printer type metadata ─────────────────────────────────────────────────
+// --- Paper size catalogue ---------------------------------------------------
+// Each entry: value = DB key, label = UI display, dims = human dimensions,
+// cssPageSize = CSS @page size value, printWidth = container max-width,
+// isNarrow = use monospace font + compact layout.
+//
+// Printer-wise defaults:
+//   Thermal Receipt  -> 80mm       (58mm, 110mm also supported)
+//   Dot Matrix       -> A4         (A5, Continuous 9.5x11, 9.5x12)
+//   Inkjet           -> A4         (A5, A3, A6, B5, Letter, Legal, 4x6, 5x7, 8x10)
+//   Laser            -> A4         (A5, A3, A6, B5, Letter, Legal, Executive, Folio)
+//   Label            -> 100x50mm   (100x150mm, 50x25mm, 25x15mm)
+//   Portable / BT    -> 80mm       (58mm, A4-roll, 2x3, 3x4)
+//   Multifunction    -> A4         (A3, A5, B4, B5, Tabloid, Letter, Legal, SRA3)
+
+interface PaperSizeOption {
+  value: string;
+  label: string;
+  dims: string;
+  cssPageSize: string;
+  printWidth: string;
+  isNarrow: boolean;
+  defaultCharsPerLine?: number;
+}
+
+const ALL_PAPER_SIZES: PaperSizeOption[] = [
+  // Standard office
+  { value: 'A4',              label: 'A4',                   dims: '210 x 297 mm',     cssPageSize: 'A4 portrait',      printWidth: '210mm',  isNarrow: false },
+  { value: 'A5',              label: 'A5',                   dims: '148 x 210 mm',     cssPageSize: 'A5 portrait',      printWidth: '148mm',  isNarrow: false },
+  { value: 'A6',              label: 'A6',                   dims: '105 x 148 mm',     cssPageSize: '105mm 148mm',      printWidth: '105mm',  isNarrow: false },
+  { value: 'A3',              label: 'A3',                   dims: '297 x 420 mm',     cssPageSize: 'A3 portrait',      printWidth: '297mm',  isNarrow: false },
+  { value: 'B5',              label: 'B5',                   dims: '176 x 250 mm',     cssPageSize: '176mm 250mm',      printWidth: '176mm',  isNarrow: false },
+  { value: 'B4',              label: 'B4',                   dims: '250 x 353 mm',     cssPageSize: '250mm 353mm',      printWidth: '250mm',  isNarrow: false },
+  { value: 'Letter',          label: 'Letter (US)',          dims: '215.9 x 279.4 mm', cssPageSize: 'letter portrait',  printWidth: '216mm',  isNarrow: false },
+  { value: 'Legal',           label: 'Legal (US)',           dims: '215.9 x 355.6 mm', cssPageSize: 'legal portrait',   printWidth: '216mm',  isNarrow: false },
+  { value: 'Executive',       label: 'Executive',            dims: '184.1 x 266.7 mm', cssPageSize: '184mm 267mm',      printWidth: '184mm',  isNarrow: false },
+  { value: 'Folio',           label: 'Folio',                dims: '215.9 x 330.2 mm', cssPageSize: '216mm 330mm',      printWidth: '216mm',  isNarrow: false },
+  { value: 'Tabloid',         label: 'Tabloid / Ledger',     dims: '279.4 x 431.8 mm', cssPageSize: 'tabloid portrait', printWidth: '279mm',  isNarrow: false },
+  { value: 'SRA3',            label: 'SRA3',                 dims: '320 x 450 mm',     cssPageSize: '320mm 450mm',      printWidth: '320mm',  isNarrow: false },
+  // Photo sizes
+  { value: '4x6',             label: '4x6 Photo',           dims: '101.6 x 152.4 mm', cssPageSize: '102mm 152mm',      printWidth: '102mm',  isNarrow: false },
+  { value: '5x7',             label: '5x7 Photo',           dims: '127 x 177.8 mm',   cssPageSize: '127mm 178mm',      printWidth: '127mm',  isNarrow: false },
+  { value: '8x10',            label: '8x10 Photo',          dims: '203.2 x 254 mm',   cssPageSize: '203mm 254mm',      printWidth: '203mm',  isNarrow: false },
+  // Thermal receipt rolls
+  { value: '58mm',            label: '58 mm Roll',          dims: '58 x Variable mm',  cssPageSize: '58mm auto',        printWidth: '48mm',   isNarrow: true,  defaultCharsPerLine: 32 },
+  { value: '80mm',            label: '80 mm Roll',          dims: '80 x Variable mm',  cssPageSize: '80mm auto',        printWidth: '72mm',   isNarrow: true,  defaultCharsPerLine: 42 },
+  { value: '110mm',           label: '110 mm Roll',         dims: '110 x Variable mm', cssPageSize: '110mm auto',       printWidth: '100mm',  isNarrow: true,  defaultCharsPerLine: 56 },
+  // Dot-matrix continuous feed
+  { value: 'Continuous9.5x11', label: 'Continuous 9.5x11',  dims: '241.3 x 279.4 mm', cssPageSize: '241mm 279mm',     printWidth: '241mm',  isNarrow: false },
+  { value: 'Continuous9.5x12', label: 'Continuous 9.5x12',  dims: '241.3 x 304.8 mm', cssPageSize: '241mm 305mm',     printWidth: '241mm',  isNarrow: false },
+  // Label sizes
+  { value: '25x15mm',         label: '25x15 mm Label',      dims: '25 x 15 mm',        cssPageSize: '25mm 15mm',       printWidth: '23mm',   isNarrow: true },
+  { value: '50x25mm',         label: '50x25 mm Label',      dims: '50 x 25 mm',        cssPageSize: '50mm 25mm',       printWidth: '46mm',   isNarrow: true },
+  { value: '100x50mm',        label: '100x50 mm Label',     dims: '100 x 50 mm',       cssPageSize: '100mm 50mm',      printWidth: '94mm',   isNarrow: true },
+  { value: '100x150mm',       label: '100x150 mm Shipping', dims: '100 x 150 mm',      cssPageSize: '100mm 150mm',     printWidth: '94mm',   isNarrow: true },
+  // Portable photo
+  { value: '2x3',             label: '2x3 Pocket Photo',    dims: '50.8 x 76.2 mm',   cssPageSize: '51mm 76mm',        printWidth: '48mm',   isNarrow: true },
+  { value: '3x4',             label: '3x4 Photo Sticker',   dims: '76.2 x 101.6 mm',  cssPageSize: '76mm 102mm',       printWidth: '72mm',   isNarrow: true },
+  // Fallback
+  { value: 'Custom',          label: 'Custom',               dims: '--',                cssPageSize: 'auto',             printWidth: '100%',   isNarrow: false },
+];
+
+const getPaperSizeOption = (value: string): PaperSizeOption =>
+  ALL_PAPER_SIZES.find(p => p.value === value) ?? ALL_PAPER_SIZES[0];
+
+// --- Printer type metadata ---------------------------------------------------
+// paperSizes[0] = default paper when this type is first selected.
 
 const PRINTER_TYPES = [
-  { value: 'Thermal',       label: 'Thermal Receipt',    icon: Printer,    color: 'text-emerald-600', bg: 'bg-emerald-50',  desc: '58mm/80mm ESC/POS receipts', paperSizes: ['58mm','80mm'], supportsEscPos: true, supportsPdf: false, supportsAutoCut: true },
-  { value: 'Laser',         label: 'Laser (A4/A5)',      icon: FileText,   color: 'text-blue-600',    bg: 'bg-blue-50',     desc: 'A4 invoices, GST bills',     paperSizes: ['A4','A5','Letter','Legal'], supportsEscPos: false, supportsPdf: true, supportsAutoCut: false },
-  { value: 'Inkjet',        label: 'Inkjet / Colour',    icon: FileText,   color: 'text-purple-600',  bg: 'bg-purple-50',   desc: 'Colour invoices, reports',   paperSizes: ['A4','A5','Letter'], supportsEscPos: false, supportsPdf: true, supportsAutoCut: false },
-  { value: 'DotMatrix',     label: 'Dot Matrix',         icon: Layers,     color: 'text-orange-600',  bg: 'bg-orange-50',   desc: 'Multi-copy, continuous paper', paperSizes: ['A4','Custom'], supportsEscPos: false, supportsPdf: false, supportsAutoCut: false },
-  { value: 'Label',         label: 'Barcode / Label',    icon: Tag,        color: 'text-rose-600',    bg: 'bg-rose-50',     desc: 'Product labels, TSPL/ZPL',  paperSizes: ['50x25mm','100x50mm','Custom'], supportsEscPos: false, supportsPdf: false, supportsAutoCut: true },
-  { value: 'Portable',      label: 'Portable / BT',      icon: Smartphone, color: 'text-indigo-600',  bg: 'bg-indigo-50',   desc: 'Field billing, mobile POS',  paperSizes: ['58mm','80mm'], supportsEscPos: true, supportsPdf: false, supportsAutoCut: false },
-  { value: 'Multifunction', label: 'Multifunction',      icon: Copy,       color: 'text-slate-600',   bg: 'bg-slate-50',    desc: 'Print, scan, copy – LAN',    paperSizes: ['A4','A5','Letter'], supportsEscPos: false, supportsPdf: true, supportsAutoCut: false },
+  {
+    value: 'Thermal', label: 'Thermal Receipt', icon: Printer,
+    color: 'text-emerald-600', bg: 'bg-emerald-50',
+    desc: 'POS receipts - 58 mm, 80 mm, 110 mm roll',
+    paperSizes: ['80mm', '58mm', '110mm'],
+    defaultPaperSize: '80mm',
+    supportsEscPos: true, supportsPdf: false, supportsAutoCut: true,
+  },
+  {
+    value: 'Laser', label: 'Laser Printer', icon: FileText,
+    color: 'text-blue-600', bg: 'bg-blue-50',
+    desc: 'A4 invoices, GST bills, office documents',
+    paperSizes: ['A4', 'A5', 'A3', 'A6', 'B5', 'Letter', 'Legal', 'Executive', 'Folio'],
+    defaultPaperSize: 'A4',
+    supportsEscPos: false, supportsPdf: true, supportsAutoCut: false,
+  },
+  {
+    value: 'Inkjet', label: 'Inkjet / Colour', icon: FileText,
+    color: 'text-purple-600', bg: 'bg-purple-50',
+    desc: 'Colour invoices, photo prints, reports',
+    paperSizes: ['A4', 'A5', 'A3', 'A6', 'B5', 'Letter', 'Legal', '4x6', '5x7', '8x10'],
+    defaultPaperSize: 'A4',
+    supportsEscPos: false, supportsPdf: true, supportsAutoCut: false,
+  },
+  {
+    value: 'DotMatrix', label: 'Dot Matrix', icon: Layers,
+    color: 'text-orange-600', bg: 'bg-orange-50',
+    desc: 'Multi-copy carbon forms, continuous fanfold',
+    paperSizes: ['A4', 'A5', 'Continuous9.5x11', 'Continuous9.5x12'],
+    defaultPaperSize: 'A4',
+    supportsEscPos: false, supportsPdf: false, supportsAutoCut: false,
+  },
+  {
+    value: 'Label', label: 'Barcode / Label', icon: Tag,
+    color: 'text-rose-600', bg: 'bg-rose-50',
+    desc: 'Product labels, shipping labels - TSPL/ZPL',
+    paperSizes: ['100x50mm', '100x150mm', '50x25mm', '25x15mm', 'Custom'],
+    defaultPaperSize: '100x50mm',
+    supportsEscPos: false, supportsPdf: false, supportsAutoCut: true,
+  },
+  {
+    value: 'Portable', label: 'Portable / BT', icon: Smartphone,
+    color: 'text-indigo-600', bg: 'bg-indigo-50',
+    desc: 'Field billing, mobile POS, pocket prints',
+    paperSizes: ['80mm', '58mm', 'A4', '2x3', '3x4'],
+    defaultPaperSize: '80mm',
+    supportsEscPos: true, supportsPdf: false, supportsAutoCut: false,
+  },
+  {
+    value: 'Multifunction', label: 'Multifunction (MFP)', icon: Copy,
+    color: 'text-slate-600', bg: 'bg-slate-50',
+    desc: 'Print, scan, copy - LAN / copier-class',
+    paperSizes: ['A4', 'A3', 'A5', 'B4', 'B5', 'Tabloid', 'Letter', 'Legal', 'SRA3'],
+    defaultPaperSize: 'A4',
+    supportsEscPos: false, supportsPdf: true, supportsAutoCut: false,
+  },
 ];
 
 const CONNECTION_TYPES = [
-  { value: 'USB',       label: 'USB',                icon: Usb,       desc: 'Direct USB — uses OS driver', needsAddress: false },
+  { value: 'USB',       label: 'USB',                icon: Usb,       desc: 'Direct USB -- uses OS driver', needsAddress: false },
   { value: 'Ethernet',  label: 'Ethernet / LAN',     icon: Network,   desc: 'Raw TCP port 9100 (ESC/POS)', needsAddress: true  },
   { value: 'WiFi',      label: 'Wi-Fi',              icon: Wifi,      desc: 'Wireless TCP connection',     needsAddress: true  },
   { value: 'Bluetooth', label: 'Bluetooth',          icon: Bluetooth, desc: 'Pair device first',           needsAddress: false },
@@ -116,7 +230,8 @@ const CONNECTION_TYPES = [
   { value: 'Cloud',     label: 'Cloud Print',        icon: Cloud,     desc: 'Cloud relay endpoint URL',    needsAddress: true  },
 ];
 
-const PAPER_SIZES = ['A4','A5','Letter','Legal','80mm','58mm','50x25mm','100x50mm','Custom'];
+// Full flat list used as fallback when no type is selected
+const PAPER_SIZES = ALL_PAPER_SIZES.map(p => p.value);
 
 // ─── Sub-components ────────────────────────────────────────────────────────
 
@@ -660,7 +775,7 @@ export const PrinterSettingsPage: React.FC = () => {
                 {/* Thermal-specific */}
                 {(form.printerType === 'Thermal' || form.printerType === 'Portable') && (
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Chars / Line" hint="32=58mm, 42=80mm">
+                    <Field label="Chars / Line" hint={`Default: ${getPaperSizeOption(form.paperSize).defaultCharsPerLine ?? 42} chars/line for ${form.paperSize}`}>
                       <input type="number" value={form.charsPerLine} onChange={e => setForm(f => ({ ...f, charsPerLine: e.target.value }))} placeholder="42" className={InputCls} />
                     </Field>
                     <Field label="Line Feed Count" hint="Lines before cut">
