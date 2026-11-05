@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Services.Interfaces
+﻿namespace MasterBilling.API.Services.Interfaces
 {
     /// <summary>
     /// Resolves the current tenant ID from the authenticated user's JWT claims.

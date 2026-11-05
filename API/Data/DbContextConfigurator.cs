@@ -1,7 +1,7 @@
-using BillingSoftware.API.Configuration;
+﻿using MasterBilling.API.Configuration;
 using Microsoft.EntityFrameworkCore;
 
-namespace BillingSoftware.API.Data
+namespace MasterBilling.API.Data
 {
     /// <summary>
     /// Configures the correct EF Core database provider based on <see cref="DataSettings.ActiveProvider"/>.

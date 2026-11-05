@@ -1,10 +1,10 @@
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.Services.Implementations;
+﻿using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace BillingSoftware.API.Controllers.Inventory
+namespace MasterBilling.API.Controllers.Inventory
 {
     [ApiController]
     [Authorize]

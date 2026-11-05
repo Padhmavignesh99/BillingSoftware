@@ -1,8 +1,8 @@
-using BillingSoftware.API.Models.Enums;
-using BillingSoftware.API.Services.Interfaces;
+﻿using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Services.Interfaces;
 using System.Security.Claims;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     /// <summary>
     /// Scoped service — resolves the current tenant from the HTTP request's JWT claims.

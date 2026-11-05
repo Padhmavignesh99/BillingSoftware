@@ -1,12 +1,12 @@
-using BillingSoftware.API.Data;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Services.Interfaces;
+﻿using MasterBilling.API.Data;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     public class DeliveryChallanService : IDeliveryChallanService
     {

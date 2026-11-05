@@ -1,6 +1,6 @@
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.Models.Enums;
 
-namespace BillingSoftware.API.DTOs.Responses
+namespace MasterBilling.API.DTOs.Responses
 {
     // ==================== DEVICE CONFIGURATION ====================
     public class DeviceConfigurationResponse

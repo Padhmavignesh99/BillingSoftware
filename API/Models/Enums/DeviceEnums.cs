@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Models.Enums
+﻿namespace MasterBilling.API.Models.Enums
 {
     // ==================== DEVICE CATEGORY ====================
     /// <summary>
@@ -7,10 +7,10 @@ namespace BillingSoftware.API.Models.Enums
     /// </summary>
     public enum DeviceCategory
     {
-        /// <summary>Devices that send data INTO the billing software (scanners, scales, keyboard, etc.).</summary>
+        /// <summary>Devices that send data INTO the Master Billing (scanners, scales, keyboard, etc.).</summary>
         Input = 1,
 
-        /// <summary>Devices that receive data FROM the billing software (printers, displays, drawers, speakers).</summary>
+        /// <summary>Devices that receive data FROM the Master Billing (printers, displays, drawers, speakers).</summary>
         Output = 2,
 
         /// <summary>Payment hardware (card/POS terminals, UPI QR readers, payment gateway integrations).</summary>

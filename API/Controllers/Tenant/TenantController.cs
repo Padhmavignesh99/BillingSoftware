@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Services.Interfaces;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Services.Interfaces;
 
-namespace BillingSoftware.API.Controllers.Tenant
+namespace MasterBilling.API.Controllers.Tenant
 {
     /// <summary>
     /// SuperAdmin-only endpoints for managing all tenants (businesses/customers).

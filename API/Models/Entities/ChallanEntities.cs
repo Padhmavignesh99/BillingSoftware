@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Models.Entities
+﻿namespace MasterBilling.API.Models.Entities
 {
     public class DeliveryChallan : TenantEntity
     {

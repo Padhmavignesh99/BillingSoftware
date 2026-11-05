@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Models.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Models.Enums;
 using System.Security.Claims;
 
-namespace BillingSoftware.API.Data
+namespace MasterBilling.API.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -413,13 +413,13 @@ namespace BillingSoftware.API.Data
 
             // ─── Seed SuperAdmin user ─────────────────────────────────────────────────
             // SuperAdmin has no TenantId — full platform access.
-            // Default credentials: superadmin@billingsoftware.com / SuperAdmin@123
+            // Default credentials: superadmin@MasterBilling.com / SuperAdmin@123
             // IMPORTANT: Change this password after first login!
             modelBuilder.Entity<User>().HasData(new User
             {
                 Id             = 1,
                 FullName       = "Super Admin",
-                Email          = "superadmin@billingsoftware.com",
+                Email          = "superadmin@MasterBilling.com",
                 PasswordHash   = BCrypt.Net.BCrypt.HashPassword("SuperAdmin@123"),
                 Role           = UserRole.SuperAdmin,
                 TenantId       = null,
@@ -438,12 +438,12 @@ namespace BillingSoftware.API.Data
             );
 
             // ─── Seed Admin user ──────────────────────────────────────────────────────
-            // Admin credentials: admin@billingsoftware.com / Admin@123
+            // Admin credentials: admin@MasterBilling.com / Admin@123
             modelBuilder.Entity<User>().HasData(new User
             {
                 Id             = 2,
                 FullName       = "Admin",
-                Email          = "admin@billingsoftware.com",
+                Email          = "admin@MasterBilling.com",
                 PasswordHash   = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
                 Role           = UserRole.SuperAdmin,
                 TenantId       = null,

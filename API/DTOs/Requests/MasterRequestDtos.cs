@@ -1,7 +1,7 @@
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace BillingSoftware.API.DTOs.Requests
+namespace MasterBilling.API.DTOs.Requests
 {
     // ==================== AUTH ====================
     public class RegisterRequest

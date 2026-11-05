@@ -1,5 +1,5 @@
-name: billing_app
-description: "A complete Billing & POS mobile and macOS desktop application"
+﻿name: master_billing
+description: "Master Billing - Complete POS & Billing App"
 publish_to: "none"
 version: 1.0.0+1
 

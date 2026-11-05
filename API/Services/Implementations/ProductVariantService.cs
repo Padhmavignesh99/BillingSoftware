@@ -1,9 +1,9 @@
-using BillingSoftware.API.Data;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.Models.Entities;
+﻿using MasterBilling.API.Data;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     public class ProductVariantService
     {

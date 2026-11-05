@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.DTOs.Responses
+﻿namespace MasterBilling.API.DTOs.Responses
 {
     // =====================================================================
     // WAREHOUSE

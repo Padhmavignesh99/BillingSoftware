@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_constants.dart';
@@ -596,7 +596,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Antigravity Billing Suite',
+                  'Master Billing',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

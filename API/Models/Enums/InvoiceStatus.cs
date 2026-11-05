@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Models.Enums
+﻿namespace MasterBilling.API.Models.Enums
 {
     public enum InvoiceStatus
     {

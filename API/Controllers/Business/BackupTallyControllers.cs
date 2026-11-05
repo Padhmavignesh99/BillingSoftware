@@ -1,10 +1,10 @@
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.Services.Implementations;
-using BillingSoftware.API.Services.Interfaces;
+﻿using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.Services.Implementations;
+using MasterBilling.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BillingSoftware.API.Controllers.Business
+namespace MasterBilling.API.Controllers.Business
 {
     [ApiController]
     [Authorize]

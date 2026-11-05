@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.DTOs.Common
+﻿namespace MasterBilling.API.DTOs.Common
 {
     /// <summary>
     /// Standard API response wrapper for all endpoints

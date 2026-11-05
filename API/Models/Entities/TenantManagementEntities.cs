@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Models.Entities
+﻿namespace MasterBilling.API.Models.Entities
 {
     // ==================== COUNTER ====================
     /// <summary>Billing counter / POS terminal at a branch.</summary>

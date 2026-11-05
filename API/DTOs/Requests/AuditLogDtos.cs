@@ -1,6 +1,6 @@
-using BillingSoftware.API.DTOs.Common;
+﻿using MasterBilling.API.DTOs.Common;
 
-namespace BillingSoftware.API.DTOs.Requests
+namespace MasterBilling.API.DTOs.Requests
 {
     public class AuditLogFilterRequest : PaginationRequest
     {

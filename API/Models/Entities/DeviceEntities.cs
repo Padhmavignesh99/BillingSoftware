@@ -1,6 +1,6 @@
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.Models.Enums;
 
-namespace BillingSoftware.API.Models.Entities
+namespace MasterBilling.API.Models.Entities
 {
     // ==================== DEVICE CONFIGURATION ====================
     /// <summary>
@@ -440,7 +440,7 @@ namespace BillingSoftware.API.Models.Entities
 
     // ==================== CARD PAYMENT TRANSACTION ====================
     /// <summary>
-    /// Tracks card/POS terminal transactions initiated from the billing software.
+    /// Tracks card/POS terminal transactions initiated from the Master Billing.
     /// Linked to an invoice payment.
     /// </summary>
     public class CardPaymentTransaction : TenantEntity

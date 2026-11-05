@@ -1,8 +1,8 @@
-using BillingSoftware.API.Data;
+﻿using MasterBilling.API.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     public class TallyExportService
     {

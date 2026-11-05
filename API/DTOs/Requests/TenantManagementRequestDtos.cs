@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BillingSoftware.API.DTOs.Requests
+namespace MasterBilling.API.DTOs.Requests
 {
     // =====================================================================
     // WAREHOUSE REQUESTS

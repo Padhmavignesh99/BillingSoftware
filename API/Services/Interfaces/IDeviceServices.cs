@@ -1,10 +1,10 @@
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Models.Enums;
 
-namespace BillingSoftware.API.Services.Interfaces
+namespace MasterBilling.API.Services.Interfaces
 {
     // ==================== DEVICE CONFIGURATION ====================
     /// <summary>

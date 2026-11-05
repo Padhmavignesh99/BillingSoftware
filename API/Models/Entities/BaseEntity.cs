@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Models.Entities
+﻿namespace MasterBilling.API.Models.Entities
 {
     /// <summary>
     /// Base entity with common audit fields for all entities

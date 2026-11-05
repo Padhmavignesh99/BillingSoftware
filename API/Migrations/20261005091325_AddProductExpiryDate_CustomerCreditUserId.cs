@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace BillingSoftware.API.Migrations
+namespace MasterBilling.API.Migrations
 {
     /// <inheritdoc />
     public partial class AddProductExpiryDate_CustomerCreditUserId : Migration
@@ -3019,7 +3019,7 @@ namespace BillingSoftware.API.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Email", "FullName", "IsActive", "IsDeleted", "LastLoginAt", "OTP", "OTPExpiry", "PasswordHash", "Phone", "ProfileImageUrl", "RefreshToken", "RefreshTokenExpiry", "ResetToken", "ResetTokenExpiry", "Role", "TenantId", "UpdatedAt", "UpdatedBy" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "superadmin@billingsoftware.com", "Super Admin", true, false, null, null, null, "$2a$11$6Sv158KiHEt5mkJ4ZxRG8.vlzPi03oa92JuxMvfBr7mgu6zNwI2Fq", null, null, null, null, null, null, 1, null, null, null });
+                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "superadmin@MasterBilling.com", "Super Admin", true, false, null, null, null, "$2a$11$6Sv158KiHEt5mkJ4ZxRG8.vlzPi03oa92JuxMvfBr7mgu6zNwI2Fq", null, null, null, null, null, null, 1, null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuditLogs_UserId",

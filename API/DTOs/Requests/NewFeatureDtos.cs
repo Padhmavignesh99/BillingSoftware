@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.DTOs.Requests
+﻿namespace MasterBilling.API.DTOs.Requests
 {
     // ─── Delivery Challan ─────────────────────────────────────────────────────────
     public class CreateDeliveryChallanRequest

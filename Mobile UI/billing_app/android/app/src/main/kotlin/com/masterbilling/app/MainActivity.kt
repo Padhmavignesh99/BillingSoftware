@@ -1,4 +1,4 @@
-package com.antigravity.billing_app
+﻿package com.antigravity.master_billing
 
 import io.flutter.embedding.android.FlutterActivity
 

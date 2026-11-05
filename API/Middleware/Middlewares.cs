@@ -1,7 +1,7 @@
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 
-namespace BillingSoftware.API.Middleware
+namespace MasterBilling.API.Middleware
 {
     public class ExceptionMiddleware
     {

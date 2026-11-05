@@ -1,8 +1,8 @@
-using BillingSoftware.API.Configuration;
-using BillingSoftware.API.Data;
-using BillingSoftware.API.Services.Implementations;
-using BillingSoftware.API.Services.Interfaces;
-using BillingSoftware.API.Middleware;
+﻿using MasterBilling.API.Configuration;
+using MasterBilling.API.Data;
+using MasterBilling.API.Services.Implementations;
+using MasterBilling.API.Services.Interfaces;
+using MasterBilling.API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -60,7 +60,7 @@ builder.Services.AddHttpClient();
 
 // ─── JWT Authentication ───────────────────────────────────────────────────────
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
-    ?? new JwtSettings { SecretKey = "BillingSoftware_SuperSecret_JWT_Key_2024!", Issuer = "BillingSoftwareAPI", Audience = "BillingSoftwareClient" };
+    ?? new JwtSettings { SecretKey = "MasterBilling_SuperSecret_JWT_Key_2024!", Issuer = "MasterBillingAPI", Audience = "MasterBillingClient" };
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddAuthentication(options =>
@@ -225,16 +225,16 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title       = "Billing Software API",
+        Title       = "Master Billing API",
         Version     = "v1",
-        Description = "REST API for the Billing Software application.\n\n" +
+        Description = "REST API for the Master Billing application.\n\n" +
                       "**Authentication**: Most endpoints require a JWT Bearer token.\n" +
                       "Use the **Authorize** button (🔒) after logging in via `/api/auth/login`.",
         Contact = new OpenApiContact
         {
             Name  = "Padhmavignesh",
             Email = "padhmavignesh99@example.com",
-            Url   = new Uri("https://github.com/Padhmavignesh99/BillingSoftware")
+            Url   = new Uri("https://github.com/Padhmavignesh99/MasterBilling")
         },
         License = new OpenApiLicense
         {
@@ -279,9 +279,9 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Billing Software API v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Master Billing API v1");
     options.RoutePrefix       = "swagger";
-    options.DocumentTitle     = "Billing Software API";
+    options.DocumentTitle     = "Master Billing API";
     options.DisplayRequestDuration();
     options.EnableDeepLinking();
     options.DefaultModelsExpandDepth(-1); // hides the schema section by default

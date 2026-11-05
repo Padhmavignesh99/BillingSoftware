@@ -1,7 +1,7 @@
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
+﻿using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
 
-namespace BillingSoftware.API.Services.Interfaces
+namespace MasterBilling.API.Services.Interfaces
 {
     public interface ITenantService
     {

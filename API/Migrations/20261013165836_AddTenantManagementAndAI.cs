@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BillingSoftware.API.Migrations
+namespace MasterBilling.API.Migrations
 {
     /// <inheritdoc />
     public partial class AddTenantManagementAndAI : Migration

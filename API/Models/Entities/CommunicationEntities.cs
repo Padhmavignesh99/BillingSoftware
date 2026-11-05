@@ -1,6 +1,6 @@
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.Models.Enums;
 
-namespace BillingSoftware.API.Models.Entities
+namespace MasterBilling.API.Models.Entities
 {
     public class WhatsAppMessage : TenantEntity
     {

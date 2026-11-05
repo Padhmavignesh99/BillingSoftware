@@ -1,6 +1,6 @@
-using BillingSoftware.API.Models.Enums;
+﻿using MasterBilling.API.Models.Enums;
 
-namespace BillingSoftware.API.DTOs.Requests
+namespace MasterBilling.API.DTOs.Requests
 {
     // ==================== DEVICE CONFIGURATION ====================
     public class CreateDeviceConfigurationRequest

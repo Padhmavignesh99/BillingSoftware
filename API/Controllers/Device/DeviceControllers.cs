@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Enums;
-using BillingSoftware.API.Services.Interfaces;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Services.Interfaces;
 
-namespace BillingSoftware.API.Controllers.Device
+namespace MasterBilling.API.Controllers.Device
 {
     // ==================== DEVICE CONFIGURATION CONTROLLER ====================
     /// <summary>
@@ -200,7 +200,7 @@ namespace BillingSoftware.API.Controllers.Device
     /// <summary>
     /// Handles QR code scan events for products, UPI payments, customer identification, etc.
     ///
-    /// QR codes in billing software can encode:
+    /// QR codes in Master Billing can encode:
     ///   - Product barcodes/SKU → same as barcode scanner
     ///   - UPI payment strings → upi://pay?pa=merchant@upi&am=500
     ///   - Customer loyalty QR → for customer identification

@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.DTOs.Requests
+﻿namespace MasterBilling.API.DTOs.Requests
 {
     // ═══════════════════════════════════════════════════════════════
     // PRINTER REGISTRY — Request DTOs
@@ -90,7 +90,7 @@ namespace BillingSoftware.API.DTOs.Requests
     }
 }
 
-namespace BillingSoftware.API.DTOs.Responses
+namespace MasterBilling.API.DTOs.Responses
 {
     // ═══════════════════════════════════════════════════════════════
     // PRINTER REGISTRY — Response DTOs

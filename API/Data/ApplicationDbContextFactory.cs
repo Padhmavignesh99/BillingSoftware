@@ -1,10 +1,10 @@
-﻿using BillingSoftware.API.Configuration;
-using BillingSoftware.API.Data;
+﻿using MasterBilling.API.Configuration;
+using MasterBilling.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace BillingSoftware.API.Data
+namespace MasterBilling.API.Data
 {
     /// <summary>
     /// Allows EF Core tools (dotnet ef migrations add / update) to create

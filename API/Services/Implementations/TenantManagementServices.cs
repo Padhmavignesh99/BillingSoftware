@@ -1,13 +1,13 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using BillingSoftware.API.Data;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Services.Interfaces;
-using UserRoleEntity = BillingSoftware.API.Models.Entities.TenantUserRole;
+using MasterBilling.API.Data;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Services.Interfaces;
+using UserRoleEntity = MasterBilling.API.Models.Entities.TenantUserRole;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     // =====================================================================
     // WAREHOUSE SERVICE

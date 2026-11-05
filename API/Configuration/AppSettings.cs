@@ -1,4 +1,4 @@
-namespace BillingSoftware.API.Configuration
+﻿namespace MasterBilling.API.Configuration
 {
     /// <summary>
     /// Controls which database provider is used at runtime.

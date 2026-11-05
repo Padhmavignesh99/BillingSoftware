@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BillingSoftware.API.Migrations
+namespace MasterBilling.API.Migrations
 {
     /// <inheritdoc />
     public partial class ExpandDeviceSettingsOutputPaymentDigital : Migration

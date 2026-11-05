@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace BillingSoftware.API.Migrations
+namespace MasterBilling.API.Migrations
 {
     /// <inheritdoc />
     public partial class AddSubscriptionPlanSeedAndAdminUser : Migration
@@ -173,7 +173,7 @@ namespace BillingSoftware.API.Migrations
                 INSERT INTO ""Users"" (""Id"", ""CreatedAt"", ""CreatedBy"", ""Email"", ""FullName"", ""IsActive"", ""IsDeleted"",
                     ""LastLoginAt"", ""OTP"", ""OTPExpiry"", ""PasswordHash"", ""Phone"", ""ProfileImageUrl"",
                     ""RefreshToken"", ""RefreshTokenExpiry"", ""ResetToken"", ""ResetTokenExpiry"", ""Role"", ""TenantId"", ""UpdatedAt"", ""UpdatedBy"")
-                VALUES (2, TIMESTAMPTZ '2024-01-01T00:00:00Z', NULL, 'admin@billingsoftware.com', 'Admin',
+                VALUES (2, TIMESTAMPTZ '2024-01-01T00:00:00Z', NULL, 'admin@MasterBilling.com', 'Admin',
                     TRUE, FALSE, NULL, NULL, NULL, '$2a$11$Y75qrPxbRO2d3VAlUkhYuur0.vaeKXvhhpdZOEgyJ5PJ4SgPH/HaS',
                     NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL)
                 ON CONFLICT (""Id"") DO NOTHING;");

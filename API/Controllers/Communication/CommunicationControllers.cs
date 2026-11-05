@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Services.Interfaces;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Services.Interfaces;
 
-namespace BillingSoftware.API.Controllers.Communication
+namespace MasterBilling.API.Controllers.Communication
 {
     // ==================== EMAIL CONTROLLER ====================
     [ApiController]

@@ -1,6 +1,6 @@
-using BillingSoftware.API.DTOs.Requests;
+﻿using MasterBilling.API.DTOs.Requests;
 
-namespace BillingSoftware.API.Services.Interfaces
+namespace MasterBilling.API.Services.Interfaces
 {
     public interface IExportImportService
     {

@@ -1,15 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Services.Interfaces;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Services.Interfaces;
 
 // Wrapper DTO required by Swashbuckle to correctly generate multipart/form-data schema
 public class UploadLogoRequest { public IFormFile File { get; set; } = null!; }
 
-namespace BillingSoftware.API.Controllers.Business
+namespace MasterBilling.API.Controllers.Business
 {
     [ApiController] [Route("api/[controller]")] [Authorize]
     public class BusinessController : ControllerBase

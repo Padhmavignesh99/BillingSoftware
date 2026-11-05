@@ -1,23 +1,23 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BillingSoftware.API.Data;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Models.Enums;
-using BillingSoftware.API.Services.Interfaces;
+using MasterBilling.API.Data;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BillingSoftware.API.Controllers.Auth
+namespace MasterBilling.API.Controllers.Auth
 {
     /// <summary>
     /// Super-Admin panel: full control over shops, users, subscription plans,
     /// subscriptions, trials, payments, and audit logs.
     ///
     /// Default Admin credentials (seed data):
-    ///   SuperAdmin: superadmin@billingsoftware.com / SuperAdmin@123
-    ///   Admin:      admin@billingsoftware.com      / Admin@123
+    ///   SuperAdmin: superadmin@MasterBilling.com / SuperAdmin@123
+    ///   Admin:      admin@MasterBilling.com      / Admin@123
     ///
     /// Login via POST /api/auth/login to get a JWT, then authorize with Bearer &lt;token&gt;.
     /// </summary>

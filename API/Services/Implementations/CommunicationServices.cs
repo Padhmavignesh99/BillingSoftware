@@ -1,11 +1,11 @@
-﻿using BillingSoftware.API.Data;
-using BillingSoftware.API.DTOs.Common;
-using BillingSoftware.API.DTOs.Requests;
-using BillingSoftware.API.DTOs.Responses;
-using BillingSoftware.API.Models.Entities;
-using BillingSoftware.API.Models.Enums;
-using BillingSoftware.API.Configuration;
-using BillingSoftware.API.Services.Interfaces;
+﻿using MasterBilling.API.Data;
+using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Requests;
+using MasterBilling.API.DTOs.Responses;
+using MasterBilling.API.Models.Entities;
+using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Configuration;
+using MasterBilling.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net;
@@ -15,7 +15,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 
-namespace BillingSoftware.API.Services.Implementations
+namespace MasterBilling.API.Services.Implementations
 {
     // ==================== EMAIL SERVICE ====================
     public class EmailService : IEmailService
@@ -36,7 +36,7 @@ namespace BillingSoftware.API.Services.Implementations
             var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId, tenantId)
                 ?? throw new KeyNotFoundException("Invoice not found");
             var business = await _context.Businesses.FindAsync(tenantId);
-            var emailSubject = subject ?? $"Invoice {invoice.InvoiceNumber} - {business?.Name ?? "Billing Software"}";
+            var emailSubject = subject ?? $"Invoice {invoice.InvoiceNumber} - {business?.Name ?? "Master Billing"}";
             var emailBody = message ?? BuildInvoiceEmailBody(invoice, business);
             var emailLog = new EmailMessage
             {
@@ -77,8 +77,8 @@ namespace BillingSoftware.API.Services.Implementations
         {
             try
             {
-                await SendSmtpEmailAsync(toEmail, "Welcome to Billing Software",
-                    $"Dear {userName},\n\nWelcome! Your account is ready.\n\nRegards,\nBilling Software Team");
+                await SendSmtpEmailAsync(toEmail, "Welcome to Master Billing",
+                    $"Dear {userName},\n\nWelcome! Your account is ready.\n\nRegards,\nMaster Billing Team");
                 return new MessageSendResponse { Status = "Sent", Message = $"Welcome email sent to {toEmail}" };
             }
             catch (Exception ex) { return new MessageSendResponse { Status = "Failed", Message = ex.Message }; }
@@ -168,7 +168,7 @@ namespace BillingSoftware.API.Services.Implementations
             sb.AppendLine("Thank you for your business!");
             sb.AppendLine();
             sb.AppendLine("Regards,");
-            sb.AppendLine(business?.Name ?? "Billing Software");
+            sb.AppendLine(business?.Name ?? "Master Billing");
             if (!string.IsNullOrWhiteSpace(business?.Phone)) sb.AppendLine($"Phone: {business.Phone}");
             if (!string.IsNullOrWhiteSpace(business?.Email)) sb.AppendLine($"Email: {business.Email}");
             return sb.ToString();

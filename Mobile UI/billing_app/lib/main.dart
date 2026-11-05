@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -54,19 +54,19 @@ void main() async {
         ChangeNotifierProvider(create: (_) => StaffProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
-      child: const BillingApp(),
+      child: const MasterBilling(),
     ),
   );
 }
 
-class BillingApp extends StatefulWidget {
-  const BillingApp({super.key});
+class MasterBilling extends StatefulWidget {
+  const MasterBilling({super.key});
 
   @override
-  State<BillingApp> createState() => _BillingAppState();
+  State<MasterBilling> createState() => _MasterBillingState();
 }
 
-class _BillingAppState extends State<BillingApp> {
+class _MasterBillingState extends State<MasterBilling> {
   late final GoRouter _router;
 
   @override
@@ -81,7 +81,7 @@ class _BillingAppState extends State<BillingApp> {
     final settings = context.watch<SettingsProvider>();
 
     return MaterialApp.router(
-      title: 'Antigravity Billing Suite',
+      title: 'Master Billing',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
