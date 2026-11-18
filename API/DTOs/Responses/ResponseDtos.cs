@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Models.Enums;
 
 namespace MasterBilling.API.DTOs.Responses
 {
@@ -184,19 +184,7 @@ namespace MasterBilling.API.DTOs.Responses
     }
 
     // ==================== PAYMENT ====================
-    public class PaymentResponse
-    {
-        public int Id { get; set; }
-        public int? InvoiceId { get; set; }
-        public string? InvoiceNumber { get; set; }
-        public string? CustomerName { get; set; }
-        public decimal Amount { get; set; }
-        public string PaymentMethod { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
-        public DateTime PaymentDate { get; set; }
-        public string? ReferenceNumber { get; set; }
-        public string? TransactionId { get; set; }
-    }
+    // PaymentResponse is now defined in PaymentResponseDtos.cs (full split-payment version)
 
     // ==================== CUSTOMER ====================
     public class CustomerResponse

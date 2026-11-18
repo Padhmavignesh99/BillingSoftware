@@ -22,6 +22,7 @@ import {
   FileText,
   AlertTriangle,
 } from 'lucide-react';
+import { CheckoutPaymentModal } from '../../components/payment/CheckoutPaymentModal';
 import { useStore } from '../../store/useStore';
 import type { Product, Customer, PaymentMethod, Invoice, SplitPaymentDetail } from '../../types';
 import { Badge } from '../../components/ui/Badge';
@@ -76,6 +77,10 @@ export const BillingPage: React.FC = () => {
   // Generated Invoice Result State
   const [lastInvoice, setLastInvoice] = useState<Invoice | null>(null);
 
+  // New checkout modal state (replaces old payment modal for new payment API)
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutInvoice, setCheckoutInvoice] = useState<Invoice | null>(null);
+
   // Sending status
   const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
   const [whatsAppSuccess, setWhatsAppSuccess] = useState(false);
@@ -127,7 +132,7 @@ export const BillingPage: React.FC = () => {
         setShowAddCustomerModal(true);
       } else if (e.key === 'F6' && cart.length > 0) {
         e.preventDefault();
-        setShowPaymentModal(true);
+        setShowCheckoutModal(true);
       } else if (e.key === 'F8' && cart.length > 0) {
         e.preventDefault();
         handleHoldBill();
@@ -242,7 +247,7 @@ export const BillingPage: React.FC = () => {
             >
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name} {c.phone !== 'N/A' ? `(${c.phone})` : ''} {c.outstandingBalance > 0 ? `• Khata Due ₹${c.outstandingBalance}` : ''}
+                  {c.name} {c.phone !== 'N/A' ? `(${c.phone})` : ''} {c.outstandingBalance > 0 ? `â€¢ Khata Due â‚¹${c.outstandingBalance}` : ''}
                 </option>
               ))}
             </select>
@@ -259,7 +264,7 @@ export const BillingPage: React.FC = () => {
 
           {selectedCustomer.outstandingBalance > 0 && (
             <Badge variant="warning" size="sm" className="hidden md:inline-flex shrink-0">
-              Khata Due: ₹{selectedCustomer.outstandingBalance.toLocaleString()}
+              Khata Due: â‚¹{selectedCustomer.outstandingBalance.toLocaleString()}
             </Badge>
           )}
         </div>
@@ -364,9 +369,9 @@ export const BillingPage: React.FC = () => {
 
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between mt-2">
                   <div>
-                    <span className="text-xs font-extrabold text-slate-900">₹{prod.sellingPrice}</span>
+                    <span className="text-xs font-extrabold text-slate-900">â‚¹{prod.sellingPrice}</span>
                     {prod.mrp > prod.sellingPrice && (
-                      <span className="text-[10px] text-slate-400 line-through ml-1">₹{prod.mrp}</span>
+                      <span className="text-[10px] text-slate-400 line-through ml-1">â‚¹{prod.mrp}</span>
                     )}
                   </div>
                   <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -399,7 +404,7 @@ export const BillingPage: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-slate-900 truncate">{item.product.name}</p>
                     <p className="text-[10px] text-slate-500 font-mono">
-                      ₹{item.product.sellingPrice} x {item.quantity} | GST {item.product.taxRate}%
+                      â‚¹{item.product.sellingPrice} x {item.quantity} | GST {item.product.taxRate}%
                     </p>
                   </div>
 
@@ -422,7 +427,7 @@ export const BillingPage: React.FC = () => {
 
                   {/* Line Total */}
                   <div className="text-right shrink-0 min-w-[60px]">
-                    <p className="text-xs font-bold text-slate-900">₹{item.lineTotal.toFixed(2)}</p>
+                    <p className="text-xs font-bold text-slate-900">â‚¹{item.lineTotal.toFixed(2)}</p>
                   </div>
 
                   <button
@@ -440,20 +445,20 @@ export const BillingPage: React.FC = () => {
           <div className="pt-3 border-t border-slate-100 space-y-2 shrink-0 bg-slate-50/50 -mx-4 -mb-4 p-4 rounded-b-2xl">
             <div className="flex items-center justify-between text-xs text-slate-600">
               <span>Subtotal</span>
-              <span className="font-mono">₹{subtotal.toFixed(2)}</span>
+              <span className="font-mono">â‚¹{subtotal.toFixed(2)}</span>
             </div>
 
             {itemDiscountTotal > 0 && (
               <div className="flex items-center justify-between text-xs text-emerald-600 font-medium">
                 <span>Item Discounts</span>
-                <span className="font-mono">-₹{itemDiscountTotal.toFixed(2)}</span>
+                <span className="font-mono">-â‚¹{itemDiscountTotal.toFixed(2)}</span>
               </div>
             )}
 
             {/* Extra Order Discount Input */}
             <div className="flex items-center justify-between text-xs text-slate-600">
               <span className="flex items-center gap-1">
-                Extra Discount (₹)
+                Extra Discount (â‚¹)
               </span>
               <input
                 type="number"
@@ -466,18 +471,18 @@ export const BillingPage: React.FC = () => {
 
             <div className="flex items-center justify-between text-xs text-slate-600">
               <span>GST Tax (CGST + SGST)</span>
-              <span className="font-mono text-slate-700">₹{taxTotal.toFixed(2)}</span>
+              <span className="font-mono text-slate-700">â‚¹{taxTotal.toFixed(2)}</span>
             </div>
 
             <div className="flex items-center justify-between text-xs text-slate-400">
               <span>Round off</span>
-              <span className="font-mono">₹{roundOff}</span>
+              <span className="font-mono">â‚¹{roundOff}</span>
             </div>
 
             <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-slate-500 uppercase">Grand Total</span>
-                <p className="text-2xl font-black text-indigo-900 tracking-tight">₹{grandTotal.toLocaleString()}</p>
+                <p className="text-2xl font-black text-indigo-900 tracking-tight">â‚¹{grandTotal.toLocaleString()}</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -497,7 +502,7 @@ export const BillingPage: React.FC = () => {
                       showToast('Please add items to cart first', 'warning');
                       return;
                     }
-                    setShowPaymentModal(true);
+                    setShowCheckoutModal(true);
                   }}
                   disabled={cart.length === 0}
                   className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
@@ -511,11 +516,28 @@ export const BillingPage: React.FC = () => {
         </div>
       </div>
 
+      {/* NEW UNIFIED CHECKOUT PAYMENT MODAL */}
+      {showCheckoutModal && (
+        <CheckoutPaymentModal
+          invoiceId={lastInvoice?.id ?? 0}
+          customerId={selectedCustomer?.id}
+          customerName={selectedCustomer?.name}
+          totalAmount={grandTotal}
+          invoiceNumber={lastInvoice?.invoiceNumber ?? "DRAFT"}
+          onSuccess={(payment) => {
+            setShowCheckoutModal(false);
+            setShowSuccessModal(true);
+            showToast("Payment completed successfully!", "success", "Payment Done");
+          }}
+          onClose={() => setShowCheckoutModal(false)}
+        />
+      )}
+
       {/* PAYMENT MODAL FLOW (Requirement 12) */}
       <Modal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        title={`Complete Payment - Bill Total ₹${grandTotal}`}
+        title={`Complete Payment - Bill Total â‚¹${grandTotal}`}
         subtitle={`Customer: ${selectedCustomer.name}`}
         maxWidth="2xl"
       >
@@ -557,7 +579,7 @@ export const BillingPage: React.FC = () => {
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Amount Received (₹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Amount Received (â‚¹)</label>
                   <input
                     type="number"
                     value={amountReceived}
@@ -566,9 +588,9 @@ export const BillingPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Change to Return (₹)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Change to Return (â‚¹)</label>
                   <div className="px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-base font-bold text-emerald-700 font-mono">
-                    ₹{Math.max(0, amountReceived - grandTotal).toFixed(2)}
+                    â‚¹{Math.max(0, amountReceived - grandTotal).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -582,7 +604,7 @@ export const BillingPage: React.FC = () => {
                 <QrCode className="w-28 h-28 text-slate-800" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">Scan UPI QR Code to Pay ₹{grandTotal}</p>
+                <p className="text-xs font-bold text-slate-900">Scan UPI QR Code to Pay â‚¹{grandTotal}</p>
                 <p className="text-[11px] text-slate-500 font-mono">VPA: srimuruganmart@okhdfcbank</p>
               </div>
               <div className="w-full text-left">
@@ -614,11 +636,11 @@ export const BillingPage: React.FC = () => {
                 <span>Credit Khata Sale Confirmation</span>
               </div>
               <p className="text-xs text-amber-700">
-                This bill amount of <strong>₹{grandTotal}</strong> will be added to{' '}
+                This bill amount of <strong>â‚¹{grandTotal}</strong> will be added to{' '}
                 <strong>{selectedCustomer.name}</strong>'s outstanding ledger balance.
               </p>
               <p className="text-[11px] text-amber-800 font-mono">
-                Current Khata Due: ₹{selectedCustomer.outstandingBalance} ➔ New Due: ₹
+                Current Khata Due: â‚¹{selectedCustomer.outstandingBalance} âž” New Due: â‚¹
                 {selectedCustomer.outstandingBalance + grandTotal}
               </p>
             </div>
@@ -627,7 +649,7 @@ export const BillingPage: React.FC = () => {
           {/* Split Payment Flow */}
           {selectedPaymentMethod === 'split' && (
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-              <p className="text-xs font-bold text-slate-900">Specify Split Combination (Total ₹{grandTotal}):</p>
+              <p className="text-xs font-bold text-slate-900">Specify Split Combination (Total â‚¹{grandTotal}):</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-600">Cash Amount</label>
@@ -676,7 +698,7 @@ export const BillingPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900">₹{lastInvoice?.grandTotal.toLocaleString()} Paid</h3>
+            <h3 className="text-xl font-extrabold text-slate-900">â‚¹{lastInvoice?.grandTotal.toLocaleString()} Paid</h3>
             <p className="text-xs text-slate-500 font-mono mt-0.5">
               Customer: {lastInvoice?.customerName} | Method: {lastInvoice?.paymentMethod.toUpperCase()}
             </p>
@@ -829,11 +851,11 @@ export const BillingPage: React.FC = () => {
                     <span className="text-xs font-semibold text-slate-700">{bill.customer.name}</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    {bill.items.length} items • Held at {bill.heldAt}
+                    {bill.items.length} items â€¢ Held at {bill.heldAt}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-extrabold text-slate-900 pr-2">₹{bill.grandTotal}</span>
+                  <span className="text-xs font-extrabold text-slate-900 pr-2">â‚¹{bill.grandTotal}</span>
                   <button
                     onClick={() => {
                       resumeHeldBill(bill.id);
@@ -905,3 +927,6 @@ export const BillingPage: React.FC = () => {
     </div>
   );
 };
+
+
+

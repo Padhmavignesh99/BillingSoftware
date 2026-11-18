@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.DTOs.Common;
+using MasterBilling.API.DTOs.Common;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
 using MasterBilling.API.Models.Entities;
@@ -88,7 +88,7 @@ namespace MasterBilling.API.Services.Interfaces
     public interface IPaymentService
     {
         Task<(List<PaymentResponse> Items, int TotalCount)> GetAllPaymentsAsync(int tenantId, PaginationRequest pagination);
-        Task<PaymentResponse> CreatePaymentAsync(CreatePaymentRequest request, int tenantId);
+        Task<PaymentResponse> CreatePaymentAsync(LegacyCreatePaymentRequest request, int tenantId);
         Task<List<PaymentResponse>> GetDueListAsync(int tenantId);
         Task<PaymentResponse> CollectDueAsync(CollectDueRequest request, int tenantId);
     }

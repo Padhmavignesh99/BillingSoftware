@@ -39,11 +39,20 @@ import {
 import { clsx } from 'clsx';
 import { useStore } from '../../store/useStore';
 import { api } from '../../services/apiClient';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface SidebarProps {
   isOpen: boolean;
   onCloseMobile?: () => void;
 }
+
+/** Role badge colour mapping */
+const ROLE_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+  admin:   { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Admin'   },
+  manager: { bg: 'bg-blue-100',    text: 'text-blue-700',    label: 'Manager' },
+  cashier: { bg: 'bg-slate-200',   text: 'text-slate-600',   label: 'Cashier' },
+  sales:   { bg: 'bg-amber-100',   text: 'text-amber-700',   label: 'Sales'   },
+};
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
   const location = useLocation();
@@ -54,56 +63,105 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
     getActiveTenant,
   } = useStore();
 
-  const activeTenant = getActiveTenant();
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const { can, isAdmin, isManager, isCashier, isSales, isAdminOrManager, role } = usePermissions();
 
+  const activeTenant = getActiveTenant();
+  const unreadCount  = notifications.filter((n) => !n.isRead).length;
+  const roleBadge    = ROLE_BADGE[role] ?? ROLE_BADGE.cashier;
+
+  // ── Nav definitions with show flag ─────────────────────────────────────────
   const coreNav = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Billing (POS)', path: '/billing', icon: ShoppingBag, badge: 'F2' },
-    { name: 'Invoices', path: '/invoices', icon: Receipt },
-    { name: 'Recurring Invoices', path: '/recurring-invoices', icon: RefreshCw },
-    { name: 'Products', path: '/products', icon: Package },
-    { name: 'Product Variants', path: '/products/variants', icon: Layers },
-    { name: 'Inventory', path: '/inventory', icon: Boxes },
-    { name: 'Reorder Alerts', path: '/reorder', icon: Zap },
-    { name: 'Customers', path: '/customers', icon: Users },
-    { name: 'Suppliers', path: '/suppliers', icon: Truck },
-    { name: 'Loyalty Program', path: '/loyalty', icon: Star },
-  ];
+    { name: 'Dashboard',          path: '/dashboard',          icon: LayoutDashboard, show: true },
+    { name: 'Billing (POS)',       path: '/billing',            icon: ShoppingBag,     show: can.createBill,     badge: 'F2' },
+    { name: 'Invoices',           path: '/invoices',           icon: Receipt,         show: can.viewProducts || can.createBill },
+    { name: 'Recurring Invoices', path: '/recurring-invoices', icon: RefreshCw,       show: isAdminOrManager },
+    { name: 'Products',           path: '/products',           icon: Package,         show: can.viewProducts },
+    { name: 'Product Variants',   path: '/products/variants',  icon: Layers,          show: can.manageProducts },
+    { name: 'Inventory',          path: '/inventory',          icon: Boxes,           show: can.viewInventory },
+    { name: 'Reorder Alerts',     path: '/reorder',            icon: Zap,             show: can.viewInventory },
+    { name: 'Customers',          path: '/customers',          icon: Users,           show: can.manageCustomers },
+    { name: 'Suppliers',          path: '/suppliers',          icon: Truck,           show: can.manageSuppliers },
+    { name: 'Loyalty Program',    path: '/loyalty',            icon: Star,            show: isAdminOrManager },
+  ].filter((item) => item.show);
 
   const operationsNav = [
-    { name: 'Purchases', path: '/purchases', icon: ShoppingCart },
-    { name: 'Delivery Challans', path: '/challans', icon: Truck },
-    { name: 'Expenses', path: '/expenses', icon: ReceiptIndianRupee },
-    { name: 'Sales Returns', path: '/sales-returns', icon: RotateCcw },
-    { name: 'Purchase Returns', path: '/purchase-returns', icon: Truck },
-    { name: 'Credit Bills (Khata)', path: '/credit-bills', icon: Wallet, highlight: true },
-    { name: 'Stock Take', path: '/stock-take', icon: ClipboardList },
-    { name: 'Payment Reminders', path: '/reminders', icon: Bell },
-    { name: 'Import / Export', path: '/import-export', icon: FileUp },
-    { name: 'Reports', path: '/reports', icon: BarChart3 },
-    { name: 'P&L Statement', path: '/reports/profit-loss', icon: TrendingUp },
-    { name: 'GST Reports', path: '/reports/gst', icon: FileText },
-    { name: 'Staff & Roles', path: '/staff', icon: UserCheck },
-    { name: 'Roles & Permissions', path: '/staff/roles', icon: Shield },
-    { name: 'AI Insights', path: '/ai-insights', icon: Sparkles, highlight: true },
-    { name: 'Notifications', path: '/notifications', icon: Bell, count: unreadCount },
-    { name: 'Activity Log', path: '/activity-log', icon: Activity },
-  ];
+    { name: 'Purchases',           path: '/purchases',         icon: ShoppingCart,          show: can.managePurchases },
+    { name: 'Delivery Challans',   path: '/challans',          icon: Truck,                 show: isAdminOrManager || isSales },
+    { name: 'Expenses',            path: '/expenses',          icon: ReceiptIndianRupee,     show: can.manageExpenses },
+    { name: 'Sales Returns',       path: '/sales-returns',     icon: RotateCcw,             show: isAdminOrManager },
+    { name: 'Purchase Returns',    path: '/purchase-returns',  icon: Truck,                 show: isAdminOrManager },
+    { name: 'Credit Bills (Khata)',path: '/credit-bills',      icon: Wallet,  highlight: true, show: can.createBill || isAdminOrManager },
+    { name: 'Stock Take',          path: '/stock-take',        icon: ClipboardList,         show: can.manageInventory || isAdminOrManager },
+    { name: 'Payment Reminders',   path: '/reminders',         icon: Bell,                  show: isAdminOrManager },
+    { name: 'Import / Export',     path: '/import-export',     icon: FileUp,                show: isAdmin },
+    { name: 'Reports',             path: '/reports',           icon: BarChart3,             show: can.viewReports },
+    { name: 'P&L Statement',       path: '/reports/profit-loss', icon: TrendingUp,          show: can.viewProfit },
+    { name: 'GST Reports',         path: '/reports/gst',       icon: FileText,              show: isAdminOrManager },
+    { name: 'Staff & Roles',       path: '/staff',             icon: UserCheck,             show: can.manageStaff },
+    { name: 'Roles & Permissions', path: '/staff/roles',       icon: Shield,                show: isAdmin },
+    { name: 'AI Insights',         path: '/ai-insights',       icon: Sparkles, highlight: true, show: isAdminOrManager },
+    { name: 'Notifications',       path: '/notifications',     icon: Bell,  count: unreadCount, show: true },
+    { name: 'Activity Log',        path: '/activity-log',      icon: Activity,              show: isAdminOrManager },
+  ].filter((item) => item.show);
 
   const saasNav = [
-    { name: 'Subscription & Plan', path: '/subscription', icon: CreditCard, highlight: true },
-    ...(api.hasRole('SuperAdmin') ? [{ name: 'Platform Admin', path: '/platform-admin', icon: ShieldCheck, badge: 'SaaS' }] : []),
-    ...(api.hasRole('SuperAdmin') ? [{ name: 'Plan Permits', path: '/admin/plan-permits', icon: Gift, badge: 'Admin' }] : []),
-    { name: 'Printer Setup', path: '/settings/printers', icon: Printer },
-    { name: 'Data Backup', path: '/settings/backup', icon: Database },
-    { name: 'Settings', path: '/settings', icon: Settings },
-  ];
+    { name: 'Subscription & Plan', path: '/subscription',      icon: CreditCard, highlight: true, show: isAdmin },
+    ...(api.hasRole('SuperAdmin') ? [{ name: 'Platform Admin',  path: '/platform-admin',    icon: ShieldCheck, badge: 'SaaS', show: true }] : []),
+    ...(api.hasRole('SuperAdmin') ? [{ name: 'Plan Permits',    path: '/admin/plan-permits', icon: Gift,       badge: 'Admin', show: true }] : []),
+    { name: 'Printer Setup',       path: '/settings/printers', icon: Printer,               show: isAdminOrManager },
+    { name: 'Data Backup',         path: '/settings/backup',   icon: Database,              show: isAdmin },
+    { name: 'Settings',            path: '/settings',          icon: Settings,              show: isAdminOrManager },
+  ].filter((item) => item.show);
 
   const isActive = (path: string) => {
-    if (path === '/settings') return location.pathname === '/settings';
+    if (path === '/settings')  return location.pathname === '/settings';
     if (path === '/dashboard') return location.pathname === '/dashboard';
     return location.pathname.startsWith(path);
+  };
+
+  // Render a single nav link
+  const NavItem = ({ item }: { item: any }) => {
+    const active = isActive(item.path);
+    const Icon   = item.icon;
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        onClick={onCloseMobile}
+        className={clsx(
+          'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group',
+          active
+            ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/25'
+            : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
+        )}
+      >
+        <div className="flex items-center gap-2.5">
+          <Icon
+            className={clsx(
+              'w-4 h-4 shrink-0',
+              item.highlight && !active && 'text-amber-500',
+              active ? 'text-white' : !item.highlight && 'text-slate-400 group-hover:text-emerald-600'
+            )}
+          />
+          <span>{item.name}</span>
+        </div>
+        {item.badge && (
+          <span
+            className={clsx(
+              'text-[10px] font-mono px-1.5 py-0.5 rounded font-bold',
+              active ? 'bg-emerald-700 text-white' : 'bg-green-100 text-green-700 group-hover:bg-green-200'
+            )}
+          >
+            {item.badge}
+          </span>
+        )}
+        {item.count != null && item.count > 0 && (
+          <span className="w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+            {item.count}
+          </span>
+        )}
+      </NavLink>
+    );
   };
 
   return (
@@ -142,129 +200,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
         {/* Navigation Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 bg-white">
           {/* CORE SECTION */}
-          <div>
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">CORE</p>
-            <nav className="space-y-0.5">
-              {coreNav.map((item) => {
-                const active = isActive(item.path);
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={onCloseMobile}
-                    className={clsx(
-                      'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group',
-                      active
-                        ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/25'
-                        : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon className={clsx('w-4 h-4 shrink-0', active ? 'text-white' : 'text-slate-400 group-hover:text-emerald-600')} />
-                      <span>{item.name}</span>
-                    </div>
-                    {item.badge && (
-                      <span
-                        className={clsx(
-                          'text-[10px] font-mono px-1.5 py-0.5 rounded font-bold',
-                          active ? 'bg-emerald-700 text-white' : 'bg-green-100 text-green-700 group-hover:bg-green-200'
-                        )}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
+          {coreNav.length > 0 && (
+            <div>
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">CORE</p>
+              <nav className="space-y-0.5">
+                {coreNav.map((item) => <NavItem key={item.path} item={item} />)}
+              </nav>
+            </div>
+          )}
 
           {/* OPERATIONS SECTION */}
-          <div>
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">OPERATIONS</p>
-            <nav className="space-y-0.5">
-              {operationsNav.map((item) => {
-                const active = isActive(item.path);
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={onCloseMobile}
-                    className={clsx(
-                      'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group',
-                      active
-                        ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/25'
-                        : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon
-                        className={clsx(
-                          'w-4 h-4 shrink-0',
-                          item.highlight && !active && 'text-amber-500',
-                          active ? 'text-white' : !item.highlight && 'text-slate-400 group-hover:text-emerald-600'
-                        )}
-                      />
-                      <span>{item.name}</span>
-                    </div>
-                    {item.count && item.count > 0 ? (
-                      <span className="w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
-                        {item.count}
-                      </span>
-                    ) : null}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
+          {operationsNav.length > 0 && (
+            <div>
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">OPERATIONS</p>
+              <nav className="space-y-0.5">
+                {operationsNav.map((item) => <NavItem key={item.path} item={item} />)}
+              </nav>
+            </div>
+          )}
 
           {/* SAAS & SYSTEM SECTION */}
-          <div>
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">SAAS & SYSTEM</p>
-            <nav className="space-y-0.5">
-              {saasNav.map((item) => {
-                const active = isActive(item.path);
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={onCloseMobile}
-                    className={clsx(
-                      'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group',
-                      active
-                        ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/25'
-                        : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-800'
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon
-                        className={clsx(
-                          'w-4 h-4 shrink-0',
-                          item.path === '/platform-admin' && !active && 'text-amber-500',
-                          item.path === '/subscription' && !active && 'text-emerald-600',
-                          active ? 'text-white' : item.path === '/settings' && 'text-slate-400 group-hover:text-emerald-600'
-                        )}
-                      />
-                      <span>{item.name}</span>
-                    </div>
-                    {item.badge && (
-                      <span
-                        className={clsx(
-                          'text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase',
-                          active ? 'bg-emerald-700 text-white' : 'bg-amber-100 text-amber-700 group-hover:bg-amber-200'
-                        )}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
+          {saasNav.length > 0 && (
+            <div>
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-green-600/70 mb-2">SAAS & SYSTEM</p>
+              <nav className="space-y-0.5">
+                {saasNav.map((item) => <NavItem key={item.path} item={item} />)}
+              </nav>
+            </div>
+          )}
         </div>
 
         {/* Bottom Profile & Help Footer */}
@@ -277,11 +240,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onCloseMobile }) => {
                 className="w-8 h-8 rounded-full object-cover shrink-0 border-2 border-emerald-200"
               />
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-slate-800 truncate">{currentUser?.name || 'Admin'}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-semibold text-slate-800 truncate">{currentUser?.name || 'Admin'}</p>
+                  {/* Role Badge */}
+                  <span
+                    className={clsx(
+                      'text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0',
+                      roleBadge.bg,
+                      roleBadge.text
+                    )}
+                  >
+                    {roleBadge.label}
+                  </span>
+                </div>
                 <p className="text-[10px] text-emerald-600 capitalize truncate">{activeTenant.name}</p>
               </div>
             </div>
-            <NavLink to="/login" onClick={() => api.setToken(null)} title="Logout" className="text-slate-400 hover:text-rose-500 p-1 rounded-lg hover:bg-rose-50 transition-colors">
+            <NavLink
+              to="/login"
+              onClick={() => api.setToken(null)}
+              title="Logout"
+              className="text-slate-400 hover:text-rose-500 p-1 rounded-lg hover:bg-rose-50 transition-colors"
+            >
               <LogOut className="w-4 h-4" />
             </NavLink>
           </div>

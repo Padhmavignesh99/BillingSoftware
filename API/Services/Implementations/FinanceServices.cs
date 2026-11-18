@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Data;
+using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Common;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MasterBilling.API.Services.Implementations
 {
-    // ==================== PAYMENT SERVICE ====================
+    // ==================== PAYMENT SERVICE (legacy — kept for backward compat) ====================
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
@@ -17,16 +17,56 @@ namespace MasterBilling.API.Services.Implementations
 
         public async Task<(List<PaymentResponse> Items, int TotalCount)> GetAllPaymentsAsync(int tenantId, PaginationRequest pagination)
         {
-            var query = _context.Payments.Include(p => p.Invoice).Include(p => p.Customer).Where(p => p.TenantId == tenantId);
+            var query = _context.Payments
+                .Include(p => p.Invoice)
+                .Include(p => p.Customer)
+                .Include(p => p.Details)
+                .Where(p => p.TenantId == tenantId && !p.IsDeleted);
             var total = await query.CountAsync();
-            var items = await query.OrderByDescending(p => p.PaymentDate).Skip((pagination.Page - 1) * pagination.PageSize).Take(pagination.PageSize)
-                .Select(p => new PaymentResponse { Id = p.Id, InvoiceId = p.InvoiceId, InvoiceNumber = p.Invoice != null ? p.Invoice.InvoiceNumber : null, CustomerName = p.Customer != null ? p.Customer.Name : null, Amount = p.Amount, PaymentMethod = p.PaymentMethod.ToString(), Status = p.Status.ToString(), PaymentDate = p.PaymentDate, ReferenceNumber = p.ReferenceNumber, TransactionId = p.TransactionId }).ToListAsync();
+            var items = await query.OrderByDescending(p => p.PaymentDate)
+                .Skip((pagination.Page - 1) * pagination.PageSize).Take(pagination.PageSize)
+                .Select(p => new PaymentResponse
+                {
+                    Id              = p.Id,
+                    InvoiceId       = p.InvoiceId,
+                    InvoiceNumber   = p.Invoice != null ? p.Invoice.InvoiceNumber : null,
+                    CustomerName    = p.Customer != null ? p.Customer.Name : null,
+                    Amount          = p.PaidAmount,
+                    PaidAmount      = p.PaidAmount,
+                    TotalAmount     = p.TotalAmount,
+                    BalanceAmount   = p.BalanceAmount,
+                    PaymentMethod   = p.Details.Count == 1 ? p.Details.First().Method.ToString() : "Split",
+                    Status          = p.Status.ToString(),
+                    PaymentDate     = p.PaymentDate,
+                    ReferenceNumber = p.Details.Count == 1 ? p.Details.First().ReferenceNumber : null,
+                    TransactionId   = p.Details.Count == 1 ? p.Details.First().TransactionId : null,
+                }).ToListAsync();
             return (items, total);
         }
 
-        public async Task<PaymentResponse> CreatePaymentAsync(CreatePaymentRequest request, int tenantId)
+        public async Task<PaymentResponse> CreatePaymentAsync(LegacyCreatePaymentRequest request, int tenantId)
         {
-            var payment = new Payment { InvoiceId = request.InvoiceId, CustomerId = request.CustomerId, Amount = request.Amount, PaymentMethod = request.PaymentMethod, ReferenceNumber = request.ReferenceNumber, TransactionId = request.TransactionId, Notes = request.Notes, BranchId = request.BranchId, TenantId = tenantId };
+            var payment = new Payment
+            {
+                InvoiceId   = request.InvoiceId,
+                CustomerId  = request.CustomerId,
+                TotalAmount = request.Amount,
+                PaidAmount  = request.Amount,
+                BalanceAmount = 0,
+                Status      = PaymentStatus.Completed,
+                BranchId    = request.BranchId,
+                Notes       = request.Notes,
+                TenantId    = tenantId,
+            };
+            payment.Details.Add(new PaymentDetail
+            {
+                Method          = request.PaymentMethod,
+                Amount          = request.Amount,
+                ReferenceNumber = request.ReferenceNumber,
+                TransactionId   = request.TransactionId,
+                Status          = PaymentStatus.Completed,
+                TenantId        = tenantId,
+            });
             _context.Payments.Add(payment);
 
             if (request.InvoiceId.HasValue)
@@ -35,21 +75,51 @@ namespace MasterBilling.API.Services.Implementations
                 if (invoice != null)
                 {
                     invoice.PaidAmount += request.Amount;
-                    invoice.DueAmount = invoice.TotalAmount - invoice.PaidAmount;
-                    invoice.Status = invoice.DueAmount <= 0 ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+                    invoice.DueAmount   = invoice.TotalAmount - invoice.PaidAmount;
+                    invoice.Status      = invoice.DueAmount <= 0 ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+                    invoice.PaymentMethod = request.PaymentMethod;
                 }
             }
             await _context.SaveChangesAsync();
-            return new PaymentResponse { Id = payment.Id, InvoiceId = payment.InvoiceId, Amount = payment.Amount, PaymentMethod = payment.PaymentMethod.ToString(), Status = payment.Status.ToString(), PaymentDate = payment.PaymentDate, ReferenceNumber = payment.ReferenceNumber };
+            return new PaymentResponse
+            {
+                Id              = payment.Id,
+                InvoiceId       = payment.InvoiceId,
+                Amount          = payment.PaidAmount,
+                PaidAmount      = payment.PaidAmount,
+                TotalAmount     = payment.TotalAmount,
+                PaymentMethod   = request.PaymentMethod.ToString(),
+                Status          = payment.Status.ToString(),
+                PaymentDate     = payment.PaymentDate,
+                ReferenceNumber = request.ReferenceNumber,
+            };
         }
 
         public async Task<List<PaymentResponse>> GetDueListAsync(int tenantId) =>
-            await _context.Invoices.Include(i => i.Customer).Where(i => i.TenantId == tenantId && i.DueAmount > 0 && i.Status != InvoiceStatus.Cancelled)
-                .Select(i => new PaymentResponse { InvoiceId = i.Id, InvoiceNumber = i.InvoiceNumber, CustomerName = i.Customer != null ? i.Customer.Name : "Walk-in", Amount = i.DueAmount, PaymentDate = i.DueDate ?? i.InvoiceDate, Status = "Due" }).ToListAsync();
+            await _context.Invoices.Include(i => i.Customer)
+                .Where(i => i.TenantId == tenantId && i.DueAmount > 0 && i.Status != InvoiceStatus.Cancelled)
+                .Select(i => new PaymentResponse
+                {
+                    InvoiceId    = i.Id,
+                    InvoiceNumber = i.InvoiceNumber,
+                    CustomerName = i.Customer != null ? i.Customer.Name : "Walk-in",
+                    Amount       = i.DueAmount,
+                    BalanceAmount = i.DueAmount,
+                    PaymentDate  = i.DueDate ?? i.InvoiceDate,
+                    Status       = "Due",
+                }).ToListAsync();
 
         public async Task<PaymentResponse> CollectDueAsync(CollectDueRequest request, int tenantId)
         {
-            return await CreatePaymentAsync(new CreatePaymentRequest { InvoiceId = request.InvoiceId, CustomerId = request.CustomerId, Amount = request.Amount, PaymentMethod = request.PaymentMethod, ReferenceNumber = request.ReferenceNumber, Notes = request.Notes }, tenantId);
+            return await CreatePaymentAsync(new LegacyCreatePaymentRequest
+            {
+                InvoiceId       = request.InvoiceId,
+                CustomerId      = request.CustomerId,
+                Amount          = request.Amount,
+                PaymentMethod   = request.PaymentMethod,
+                ReferenceNumber = request.ReferenceNumber,
+                Notes           = request.Notes,
+            }, tenantId);
         }
     }
 

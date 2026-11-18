@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Configuration;
+using MasterBilling.API.Configuration;
 using MasterBilling.API.Data;
 using MasterBilling.API.Services.Implementations;
 using MasterBilling.API.Services.Interfaces;
@@ -164,6 +164,7 @@ builder.Services.AddScoped<IPaymentMethodService,  PaymentMethodService>();
 builder.Services.AddScoped<IRefundService,         RefundService>();
 builder.Services.AddScoped<ICashRegisterService,   CashRegisterService>();
 builder.Services.AddScoped<IPaymentGatewayService, PaymentGatewayService>();
+builder.Services.AddScoped<IFullPaymentService,    FullPaymentService>();
 
 // ─── Expense Services ─────────────────────────────────────────────────────────
 builder.Services.AddScoped<IExpenseService,         ExpenseService>();

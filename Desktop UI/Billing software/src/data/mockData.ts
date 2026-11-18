@@ -149,12 +149,59 @@ export const initialStaff: UserStaff[] = [
 ];
 
 export const initialCategories: Category[] = [
-  { id: 'cat-01', name: 'Grocery & Staples', code: 'GROC', productCount: 42 },
-  { id: 'cat-02', name: 'Snacks & Beverages', code: 'SNACK', productCount: 35 },
-  { id: 'cat-03', name: 'Personal Care & Hygiene', code: 'CARE', productCount: 28 },
-  { id: 'cat-04', name: 'Home & Cleaning', code: 'HOME', productCount: 19 },
-  { id: 'cat-05', name: 'Dairy & Fresh Produce', code: 'DAIRY', productCount: 24 },
-  { id: 'cat-06', name: 'Spices & Masala', code: 'SPICE', productCount: 31 },
+  // ── Root: Grocery / FMCG ──────────────────────────────────────────────────
+  { id: 'cat-01', name: 'Grocery & Staples',       code: 'GROC',  productCount: 42, parentCategoryId: null, level: 0 },
+  { id: 'cat-02', name: 'Snacks & Beverages',      code: 'SNACK', productCount: 35, parentCategoryId: null, level: 0 },
+  { id: 'cat-03', name: 'Personal Care & Hygiene', code: 'CARE',  productCount: 28, parentCategoryId: null, level: 0 },
+  { id: 'cat-04', name: 'Home & Cleaning',          code: 'HOME',  productCount: 19, parentCategoryId: null, level: 0 },
+  { id: 'cat-05', name: 'Dairy & Fresh Produce',   code: 'DAIRY', productCount: 24, parentCategoryId: null, level: 0 },
+  { id: 'cat-06', name: 'Spices & Masala',          code: 'SPICE', productCount: 31, parentCategoryId: null, level: 0 },
+
+  // ── Root: Clothing ───────────────────────────────────────────────────────
+  { id: 'cat-10', name: 'Mens',   code: 'MENS',   productCount: 0, parentCategoryId: null, level: 0 },
+  { id: 'cat-15', name: 'Womens', code: 'WOMENS', productCount: 0, parentCategoryId: null, level: 0 },
+  { id: 'cat-20', name: 'Kids',   code: 'KIDS',   productCount: 0, parentCategoryId: null, level: 0 },
+
+  // ── Root: Electronics ────────────────────────────────────────────────────
+  { id: 'cat-30', name: 'Electronics', code: 'ELEC', productCount: 0, parentCategoryId: null, level: 0 },
+
+  // ═══ Mens Sub-Categories (level 1) ═══════════════════════════════════════
+  { id: 'cat-11', name: 'Shirt',   code: 'MENS-SHIRT',   productCount: 0, parentCategoryId: 'cat-10', level: 1 },
+  { id: 'cat-14', name: 'Trouser', code: 'MENS-TRSR',    productCount: 0, parentCategoryId: 'cat-10', level: 1 },
+  { id: 'cat-16', name: 'T-Shirt', code: 'MENS-TSHIRT',  productCount: 0, parentCategoryId: 'cat-10', level: 1 },
+  { id: 'cat-17', name: 'Jeans',   code: 'MENS-JEANS',   productCount: 0, parentCategoryId: 'cat-10', level: 1 },
+
+  // ═══ Shirt Sub-Sub-Categories (level 2) ══════════════════════════════════
+  { id: 'cat-11a', name: 'Full Hand Shirt', code: 'SHIRT-FULL',  productCount: 0, parentCategoryId: 'cat-11', level: 2 },
+  { id: 'cat-11b', name: 'Half Hand Shirt', code: 'SHIRT-HALF',  productCount: 0, parentCategoryId: 'cat-11', level: 2 },
+
+  // ═══ Trouser Sub-Sub-Categories (level 2) ════════════════════════════════
+  { id: 'cat-14a', name: 'Formal Trouser', code: 'TRSR-FRMOL',  productCount: 0, parentCategoryId: 'cat-14', level: 2 },
+  { id: 'cat-14b', name: 'Casual Trouser', code: 'TRSR-CASL',   productCount: 0, parentCategoryId: 'cat-14', level: 2 },
+
+  // ═══ T-Shirt Sub-Sub-Categories (level 2) ════════════════════════════════
+  { id: 'cat-16a', name: 'Round Neck',    code: 'TSH-RND',  productCount: 0, parentCategoryId: 'cat-16', level: 2 },
+  { id: 'cat-16b', name: 'Polo / Collar', code: 'TSH-POLO', productCount: 0, parentCategoryId: 'cat-16', level: 2 },
+
+  // ═══ Womens Sub-Categories (level 1) ═════════════════════════════════════
+  { id: 'cat-21', name: 'Saree',    code: 'WMNS-SAREE', productCount: 0, parentCategoryId: 'cat-15', level: 1 },
+  { id: 'cat-22', name: 'Kurti',    code: 'WMNS-KURTI', productCount: 0, parentCategoryId: 'cat-15', level: 1 },
+  { id: 'cat-23', name: 'Leggings', code: 'WMNS-LEGG',  productCount: 0, parentCategoryId: 'cat-15', level: 1 },
+  { id: 'cat-24', name: 'Blouse',   code: 'WMNS-BLSE',  productCount: 0, parentCategoryId: 'cat-15', level: 1 },
+
+  // ═══ Kurti Sub-Sub-Categories (level 2) ══════════════════════════════════
+  { id: 'cat-22a', name: 'Cotton Kurti',  code: 'KURTI-CTN',  productCount: 0, parentCategoryId: 'cat-22', level: 2 },
+  { id: 'cat-22b', name: 'Silk Kurti',    code: 'KURTI-SILK', productCount: 0, parentCategoryId: 'cat-22', level: 2 },
+  { id: 'cat-22c', name: 'Printed Kurti', code: 'KURTI-PRT',  productCount: 0, parentCategoryId: 'cat-22', level: 2 },
+
+  // ═══ Kids Sub-Categories (level 1) ═══════════════════════════════════════
+  { id: 'cat-25', name: 'Boys Clothing',  code: 'KIDS-BOY',  productCount: 0, parentCategoryId: 'cat-20', level: 1 },
+  { id: 'cat-26', name: 'Girls Clothing', code: 'KIDS-GIRL', productCount: 0, parentCategoryId: 'cat-20', level: 1 },
+
+  // ═══ Electronics Sub-Categories (level 1) ════════════════════════════════
+  { id: 'cat-31', name: 'Mobile & Accessories', code: 'ELEC-MOB',  productCount: 0, parentCategoryId: 'cat-30', level: 1 },
+  { id: 'cat-32', name: 'Laptops & Computers',  code: 'ELEC-LAP',  productCount: 0, parentCategoryId: 'cat-30', level: 1 },
+  { id: 'cat-33', name: 'TV & Audio',           code: 'ELEC-TV',   productCount: 0, parentCategoryId: 'cat-30', level: 1 },
 ];
 
 export const initialProducts: Product[] = [

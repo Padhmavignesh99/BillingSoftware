@@ -741,6 +741,89 @@ class ApiService {
     },
   };
 
+  // ================= 19. PAYMENT API =================
+  public payments = {
+    /** Create a full payment (supports split methods) */
+    create: (data: any) =>
+      this.request<any>('/api/payments/create', { method: 'POST', body: JSON.stringify(data) }),
+
+    /** List all payments with pagination */
+    list: (page = 1, pageSize = 20) =>
+      this.request<any>(`/api/payments?page=${page}&pageSize=${pageSize}`),
+
+    /** Get single payment by id */
+    getById: (id: number) =>
+      this.request<any>(`/api/payments/${id}`),
+
+    /** Get daily payment summary */
+    dailySummary: (date?: string, branchId?: number) => {
+      const q = new URLSearchParams();
+      if (date) q.set('date', date);
+      if (branchId) q.set('branchId', String(branchId));
+      return this.request<any>(`/api/payments/daily-summary${q.toString() ? '?' + q : ''}`);
+    },
+
+    /** Get due / outstanding payments */
+    due: () => this.request<any>('/api/payments/due'),
+
+    /** Collect a due amount */
+    collectDue: (data: any) =>
+      this.request<any>('/api/payments/collect-due', { method: 'POST', body: JSON.stringify(data) }),
+  };
+
+  public paymentTerminals = {
+    list: () => this.request<any>('/api/payment-terminals'),
+
+    register: (data: any) =>
+      this.request<any>('/api/payment-terminals/register', { method: 'POST', body: JSON.stringify(data) }),
+
+    update: (id: number, data: any) =>
+      this.request<any>(`/api/payment-terminals/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+    testConnection: (id: number) =>
+      this.request<any>(`/api/payment-terminals/${id}/test-connection`, { method: 'POST' }),
+
+    delete: (id: number) =>
+      this.request<any>(`/api/payment-terminals/${id}`, { method: 'DELETE' }),
+  };
+
+  public paymentTransactions = {
+    initiate: (data: any) =>
+      this.request<any>('/api/payment-transactions/initiate', { method: 'POST', body: JSON.stringify(data) }),
+
+    getStatus: (id: number) =>
+      this.request<any>(`/api/payment-transactions/status/${id}`),
+
+    cancel: (id: number) =>
+      this.request<any>(`/api/payment-transactions/${id}/cancel`, { method: 'POST' }),
+  };
+
+  public paymentRefunds = {
+    create: (data: any) =>
+      this.request<any>('/api/payment-refunds/create', { method: 'POST', body: JSON.stringify(data) }),
+
+    list: (paymentId?: number) => {
+      const q = paymentId ? `?paymentId=${paymentId}` : '';
+      return this.request<any>(`/api/payment-refunds${q}`);
+    },
+  };
+
+  public paymentConfig = {
+    get: (branchId?: number) => {
+      const q = branchId ? `?branchId=${branchId}` : '';
+      return this.request<any>(`/api/payment-config${q}`);
+    },
+
+    update: (methods: any[], branchId?: number) => {
+      const q = branchId ? `?branchId=${branchId}` : '';
+      return this.request<any>(`/api/payment-config${q}`, { method: 'PUT', body: JSON.stringify({ methods }) });
+    },
+  };
+
+  public paymentProviders = {
+    list: () => this.request<any>('/api/payment-providers'),
+  };
+
   // ─── Utility: download a file as Blob ──────────────────────────────────────
   public async getBlob(endpoint: string): Promise<Blob> {
     const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;

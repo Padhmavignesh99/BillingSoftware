@@ -6,33 +6,48 @@ import {
   Edit,
   Trash2,
   FileSpreadsheet,
+  ChevronRight,
 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Badge } from '../../components/ui/Badge';
 import { exportToCSV } from '../../utils/exportUtils';
 import { useToast } from '../../components/common/Toast';
 import { Modal } from '../../components/ui/Modal';
+import {
+  getRootCategories,
+  getSubCategories,
+  getLeafPath,
+  matchesCategory,
+} from '../../utils/categoryUtils';
 
 export const ProductsPage: React.FC = () => {
   const navigate = useNavigate();
   const { products, categories, deleteProduct, adjustStock } = useStore();
   const { showToast } = useToast();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchQuery, setSearchQuery]           = useState('');
+  const [categoryFilter, setCategoryFilter]     = useState('all');  // stores category id or 'all'
   const [stockStatusFilter, setStockStatusFilter] = useState('all');
 
   const [adjustingProduct, setAdjustingProduct] = useState<any>(null);
-  const [adjDelta, setAdjDelta] = useState<number>(10);
-  const [adjReason, setAdjReason] = useState('Stock Purchase Arrival');
+  const [adjDelta, setAdjDelta]                 = useState<number>(10);
+  const [adjReason, setAdjReason]               = useState('Stock Purchase Arrival');
+
+  // Build grouped category options for the filter dropdown
+  const roots = getRootCategories(categories);
 
   const filteredProducts = products.filter((prod) => {
-    const matchesCat = categoryFilter === 'all' || prod.category === categoryFilter;
+    // Category filter
+    const matchesCat =
+      categoryFilter === 'all' ||
+      matchesCategory(prod, categoryFilter, categories);
+
+    // Stock filter
     const matchesStock =
       stockStatusFilter === 'all' ||
-      (stockStatusFilter === 'low_stock' && (prod.stock <= prod.minStock || prod.status === 'low_stock')) ||
+      (stockStatusFilter === 'low_stock'    && (prod.stock <= prod.minStock || prod.status === 'low_stock')) ||
       (stockStatusFilter === 'out_of_stock' && prod.stock === 0) ||
-      (stockStatusFilter === 'active' && prod.stock > prod.minStock);
+      (stockStatusFilter === 'active'       && prod.stock > prod.minStock);
 
     const q = searchQuery.toLowerCase().trim();
     const matchesQ =
@@ -47,16 +62,17 @@ export const ProductsPage: React.FC = () => {
 
   const handleExportCSV = () => {
     exportToCSV('BillFlow_Products_Catalog', filteredProducts, [
-      { key: 'name', label: 'Product Name' },
-      { key: 'sku', label: 'SKU' },
-      { key: 'barcode', label: 'Barcode' },
-      { key: 'category', label: 'Category' },
+      { key: 'name',         label: 'Product Name' },
+      { key: 'sku',          label: 'SKU' },
+      { key: 'barcode',      label: 'Barcode' },
+      { key: 'category',     label: 'Category' },
+      { key: 'subCategory',  label: 'Sub-Category' },
       { key: 'sellingPrice', label: 'Selling Price (₹)' },
-      { key: 'mrp', label: 'MRP (₹)' },
-      { key: 'taxRate', label: 'GST Tax %' },
-      { key: 'stock', label: 'Current Stock' },
-      { key: 'unit', label: 'Unit' },
-      { key: 'status', label: 'Status' },
+      { key: 'mrp',          label: 'MRP (₹)' },
+      { key: 'taxRate',      label: 'GST Tax %' },
+      { key: 'stock',        label: 'Current Stock' },
+      { key: 'unit',         label: 'Unit' },
+      { key: 'status',       label: 'Status' },
     ]);
     showToast('Product catalog exported as CSV', 'success');
   };
@@ -70,6 +86,14 @@ export const ProductsPage: React.FC = () => {
     } catch (err: any) {
       showToast(err.message || 'Could not adjust stock', 'error');
     }
+  };
+
+  /** Build a pretty category path for a product row */
+  const getCategoryPath = (prod: any): string => {
+    if (prod.subSubCategoryId) return getLeafPath(categories, prod.subSubCategoryId);
+    if (prod.subCategoryId)    return getLeafPath(categories, prod.subCategoryId);
+    if (prod.categoryId)       return getLeafPath(categories, prod.categoryId);
+    return prod.category || '—';
   };
 
   return (
@@ -116,17 +140,39 @@ export const ProductsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Hierarchical Category Filter */}
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 max-w-[220px]"
           >
             <option value="all">All Categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.name}>
-                {c.name}
-              </option>
-            ))}
+            {roots.map((root) => {
+              const subs    = getSubCategories(categories, root.id);
+              const subSubs = subs.flatMap((s) => getSubCategories(categories, s.id));
+              if (subs.length === 0) {
+                return <option key={root.id} value={root.id}>{root.name}</option>;
+              }
+              return (
+                <optgroup key={root.id} label={root.name}>
+                  <option value={root.id}>📁 {root.name} (All)</option>
+                  {subs.map((sub) => {
+                    const subSub2 = getSubCategories(categories, sub.id);
+                    if (subSub2.length === 0) {
+                      return <option key={sub.id} value={sub.id}>  └ {sub.name}</option>;
+                    }
+                    return (
+                      <React.Fragment key={sub.id}>
+                        <option value={sub.id}>  └ {sub.name} (All)</option>
+                        {subSub2.map((ss) => (
+                          <option key={ss.id} value={ss.id}>      └ {ss.name}</option>
+                        ))}
+                      </React.Fragment>
+                    );
+                  })}
+                </optgroup>
+              );
+            })}
           </select>
 
           <select
@@ -150,7 +196,7 @@ export const ProductsPage: React.FC = () => {
               <tr>
                 <th className="py-3.5 px-4">Product Name</th>
                 <th className="py-3.5 px-4">SKU / Barcode</th>
-                <th className="py-3.5 px-4">Category</th>
+                <th className="py-3.5 px-4">Category Path</th>
                 <th className="py-3.5 px-4">Selling Price</th>
                 <th className="py-3.5 px-4">GST Rate</th>
                 <th className="py-3.5 px-4">Stock Qty</th>
@@ -176,7 +222,26 @@ export const ProductsPage: React.FC = () => {
                       <p>{prod.sku}</p>
                       <p className="text-[10px] text-slate-400">{prod.barcode}</p>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700">{prod.category}</td>
+                    <td className="py-3.5 px-4 text-slate-700">
+                      {/* Show full breadcrumb path */}
+                      <div className="flex flex-col gap-0.5">
+                        {getCategoryPath(prod)
+                          .split(' > ')
+                          .map((part, i, arr) => (
+                            <span
+                              key={i}
+                              className={`flex items-center gap-1 ${
+                                i === arr.length - 1
+                                  ? 'text-indigo-700 font-semibold'
+                                  : 'text-slate-400 text-[10px]'
+                              }`}
+                            >
+                              {i > 0 && <ChevronRight className="w-2.5 h-2.5 shrink-0" />}
+                              {part}
+                            </span>
+                          ))}
+                      </div>
+                    </td>
                     <td className="py-3.5 px-4 font-bold text-slate-900">
                       ₹{prod.sellingPrice}{' '}
                       {prod.mrp > prod.sellingPrice && (

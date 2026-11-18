@@ -17,7 +17,7 @@ namespace MasterBilling.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.33")
+                .HasAnnotation("ProductVersion", "8.0.34")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -642,7 +642,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5270),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8867),
                             Description = "General retail shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -651,7 +651,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5274),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8878),
                             Description = "Wholesale business",
                             IsActive = true,
                             IsDeleted = false,
@@ -660,7 +660,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5275),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8883),
                             Description = "Food & beverage",
                             IsActive = true,
                             IsDeleted = false,
@@ -669,7 +669,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5276),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8887),
                             Description = "Medical store",
                             IsActive = true,
                             IsDeleted = false,
@@ -678,7 +678,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5277),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8890),
                             Description = "Electronics shop",
                             IsActive = true,
                             IsDeleted = false,
@@ -687,7 +687,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5278),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8894),
                             Description = "Fashion & apparel",
                             IsActive = true,
                             IsDeleted = false,
@@ -696,7 +696,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5279),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8897),
                             Description = "Grocery & supermarket",
                             IsActive = true,
                             IsDeleted = false,
@@ -705,7 +705,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5279),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8900),
                             Description = "Service-based business",
                             IsActive = true,
                             IsDeleted = false,
@@ -714,7 +714,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5280),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8903),
                             Description = "Manufacturing unit",
                             IsActive = true,
                             IsDeleted = false,
@@ -723,7 +723,7 @@ namespace MasterBilling.API.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 138, DateTimeKind.Utc).AddTicks(5289),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8906),
                             Description = "Other business type",
                             IsActive = true,
                             IsDeleted = false,
@@ -867,16 +867,28 @@ namespace MasterBilling.API.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("TotalCard")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalCash")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalCashIn")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalCashOut")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("TotalOther")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalRefunds")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalSales")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalUPI")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -2823,7 +2835,7 @@ namespace MasterBilling.API.Migrations
                         {
                             Id = 1,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3560),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9804),
                             Description = "Indian Rupee",
                             IsActive = true,
                             IsDeleted = false,
@@ -2835,7 +2847,7 @@ namespace MasterBilling.API.Migrations
                         {
                             Id = 2,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3562),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9814),
                             Description = "US Dollar",
                             IsActive = true,
                             IsDeleted = false,
@@ -2847,7 +2859,7 @@ namespace MasterBilling.API.Migrations
                         {
                             Id = 3,
                             Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3564),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9819),
                             Description = "Euro",
                             IsActive = true,
                             IsDeleted = false,
@@ -2859,7 +2871,7 @@ namespace MasterBilling.API.Migrations
                         {
                             Id = 4,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3565),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9823),
                             Description = "India",
                             IsActive = true,
                             IsDeleted = false,
@@ -2871,7 +2883,7 @@ namespace MasterBilling.API.Migrations
                         {
                             Id = 5,
                             Category = "Country",
-                            CreatedAt = new DateTime(2026, 11, 1, 12, 39, 42, 302, DateTimeKind.Utc).AddTicks(3566),
+                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9829),
                             Description = "United States",
                             IsActive = true,
                             IsDeleted = false,
@@ -3212,11 +3224,17 @@ namespace MasterBilling.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("BalanceAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("BranchId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CashierName")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ChangeAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -3239,14 +3257,14 @@ namespace MasterBilling.API.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("PaymentMethod")
+                    b.Property<int?>("ProcessedByUserId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("ReferenceNumber")
-                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -3254,8 +3272,8 @@ namespace MasterBilling.API.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("text");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -3274,6 +3292,157 @@ namespace MasterBilling.API.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentConfiguration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("PaymentConfigurations");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CardLastFour")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CardNetwork")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("CashReceived")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ChangeGiven")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ChequeDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ChequeNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EMIBankName")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("EMIInterestRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("EMIMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GiftCardCode")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UPIApp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WalletName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("PaymentDetails");
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentGatewayTransaction", b =>
@@ -3322,6 +3491,9 @@ namespace MasterBilling.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PaymentLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("QRCodeData")
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
@@ -3396,6 +3568,285 @@ namespace MasterBilling.API.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("PaymentMethods");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentProvider", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApiEndpoint")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ProviderCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupportedMethods")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WebhookSecret")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("PaymentProviders");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentSettlement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SettlementDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SettlementReference")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TerminalId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TransactionCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TerminalId");
+
+                    b.ToTable("PaymentSettlements");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentTerminal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConnectionType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastConnectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MerchantId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Port")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TerminalId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TerminalName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("PaymentTerminals");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("InitiatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProviderId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProviderOrderId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderTransactionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RawResponse")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StatusMessage")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TerminalId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransactionRef")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TerminalId");
+
+                    b.ToTable("PaymentTransactions");
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.Permission", b =>
@@ -5285,6 +5736,12 @@ namespace MasterBilling.API.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -7555,7 +8012,7 @@ namespace MasterBilling.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$J9Oxq3zBahBqV.Uy.o2iZugbG.Ed3JilfiIxZLv2.EJ5OtkYWTZZG",
+                            PasswordHash = "$2a$11$Pk5lUrkmtcleXXr8qnt94edA8Jz9bGmwG0sx5F7f7KnYAErHHJU5e",
                             Role = 1
                         },
                         new
@@ -7566,7 +8023,7 @@ namespace MasterBilling.API.Migrations
                             FullName = "Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$8p4bJXk1rDKdI5FCeGrQs.WeV8A5DacKbOGRrFDJblQA57hKFc0Hi",
+                            PasswordHash = "$2a$11$b2NH1zi0AZxUQe9JqPdtlORMSK3T14kdm6ggAtCwfdof26EIDJ476",
                             Role = 1
                         },
                         new
@@ -7577,7 +8034,7 @@ namespace MasterBilling.API.Migrations
                             FullName = "Vignesh",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$/bycItNE2DQeSBLq6/AF0OkCH/fN48LfUhz8TfNnYxRklHZe1Dv5e",
+                            PasswordHash = "$2a$11$qxeHfTSRCM.69.a3EZ5/KeqQ66fpdnffQ/3w6QehQkgjYTjqvuFQO",
                             Role = 2,
                             TenantId = 9999
                         });
@@ -8817,6 +9274,42 @@ namespace MasterBilling.API.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentConfiguration", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentDetail", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Payment", "Payment")
+                        .WithMany("Details")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentGatewayTransaction", b =>
                 {
                     b.HasOne("MasterBilling.API.Models.Entities.Invoice", "Invoice")
@@ -8843,6 +9336,96 @@ namespace MasterBilling.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentProvider", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentSettlement", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MasterBilling.API.Models.Entities.PaymentTerminal", "Terminal")
+                        .WithMany()
+                        .HasForeignKey("TerminalId");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("Terminal");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentTerminal", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("MasterBilling.API.Models.Entities.PaymentProvider", "Provider")
+                        .WithMany("Terminals")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentTransaction", b =>
+                {
+                    b.HasOne("MasterBilling.API.Models.Entities.Payment", "Payment")
+                        .WithMany("Transactions")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MasterBilling.API.Models.Entities.PaymentProvider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId");
+
+                    b.HasOne("MasterBilling.API.Models.Entities.Business", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MasterBilling.API.Models.Entities.PaymentTerminal", "Terminal")
+                        .WithMany()
+                        .HasForeignKey("TerminalId");
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("Terminal");
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.PlanFeature", b =>
@@ -10209,6 +10792,18 @@ namespace MasterBilling.API.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.Payment", b =>
+                {
+                    b.Navigation("Details");
+
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("MasterBilling.API.Models.Entities.PaymentProvider", b =>
+                {
+                    b.Navigation("Terminals");
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.Permission", b =>

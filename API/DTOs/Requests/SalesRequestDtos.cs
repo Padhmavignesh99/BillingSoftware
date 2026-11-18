@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Models.Enums;
+using MasterBilling.API.Models.Enums;
 
 namespace MasterBilling.API.DTOs.Requests
 {
@@ -130,7 +130,9 @@ namespace MasterBilling.API.DTOs.Requests
     }
 
     // ==================== PAYMENT ====================
-    public class CreatePaymentRequest
+    // CreatePaymentRequest, CollectDueRequest, CreateRefundRequest moved to PaymentRequestDtos.cs
+    // Legacy alias kept for backward compat with existing FinanceServices.cs
+    public class LegacyCreatePaymentRequest
     {
         public int? InvoiceId { get; set; }
         public int? CustomerId { get; set; }
@@ -140,28 +142,6 @@ namespace MasterBilling.API.DTOs.Requests
         public string? TransactionId { get; set; }
         public string? Notes { get; set; }
         public int? BranchId { get; set; }
-    }
-
-    public class CollectDueRequest
-    {
-        public int CustomerId { get; set; }
-        public int InvoiceId { get; set; }
-        public decimal Amount { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
-        public string? ReferenceNumber { get; set; }
-        public string? Notes { get; set; }
-    }
-
-    // ==================== REFUND ====================
-    public class CreateRefundRequest
-    {
-        public int? InvoiceId { get; set; }
-        public int? PaymentId { get; set; }
-        public int? CustomerId { get; set; }
-        public decimal Amount { get; set; }
-        public string Reason { get; set; } = string.Empty;
-        public PaymentMethod RefundMethod { get; set; }
-        public string? Notes { get; set; }
     }
 
     // ==================== CASH REGISTER ====================

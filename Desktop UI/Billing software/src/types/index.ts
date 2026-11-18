@@ -77,6 +77,8 @@ export interface Category {
   name: string;
   code: string;
   productCount: number;
+  parentCategoryId?: string | null; // null = root category
+  level?: number; // 0 = root, 1 = sub, 2 = sub-sub
 }
 
 export interface Product {
@@ -84,7 +86,12 @@ export interface Product {
   name: string;
   sku: string;
   barcode: string;
-  category: string;
+  category: string;        // root category name
+  categoryId?: string;     // root category id
+  subCategory?: string;    // sub-category name
+  subCategoryId?: string;  // sub-category id
+  subSubCategory?: string;    // sub-sub-category name
+  subSubCategoryId?: string;  // sub-sub-category id
   brand: string;
   description: string;
   imageUrl?: string;

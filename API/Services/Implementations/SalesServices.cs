@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Data;
+using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Common;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
@@ -28,7 +28,7 @@ namespace MasterBilling.API.Services.Implementations
 
         public async Task<InvoiceResponse?> GetInvoiceByIdAsync(int id, int tenantId)
         {
-            var i = await _context.Invoices.Include(i => i.Customer).Include(i => i.Items).ThenInclude(item => item.Product).Include(i => i.Payments)
+            var i = await _context.Invoices.Include(i => i.Customer).Include(i => i.Items).ThenInclude(item => item.Product).Include(i => i.Payments).ThenInclude(p => p.Details)
                 .FirstOrDefaultAsync(i => i.Id == id && i.TenantId == tenantId);
             return i == null ? null : MapToResponseStatic(i);
         }
@@ -36,7 +36,7 @@ namespace MasterBilling.API.Services.Implementations
         public async Task<InvoiceResponse> CreateInvoiceAsync(CreateInvoiceRequest request, int tenantId)
         {
             if (request.Items.Count == 0) throw new ArgumentException("Invoice needs at least one item.");
-            if (request.PaymentMethod == PaymentMethod.Credit && !request.CustomerId.HasValue)
+            if (request.PaymentMethod == PaymentMethod.CustomerCredit && !request.CustomerId.HasValue)
                 throw new ArgumentException("Credit sales require a customer.");
             var invoiceNumber = await GetNextInvoiceNumberAsync(tenantId);
             var invoice = new Invoice
@@ -92,13 +92,27 @@ namespace MasterBilling.API.Services.Implementations
             invoice.DueAmount = invoice.TotalAmount;
             invoice.Status = InvoiceStatus.Pending;
 
-            // If payment method provided, mark as paid
-            if (request.PaymentMethod.HasValue && request.PaymentMethod != PaymentMethod.Credit)
+            if (request.PaymentMethod.HasValue && request.PaymentMethod != PaymentMethod.CustomerCredit)
             {
                 invoice.PaidAmount = invoice.TotalAmount;
                 invoice.DueAmount = 0;
                 invoice.Status = InvoiceStatus.Paid;
-                invoice.Payments.Add(new Payment { Amount = invoice.TotalAmount, PaymentMethod = request.PaymentMethod.Value, PaymentDate = DateTime.UtcNow, TenantId = tenantId });
+                var newPayment = new Payment
+                {
+                    TotalAmount = invoice.TotalAmount,
+                    PaidAmount = invoice.TotalAmount,
+                    BalanceAmount = 0,
+                    Status = PaymentStatus.Completed,
+                    TenantId = tenantId
+                };
+                newPayment.Details.Add(new PaymentDetail
+                {
+                    Method = request.PaymentMethod.Value,
+                    Amount = invoice.TotalAmount,
+                    Status = PaymentStatus.Completed,
+                    TenantId = tenantId
+                });
+                invoice.Payments.Add(newPayment);
             }
 
             // Update customer stats
@@ -119,7 +133,7 @@ namespace MasterBilling.API.Services.Implementations
             if (settings != null) settings.NextInvoiceNumber++;
 
             _context.Invoices.Add(invoice);
-            if (request.PaymentMethod == PaymentMethod.Credit && request.CustomerId.HasValue)
+            if (request.PaymentMethod == PaymentMethod.CustomerCredit && request.CustomerId.HasValue)
             {
                 _context.CustomerCredits.Add(new CustomerCredit
                 {
@@ -177,7 +191,17 @@ namespace MasterBilling.API.Services.Implementations
             RoundOff = i.RoundOff, TotalAmount = i.TotalAmount, PaidAmount = i.PaidAmount, DueAmount = i.DueAmount, Status = i.Status.ToString(),
             PaymentMethodName = i.PaymentMethod?.ToString(), Notes = i.Notes, PdfUrl = i.PdfUrl,
             Items = i.Items.Select(item => new InvoiceItemResponse { Id = item.Id, ProductId = item.ProductId, ProductName = item.ProductName, HSNCode = item.HSNCode, Quantity = item.Quantity, UnitPrice = item.UnitPrice, DiscountAmount = item.DiscountAmount, TaxAmount = item.TaxAmount, TaxPercentage = item.TaxPercentage, TotalPrice = item.TotalPrice }).ToList(),
-            Payments = i.Payments.Select(p => new PaymentResponse { Id = p.Id, Amount = p.Amount, PaymentMethod = p.PaymentMethod.ToString(), PaymentDate = p.PaymentDate, ReferenceNumber = p.ReferenceNumber, Status = p.Status.ToString() }).ToList()
+            Payments = i.Payments.Select(p => new PaymentResponse
+            {
+                Id = p.Id,
+                Amount = p.PaidAmount,
+                TotalAmount = p.TotalAmount,
+                PaidAmount = p.PaidAmount,
+                PaymentMethod = p.Details.Count == 1 ? p.Details.First().Method.ToString() : "Split",
+                PaymentDate = p.PaymentDate,
+                ReferenceNumber = p.Details.Count == 1 ? p.Details.First().ReferenceNumber : null,
+                Status = p.Status.ToString()
+            }).ToList()
         };
     }
 

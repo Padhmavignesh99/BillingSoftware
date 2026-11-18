@@ -1,4 +1,4 @@
-﻿namespace MasterBilling.API.Models.Enums
+namespace MasterBilling.API.Models.Enums
 {
     public enum StockTransactionType
     {
@@ -87,13 +87,32 @@
         Pending = 1,
         Completed = 2,
         Failed = 3,
-        Refunded = 4
+        Cancelled = 4,
+        Refunded = 5,
+        PartiallyRefunded = 6
     }
 
     public enum CashRegisterStatus
     {
         Open = 1,
         Closed = 2
+    }
+
+    public enum TerminalStatus
+    {
+        Active = 1,
+        Inactive = 2,
+        Maintenance = 3
+    }
+
+    public enum TransactionStatus
+    {
+        Initiated = 1,
+        Pending = 2,
+        Success = 3,
+        Failed = 4,
+        Cancelled = 5,
+        TimedOut = 6
     }
 
     public enum FileType

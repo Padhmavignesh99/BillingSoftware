@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Data;
+using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Common;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
@@ -63,13 +63,13 @@ namespace MasterBilling.API.Services.Implementations
 
         public async Task<MessageSendResponse> SendPaymentReceiptEmailAsync(int paymentId, string toEmail, int tenantId)
         {
-            var payment = await _context.Payments.Include(p => p.Invoice)
+            var payment = await _context.Payments.Include(p => p.Invoice).Include(p => p.Details)
                 .FirstOrDefaultAsync(p => p.Id == paymentId) ?? throw new KeyNotFoundException("Payment not found");
             return await SendEmailAsync(new SendEmailRequest
             {
                 ToEmail = toEmail,
                 Subject = $"Payment Receipt - {payment.Invoice?.InvoiceNumber}",
-                Body = $"Dear Customer,\n\nPayment of Rs.{payment.Amount:N2} received via {payment.PaymentMethod} for invoice {payment.Invoice?.InvoiceNumber}.\n\nThank you!"
+                Body = $"Dear Customer,\n\nPayment of Rs.{payment.PaidAmount:N2} received via {(payment.Details.FirstOrDefault()?.Method.ToString() ?? "Unknown")} for invoice {payment.Invoice?.InvoiceNumber}.\n\nThank you!"
             }, tenantId);
         }
 
@@ -236,12 +236,12 @@ namespace MasterBilling.API.Services.Implementations
 
         public async Task<MessageSendResponse> SendPaymentReceiptWhatsAppAsync(int paymentId, string mobileNumber, int tenantId)
         {
-            var payment = await _context.Payments.Include(p => p.Invoice)
+            var payment = await _context.Payments.Include(p => p.Invoice).Include(p => p.Details)
                 .FirstOrDefaultAsync(p => p.Id == paymentId) ?? throw new KeyNotFoundException("Payment not found");
             return await SendWhatsAppAsync(new SendWhatsAppRequest
             {
                 MobileNumber = mobileNumber,
-                Message = $"Payment of Rs.{payment.Amount:N2} received for invoice {payment.Invoice?.InvoiceNumber}. Thank you!"
+                Message = $"Payment of Rs.{payment.PaidAmount:N2} received for invoice {payment.Invoice?.InvoiceNumber}. Thank you!"
             }, tenantId);
         }
 

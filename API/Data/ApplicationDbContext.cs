@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MasterBilling.API.Models.Entities;
 using MasterBilling.API.Models.Enums;
 using System.Security.Claims;
@@ -110,12 +110,18 @@ namespace MasterBilling.API.Data
         public DbSet<SupplierPayment> SupplierPayments { get; set; }
         public DbSet<SupplierCredit> SupplierCredits { get; set; }
 
-        // Payment
+        // Payment — full payment system with split, terminals, transactions
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentDetail> PaymentDetails { get; set; }
         public DbSet<PaymentMethodEntity> PaymentMethods { get; set; }
+        public DbSet<PaymentTerminal> PaymentTerminals { get; set; }
+        public DbSet<PaymentProvider> PaymentProviders { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+        public DbSet<PaymentConfiguration> PaymentConfigurations { get; set; }
         public DbSet<Refund> Refunds { get; set; }
         public DbSet<CashRegister> CashRegisters { get; set; }
         public DbSet<PaymentGatewayTransaction> PaymentGatewayTransactions { get; set; }
+        public DbSet<PaymentSettlement> PaymentSettlements { get; set; }
 
         // Expense
         public DbSet<Expense> Expenses { get; set; }
