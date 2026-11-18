@@ -1,4 +1,4 @@
-﻿using MasterBilling.API.Data;
+using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
 using MasterBilling.API.Models.Entities;
@@ -634,7 +634,7 @@ namespace MasterBilling.API.Services.Implementations
                 BusinessId = request.BusinessId, SubscriptionId = request.SubscriptionId,
                 Amount = request.Amount, Currency = request.Currency ?? "INR",
                 PaymentGateway = request.PaymentGateway, TransactionId = request.TransactionId,
-                Status = request.Status, PaymentDate = request.PaymentDate ?? DateTime.UtcNow
+                Status = request.Status ?? "Completed", PaymentDate = request.PaymentDate ?? DateTime.UtcNow
             };
             _db.SubscriptionPayments.Add(payment);
             await _db.SaveChangesAsync();

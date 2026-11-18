@@ -92,7 +92,7 @@ namespace MasterBilling.API.Controllers.Sales
                 await _postBilling.SendAsync(r, TenantId), "Notification dispatch complete"));
         }
 
-        [HttpGet("{id}/delivery-status")] public async Task<ActionResult<ApiResponse<object>>> GetDeliveryStatus(int id) => Ok(ApiResponse<object>.SuccessResponse(new { InvoiceId = id, Status = "Delivered" }));
+        [HttpGet("{id}/delivery-status")] public Task<ActionResult<ApiResponse<object>>> GetDeliveryStatus(int id) => Task.FromResult<ActionResult<ApiResponse<object>>>(Ok(ApiResponse<object>.SuccessResponse(new { InvoiceId = id, Status = "Delivered" })));
     }
 
     [ApiController] [Route("api/invoice-items")] [Authorize]
@@ -150,3 +150,4 @@ namespace MasterBilling.API.Controllers.Sales
         [HttpPost("{id}/convert-to-invoice")] public async Task<ActionResult<ApiResponse<InvoiceResponse>>> Convert(int id) => Ok(ApiResponse<InvoiceResponse>.SuccessResponse(await _s.ConvertToInvoiceAsync(id, TenantId), "Converted"));
     }
 }
+

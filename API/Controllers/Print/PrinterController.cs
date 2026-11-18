@@ -271,7 +271,7 @@ namespace MasterBilling.API.Controllers.Print
         {
             request ??= new BillPrintRequest();
             var result = await _svc.PrintBillAsync(invoiceId, TenantId, request, UserId);
-            return Ok(ApiResponse<BillPrintResponse>.SuccessResponse(result, result.Message));
+            return Ok(ApiResponse<BillPrintResponse>.SuccessResponse(result, result.Message ?? "Success"));
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace MasterBilling.API.Controllers.Print
             try
             {
                 var result = await _svc.ReprintAsync(printJobId, TenantId, UserId);
-                return Ok(ApiResponse<BillPrintResponse>.SuccessResponse(result, result.Message));
+                return Ok(ApiResponse<BillPrintResponse>.SuccessResponse(result, result.Message ?? "Success"));
             }
             catch (KeyNotFoundException ex)
             {
@@ -303,3 +303,4 @@ namespace MasterBilling.API.Controllers.Print
         public int?    Port                   { get; set; }
     }
 }
+

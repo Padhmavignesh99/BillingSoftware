@@ -1,4 +1,4 @@
-using MasterBilling.API.Data;
+﻿using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Common;
 using MasterBilling.API.DTOs.Requests;
 using MasterBilling.API.DTOs.Responses;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MasterBilling.API.Services.Implementations
 {
-    // ==================== PAYMENT SERVICE (legacy — kept for backward compat) ====================
+    // ==================== PAYMENT SERVICE (legacy â€” kept for backward compat) ====================
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
@@ -270,13 +270,13 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        public async Task<byte[]> ExportReportAsync(int tenantId, ExportReportRequest request) => System.Text.Encoding.UTF8.GetBytes("Report export placeholder");
+        public Task<byte[]> ExportReportAsync(int tenantId, ExportReportRequest request) => Task.FromResult(System.Text.Encoding.UTF8.GetBytes("Report export placeholder"));
         public async Task<object> GetInventoryReportAsync(int tenantId, ReportFilterRequest filter) => await GetStockReportAsync(tenantId, filter);
         public async Task<object> GetCustomerReportAsync(int tenantId, ReportFilterRequest filter) => new { TotalCustomers = await _context.Customers.CountAsync(c => c.TenantId == tenantId), TopCustomers = await _context.Customers.Where(c => c.TenantId == tenantId).OrderByDescending(c => c.TotalPurchaseAmount).Take(10).Select(c => new { c.Name, c.TotalPurchaseAmount }).ToListAsync() };
         public async Task<object> GetSupplierReportAsync(int tenantId, ReportFilterRequest filter) => new { TotalSuppliers = await _context.Suppliers.CountAsync(s => s.TenantId == tenantId) };
         public async Task<object> GetExpenseReportAsync(int tenantId, ReportFilterRequest filter) => new { TotalExpenses = await _context.Expenses.Where(e => e.TenantId == tenantId).SumAsync(e => e.Amount) };
 
-        // ── Purchase Report (typed) ──────────────────────────────────────────────
+        // â”€â”€ Purchase Report (typed) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<PurchaseReportResponse> GetPurchaseReportAsync(int tenantId, ReportFilterRequest filter)
         {
             var q = _context.Purchases.Include(p => p.Supplier).Where(p => p.TenantId == tenantId);
@@ -303,7 +303,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Sales Return Report ──────────────────────────────────────────────────
+        // â”€â”€ Sales Return Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<SalesReturnReportResponse> GetSalesReturnReportAsync(int tenantId, ReportFilterRequest filter)
         {
             var q = _context.SalesReturns.Include(r => r.Invoice).Include(r => r.Customer).Where(r => r.TenantId == tenantId);
@@ -325,7 +325,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Purchase Return Report ───────────────────────────────────────────────
+        // â”€â”€ Purchase Return Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<PurchaseReturnReportResponse> GetPurchaseReturnReportAsync(int tenantId, ReportFilterRequest filter)
         {
             var q = _context.PurchaseReturns.Include(r => r.Supplier).Where(r => r.TenantId == tenantId);
@@ -346,7 +346,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Low Stock Report ─────────────────────────────────────────────────────
+        // â”€â”€ Low Stock Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<LowStockReportResponse> GetLowStockReportAsync(int tenantId)
         {
             var products = await _context.Products.Include(p => p.Category)
@@ -366,7 +366,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Credit Bill Report (user-wise) ───────────────────────────────────────
+        // â”€â”€ Credit Bill Report (user-wise) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<CreditBillReportResponse> GetCreditBillReportAsync(int tenantId, int? userId = null)
         {
             var q = _context.CustomerCredits.Include(c => c.Customer).Include(c => c.Invoice).Include(c => c.User)
@@ -392,7 +392,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Product Mini Statement ───────────────────────────────────────────────
+        // â”€â”€ Product Mini Statement â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<ProductMiniStatementResponse> GetProductMiniStatementAsync(int tenantId, int productId, ReportFilterRequest filter)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId && p.TenantId == tenantId);
@@ -460,7 +460,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Product Stock Report ─────────────────────────────────────────────────
+        // â”€â”€ Product Stock Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<ProductStockReportResponse> GetProductStockReportAsync(int tenantId, ReportFilterRequest filter)
         {
             var q = _context.Products.Include(p => p.Category).Where(p => p.TenantId == tenantId);
@@ -482,7 +482,7 @@ namespace MasterBilling.API.Services.Implementations
             };
         }
 
-        // ── Expired Stock Report ─────────────────────────────────────────────────
+        // â”€â”€ Expired Stock Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public async Task<ExpiredStockReportResponse> GetExpiredStockReportAsync(int tenantId, int daysAhead = 30)
         {
             var today = DateTime.UtcNow.Date;
@@ -512,3 +512,4 @@ namespace MasterBilling.API.Services.Implementations
         }
     }
 }
+

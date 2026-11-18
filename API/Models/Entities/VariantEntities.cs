@@ -1,4 +1,4 @@
-﻿namespace MasterBilling.API.Models.Entities
+namespace MasterBilling.API.Models.Entities
 {
     // ── Product Variant System ─────────────────────────────────────────────────
 
@@ -32,7 +32,7 @@
         public decimal? SellingPrice { get; set; }
         public decimal? MRP { get; set; }
         public int CurrentStock { get; set; } = 0;
-        public bool IsActive { get; set; } = true;
+        public new bool IsActive { get; set; } = true;
         public ICollection<ProductVariantAttribute> VariantAttributes { get; set; } = new List<ProductVariantAttribute>();
     }
 

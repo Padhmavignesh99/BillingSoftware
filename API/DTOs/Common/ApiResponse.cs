@@ -1,4 +1,4 @@
-﻿namespace MasterBilling.API.DTOs.Common
+namespace MasterBilling.API.DTOs.Common
 {
     /// <summary>
     /// Standard API response wrapper for all endpoints
@@ -13,12 +13,12 @@
         public int? Page { get; set; }
         public int? PageSize { get; set; }
 
-        public static ApiResponse<T> SuccessResponse(T data, string message = "Success")
+        public static ApiResponse<T> SuccessResponse(T? data, string message = "Success")
         {
             return new ApiResponse<T> { Success = true, Message = message, Data = data };
         }
 
-        public static ApiResponse<T> SuccessResponse(T data, string message, int totalCount, int page, int pageSize)
+        public static ApiResponse<T> SuccessResponse(T? data, string message, int totalCount, int page, int pageSize)
         {
             return new ApiResponse<T> { Success = true, Message = message, Data = data, TotalCount = totalCount, Page = page, PageSize = pageSize };
         }
