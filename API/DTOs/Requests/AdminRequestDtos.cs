@@ -149,4 +149,21 @@
         /// <summary>Optional internal note (e.g. "Beta tester", "Partner deal").</summary>
         public string? Note { get; set; }
     }
+
+    // ── ADMIN: SUPERADMIN CREATE / UPDATE ─────────────────────────────────────────
+    public class AdminCreateSuperAdminRequest
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class AdminUpdateSuperAdminRequest
+    {
+        public string? FullName { get; set; }
+        public string? Phone { get; set; }
+        public string? Password { get; set; }
+        public bool? IsActive { get; set; }
+    }
 }

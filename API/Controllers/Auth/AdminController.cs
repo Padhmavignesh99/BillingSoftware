@@ -118,6 +118,24 @@ namespace MasterBilling.API.Controllers.Auth
         public async Task<ActionResult<ApiResponse<bool>>> DeleteUser(int id)
             => Ok(ApiResponse<bool>.SuccessResponse(await _admin.DeleteUserAsync(id), "User deleted"));
 
+        /// <summary>Update a user's details</summary>
+        [HttpPut("users/{id}")]
+        public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateUser(int id, [FromBody] AdminUpdateUserRequest request)
+        {
+            var user = await _db.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+            if (user == null) return NotFound(ApiResponse<object>.FailResponse("User not found."));
+            if (request.Name != null) user.FullName = request.Name;
+            if (request.Phone != null) user.Phone = request.Phone;
+            if (request.IsActive.HasValue) user.IsActive = request.IsActive.Value;
+            await _db.SaveChangesAsync();
+            return Ok(ApiResponse<AdminUserResponse>.SuccessResponse(new AdminUserResponse
+            {
+                Id = user.Id, FullName = user.FullName, Email = user.Email, Phone = user.Phone,
+                Role = user.Role.ToString(), TenantId = user.TenantId, IsActive = user.IsActive,
+                LastLoginAt = user.LastLoginAt, CreatedAt = user.CreatedAt
+            }, "User updated"));
+        }
+
         // ── SUBSCRIPTION PLANS ──────────────────────────────────────────────────────
 
         /// <summary>List all subscription plans with active subscriber counts</summary>
@@ -425,6 +443,87 @@ namespace MasterBilling.API.Controllers.Auth
                 perm.GrantNote,
                 PlanName = perm.Plan?.Name
             }));
+        }
+
+        // ── SUPERADMIN MANAGEMENT ────────────────────────────────────────────────────
+
+        /// <summary>List all SuperAdmin users</summary>
+        [HttpGet("superadmins")]
+        public async Task<ActionResult<ApiResponse<List<AdminUserResponse>>>> GetSuperAdmins()
+        {
+            var users = await _db.Users.IgnoreQueryFilters()
+                .Where(u => !u.IsDeleted && u.Role == UserRole.SuperAdmin)
+                .ToListAsync();
+            var result = users.Select(u => new AdminUserResponse
+            {
+                Id = u.Id, FullName = u.FullName, Email = u.Email, Phone = u.Phone,
+                Role = u.Role.ToString(), TenantId = u.TenantId,
+                BusinessName = null, IsActive = u.IsActive,
+                LastLoginAt = u.LastLoginAt, CreatedAt = u.CreatedAt
+            }).ToList();
+            return Ok(ApiResponse<List<AdminUserResponse>>.SuccessResponse(result, "SuperAdmins loaded"));
+        }
+
+        /// <summary>Create a new SuperAdmin user</summary>
+        [HttpPost("superadmins")]
+        public async Task<ActionResult<ApiResponse<AdminUserResponse>>> CreateSuperAdmin([FromBody] AdminCreateSuperAdminRequest request)
+        {
+            if (await _db.Users.AnyAsync(u => u.Email == request.Email && !u.IsDeleted))
+                return BadRequest(ApiResponse<object>.FailResponse("Email already in use."));
+
+            var user = new MasterBilling.API.Models.Entities.User
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                Phone = request.Phone,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                Role = MasterBilling.API.Models.Enums.UserRole.SuperAdmin,
+                IsActive = true,
+                TenantId = null
+            };
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+            return Ok(ApiResponse<AdminUserResponse>.SuccessResponse(new AdminUserResponse
+            {
+                Id = user.Id, FullName = user.FullName, Email = user.Email, Phone = user.Phone,
+                Role = "SuperAdmin", TenantId = null, IsActive = true,
+                LastLoginAt = null, CreatedAt = user.CreatedAt
+            }, "SuperAdmin created"));
+        }
+
+        /// <summary>Update a SuperAdmin user</summary>
+        [HttpPut("superadmins/{id}")]
+        public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateSuperAdmin(int id, [FromBody] AdminUpdateSuperAdminRequest request)
+        {
+            var user = await _db.Users.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Id == id && u.Role == MasterBilling.API.Models.Enums.UserRole.SuperAdmin && !u.IsDeleted);
+            if (user == null) return NotFound(ApiResponse<object>.FailResponse("SuperAdmin not found."));
+
+            if (!string.IsNullOrWhiteSpace(request.FullName)) user.FullName = request.FullName;
+            if (!string.IsNullOrWhiteSpace(request.Phone)) user.Phone = request.Phone;
+            if (!string.IsNullOrWhiteSpace(request.Password))
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            if (request.IsActive.HasValue) user.IsActive = request.IsActive.Value;
+
+            await _db.SaveChangesAsync();
+            return Ok(ApiResponse<AdminUserResponse>.SuccessResponse(new AdminUserResponse
+            {
+                Id = user.Id, FullName = user.FullName, Email = user.Email, Phone = user.Phone,
+                Role = "SuperAdmin", TenantId = null, IsActive = user.IsActive,
+                LastLoginAt = user.LastLoginAt, CreatedAt = user.CreatedAt
+            }, "SuperAdmin updated"));
+        }
+
+        /// <summary>Delete (soft-delete) a SuperAdmin user. Cannot delete yourself.</summary>
+        [HttpDelete("superadmins/{id}")]
+        public async Task<ActionResult<ApiResponse<bool>>> DeleteSuperAdmin(int id)
+        {
+            var user = await _db.Users.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(u => u.Id == id && u.Role == MasterBilling.API.Models.Enums.UserRole.SuperAdmin && !u.IsDeleted);
+            if (user == null) return NotFound(ApiResponse<object>.FailResponse("SuperAdmin not found."));
+            user.IsDeleted = true;
+            await _db.SaveChangesAsync();
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "SuperAdmin deleted"));
         }
     }
 }

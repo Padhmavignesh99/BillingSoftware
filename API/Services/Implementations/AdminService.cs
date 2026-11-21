@@ -220,7 +220,7 @@ namespace MasterBilling.API.Services.Implementations
         public async Task<List<AdminUserResponse>> GetAllUsersAsync()
         {
             var users = await _db.Users.IgnoreQueryFilters()
-                .Where(u => !u.IsDeleted)
+                .Where(u => !u.IsDeleted && u.Role != MasterBilling.API.Models.Enums.UserRole.SuperAdmin)
                 .ToListAsync();
             var businesses = await _db.Businesses.IgnoreQueryFilters().ToListAsync();
 
