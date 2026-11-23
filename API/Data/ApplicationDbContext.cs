@@ -403,21 +403,7 @@ namespace MasterBilling.API.Data
                 .HasForeignKey(p => p.SupplierId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Seed default business types
-            modelBuilder.Entity<BusinessType>().HasData(
-                new BusinessType { Id = 1, Name = "Retail Store", Description = "General retail shop", IsActive = true },
-                new BusinessType { Id = 2, Name = "Wholesale", Description = "Wholesale business", IsActive = true },
-                new BusinessType { Id = 3, Name = "Restaurant", Description = "Food & beverage", IsActive = true },
-                new BusinessType { Id = 4, Name = "Pharmacy", Description = "Medical store", IsActive = true },
-                new BusinessType { Id = 5, Name = "Electronics", Description = "Electronics shop", IsActive = true },
-                new BusinessType { Id = 6, Name = "Clothing", Description = "Fashion & apparel", IsActive = true },
-                new BusinessType { Id = 7, Name = "Grocery", Description = "Grocery & supermarket", IsActive = true },
-                new BusinessType { Id = 8, Name = "Service", Description = "Service-based business", IsActive = true },
-                new BusinessType { Id = 9, Name = "Manufacturing", Description = "Manufacturing unit", IsActive = true },
-                new BusinessType { Id = 10, Name = "Other", Description = "Other business type", IsActive = true }
-            );
-
-            // ─── Seed SuperAdmin user ─────────────────────────────────────────────────
+            // ─── Seed SuperAdmin user (only) ─────────────────────────────────────────
             // SuperAdmin has no TenantId — full platform access.
             // Default credentials: superadmin@MasterBilling.com / SuperAdmin@123
             // IMPORTANT: Change this password after first login!
@@ -432,91 +418,6 @@ namespace MasterBilling.API.Data
                 IsActive       = true,
                 IsDeleted      = false,
                 CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            // Seed default lookup data
-            modelBuilder.Entity<Lookup>().HasData(
-                new Lookup { Id = 1, Category = "Currency", Key = "INR", Value = "₹", Description = "Indian Rupee" },
-                new Lookup { Id = 2, Category = "Currency", Key = "USD", Value = "$", Description = "US Dollar" },
-                new Lookup { Id = 3, Category = "Currency", Key = "EUR", Value = "€", Description = "Euro" },
-                new Lookup { Id = 4, Category = "Country", Key = "IN", Value = "India", Description = "India" },
-                new Lookup { Id = 5, Category = "Country", Key = "US", Value = "United States", Description = "United States" }
-            );
-
-            // ─── Seed Admin user ──────────────────────────────────────────────────────
-            // Admin credentials: admin@MasterBilling.com / Admin@123
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id             = 2,
-                FullName       = "Admin",
-                Email          = "admin@MasterBilling.com",
-                PasswordHash   = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-                Role           = UserRole.SuperAdmin,
-                TenantId       = null,
-                IsActive       = true,
-                IsDeleted      = false,
-                CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            // ─── Seed Demo Business (Vignesh Tex) ────────────────────────────────────
-            modelBuilder.Entity<Business>().HasData(new Business
-            {
-                Id           = 9999,
-                Name         = "Vignesh Tex",
-                Email        = "padhmavignesh99@gmail.com",
-                CurrencyCode = "INR",
-                CurrencySymbol = "₹",
-                Status       = BusinessStatus.Active,
-                IsActive     = true,
-                IsDeleted    = false,
-                CreatedAt    = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            // ─── Seed Demo Admin User ─────────────────────────────────────────────────
-            // Demo credentials: padhmavignesh99@gmail.com / Vignesh@123
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id             = 9999,
-                FullName       = "Vignesh",
-                Email          = "padhmavignesh99@gmail.com",
-                PasswordHash   = BCrypt.Net.BCrypt.HashPassword("Vignesh@123"),
-                Role           = UserRole.Owner,
-                TenantId       = 9999,
-                IsActive       = true,
-                IsDeleted      = false,
-                CreatedAt      = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            // ─── Seed Demo Business Settings ──────────────────────────────────────────
-            modelBuilder.Entity<BusinessSettings>().HasData(new BusinessSettings
-            {
-                Id       = 9999,
-                TenantId = 9999,
-                IsActive = true,
-                IsDeleted = false,
-                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            modelBuilder.Entity<InvoiceSettings>().HasData(new InvoiceSettings
-            {
-                Id       = 9999,
-                TenantId = 9999,
-                IsActive = true,
-                IsDeleted = false,
-                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-
-            // ─── Seed Demo Trial ──────────────────────────────────────────────────────
-            modelBuilder.Entity<Trial>().HasData(new Trial
-            {
-                Id         = 9999,
-                BusinessId = 9999,
-                StartDate  = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                EndDate    = new DateTime(2024, 1, 31, 0, 0, 0, DateTimeKind.Utc),
-                IsConverted = false,
-                IsActive   = true,
-                IsDeleted  = false,
-                CreatedAt  = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
 
             // ─── Seed Subscription Plans ──────────────────────────────────────────────

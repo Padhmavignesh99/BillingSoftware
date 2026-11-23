@@ -491,20 +491,6 @@ namespace MasterBilling.API.Migrations
                         .HasFilter("\"GSTNumber\" IS NOT NULL");
 
                     b.ToTable("Businesses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 9999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyCode = "INR",
-                            CurrencySymbol = "₹",
-                            Email = "padhmavignesh99@gmail.com",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Vignesh Tex",
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.BusinessSettings", b =>
@@ -575,27 +561,6 @@ namespace MasterBilling.API.Migrations
                         .IsUnique();
 
                     b.ToTable("BusinessSettings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 9999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DateFormat = "dd-MM-yyyy",
-                            EnableBarcode = true,
-                            EnableEmailNotifications = true,
-                            EnableGST = true,
-                            EnableLowStockAlert = true,
-                            EnableMultiBranch = false,
-                            EnableSmsNotifications = false,
-                            EnableWhatsAppNotifications = false,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Language = "en",
-                            LowStockThreshold = 10,
-                            TenantId = 9999,
-                            TimeZone = "Asia/Kolkata"
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.BusinessType", b =>
@@ -637,98 +602,6 @@ namespace MasterBilling.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BusinessTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8867),
-                            Description = "General retail shop",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Retail Store"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8878),
-                            Description = "Wholesale business",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Wholesale"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8883),
-                            Description = "Food & beverage",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Restaurant"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8887),
-                            Description = "Medical store",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Pharmacy"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8890),
-                            Description = "Electronics shop",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Electronics"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8894),
-                            Description = "Fashion & apparel",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Clothing"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8897),
-                            Description = "Grocery & supermarket",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Grocery"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8900),
-                            Description = "Service-based business",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Service"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8903),
-                            Description = "Manufacturing unit",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Manufacturing"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 633, DateTimeKind.Utc).AddTicks(8906),
-                            Description = "Other business type",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Other"
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.CardPaymentTransaction", b =>
@@ -2758,25 +2631,6 @@ namespace MasterBilling.API.Migrations
                         .IsUnique();
 
                     b.ToTable("InvoiceSettings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 9999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            InvoiceNumberFormat = "{PREFIX}-{YEAR}-{NUMBER:5}",
-                            InvoicePrefix = "INV",
-                            IsActive = true,
-                            IsDeleted = false,
-                            NextInvoiceNumber = 1,
-                            PrimaryColor = "#1a73e8",
-                            ShowDiscount = true,
-                            ShowGST = true,
-                            ShowLogo = true,
-                            ShowSignature = false,
-                            TemplateName = "Default",
-                            TenantId = 9999
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.Lookup", b =>
@@ -2829,68 +2683,6 @@ namespace MasterBilling.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Lookups");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9804),
-                            Description = "Indian Rupee",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Key = "INR",
-                            SortOrder = 0,
-                            Value = "₹"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9814),
-                            Description = "US Dollar",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Key = "USD",
-                            SortOrder = 0,
-                            Value = "$"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Category = "Currency",
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9819),
-                            Description = "Euro",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Key = "EUR",
-                            SortOrder = 0,
-                            Value = "€"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Category = "Country",
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9823),
-                            Description = "India",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Key = "IN",
-                            SortOrder = 0,
-                            Value = "India"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Category = "Country",
-                            CreatedAt = new DateTime(2026, 11, 18, 16, 22, 18, 919, DateTimeKind.Utc).AddTicks(9829),
-                            Description = "United States",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Key = "US",
-                            SortOrder = 0,
-                            Value = "United States"
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.LoyaltyProgram", b =>
@@ -7803,19 +7595,6 @@ namespace MasterBilling.API.Migrations
                     b.HasIndex("ConvertedSubscriptionId");
 
                     b.ToTable("Trials");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 9999,
-                            BusinessId = 9999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndDate = new DateTime(2024, 1, 31, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            IsConverted = false,
-                            IsDeleted = false,
-                            StartDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("MasterBilling.API.Models.Entities.Unit", b =>
@@ -8012,31 +7791,8 @@ namespace MasterBilling.API.Migrations
                             FullName = "Super Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            PasswordHash = "$2a$11$Pk5lUrkmtcleXXr8qnt94edA8Jz9bGmwG0sx5F7f7KnYAErHHJU5e",
+                            PasswordHash = "$2a$11$5UyfcMXyf1a3PKfsOhAH4eP3wI5PruW4GCN7eJAfCxbrdf40pud0S",
                             Role = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@MasterBilling.com",
-                            FullName = "Admin",
-                            IsActive = true,
-                            IsDeleted = false,
-                            PasswordHash = "$2a$11$b2NH1zi0AZxUQe9JqPdtlORMSK3T14kdm6ggAtCwfdof26EIDJ476",
-                            Role = 1
-                        },
-                        new
-                        {
-                            Id = 9999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "padhmavignesh99@gmail.com",
-                            FullName = "Vignesh",
-                            IsActive = true,
-                            IsDeleted = false,
-                            PasswordHash = "$2a$11$qxeHfTSRCM.69.a3EZ5/KeqQ66fpdnffQ/3w6QehQkgjYTjqvuFQO",
-                            Role = 2,
-                            TenantId = 9999
                         });
                 });
 

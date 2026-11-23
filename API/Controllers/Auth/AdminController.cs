@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MasterBilling.API.Data;
 using MasterBilling.API.DTOs.Common;
@@ -443,6 +443,77 @@ namespace MasterBilling.API.Controllers.Auth
                 perm.GrantNote,
                 PlanName = perm.Plan?.Name
             }));
+        }
+
+        // ── TENANT-WISE VIEWS ────────────────────────────────────────────────────────
+
+        /// <summary>List all tenants with their users grouped by tenant</summary>
+        [HttpGet("tenants/users")]
+        public async Task<IActionResult> GetTenantUsers()
+        {
+            var businesses = await _db.Businesses.IgnoreQueryFilters()
+                .Where(b => !b.IsDeleted)
+                .OrderBy(b => b.Name)
+                .ToListAsync();
+
+            var users = await _db.Users.IgnoreQueryFilters()
+                .Where(u => !u.IsDeleted && u.TenantId != null && u.Role != UserRole.SuperAdmin)
+                .ToListAsync();
+
+            var result = businesses.Select(b => new
+            {
+                TenantId     = b.Id,
+                TenantName   = b.Name,
+                TenantEmail  = b.Email,
+                TenantStatus = b.Status.ToString(),
+                IsActive     = b.IsActive,
+                CreatedAt    = b.CreatedAt,
+                UserCount    = users.Count(u => u.TenantId == b.Id),
+                Users        = users.Where(u => u.TenantId == b.Id)
+                    .Select(u => new
+                    {
+                        u.Id, u.FullName, u.Email, u.Phone,
+                        Role = u.Role.ToString(), u.IsActive,
+                        u.LastLoginAt, u.CreatedAt
+                    }).ToList()
+            }).ToList();
+
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Tenant users loaded"));
+        }
+
+        /// <summary>List all tenants with their product counts and top products</summary>
+        [HttpGet("tenants/products")]
+        public async Task<IActionResult> GetTenantProducts()
+        {
+            var businesses = await _db.Businesses.IgnoreQueryFilters()
+                .Where(b => !b.IsDeleted)
+                .OrderBy(b => b.Name)
+                .ToListAsync();
+
+            var products = await _db.Products.IgnoreQueryFilters()
+                .Where(p => !p.IsDeleted)
+                .ToListAsync();
+
+            var result = businesses.Select(b => new
+            {
+                TenantId     = b.Id,
+                TenantName   = b.Name,
+                TenantStatus = b.Status.ToString(),
+                ProductCount = products.Count(p => p.TenantId == b.Id),
+                Products     = products.Where(p => p.TenantId == b.Id)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Take(10)
+                    .Select(p => new
+                    {
+                        p.Id, p.Name,
+                        Barcode   = p.Barcode ?? "",
+                        SKU       = p.SKU ?? "",
+                        SalePrice = p.SellingPrice,
+                        p.IsActive
+                    }).ToList()
+            }).ToList();
+
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Tenant products loaded"));
         }
 
         // ── SUPERADMIN MANAGEMENT ────────────────────────────────────────────────────
